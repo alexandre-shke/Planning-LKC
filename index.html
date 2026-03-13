@@ -1,0 +1,3851 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanningPro — PA3</title>
+
+<!-- PWA -->
+<meta name="application-name" content="PlanningPro">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PlanningPro">
+<meta name="theme-color" content="#0f1117">
+<meta name="description" content="Planning de conception immobilière — PA3">
+<link rel="manifest" id="pwaManifest">
+<link rel="apple-touch-icon" id="appleTouchIcon">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    /* ── Linkcity brand ── */
+    --lc-electric: #525DF4;
+    --lc-intense:  #202E5B;
+    --lc-mint:     #24EDB8;
+    --lc-coral:    #FF8C77;
+
+    /* ── Dark UI palette built on brand ── */
+    --bg:       #0D1428;
+    --surface:  #121C3A;
+    --surface2: #192244;
+    --surface3: #1E2A52;
+    --border:   rgba(82,93,244,.16);
+    --border-hi: rgba(82,93,244,.35);
+
+    --accent:   #525DF4;
+    --green:    #24EDB8;
+    --orange:   #FF8C77;
+    --red:      #EF5072;
+    --milestone: #24EDB8;
+
+    --text:  #F0F4FF;
+    --text2: #8B9BC8;
+    --text3: #445078;
+
+    --row-h:    32px;
+    --label-w:  510px;
+    --header-h: 64px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+
+  /* ══════════════════════════════════════════
+     HEADER — Linkcity total redesign
+  ══════════════════════════════════════════ */
+  header {
+    background: linear-gradient(90deg, var(--lc-intense) 0%, #162048 60%, #0D1428 100%);
+    border-bottom: 1px solid var(--border-hi);
+    padding: 0 28px;
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+    z-index: 100;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle decorative grid dots in background */
+  header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(82,93,244,.12) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+  }
+
+  /* Mint bottom-left accent block — echoes the Linkcity module system */
+  header::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 6px; height: 100%;
+    background: linear-gradient(to bottom, var(--lc-electric), var(--lc-mint));
+    z-index: 2;
+  }
+
+  /* ── Logo zone ── */
+  .logo-zone {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-left: 14px;
+    position: relative;
+    z-index: 3;
+    flex-shrink: 0;
+  }
+
+  /* Real Linkcity SVG logo */
+  .lc-logo-svg {
+    height: 36px;
+    width: auto;
+    flex-shrink: 0;
+  }
+  /* Dark mode — logo stays electric blue on dark bg (already fine) */
+  /* Light mode — logo keeps electric blue (looks great on light bg too) */
+
+  .logo-divider {
+    width: 1px;
+    height: 32px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,.25), transparent);
+    flex-shrink: 0;
+  }
+
+  .project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .project-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--lc-mint);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .project-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+    line-height: 1;
+  }
+
+  /* ── Stats ── */
+  .spacer { flex: 1; }
+
+  .header-stats {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    position: relative;
+    z-index: 3;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    background: rgba(82,93,244,.1);
+    border: 1px solid rgba(82,93,244,.18);
+    min-width: 72px;
+    transition: background .15s;
+  }
+  .stat:hover { background: rgba(82,93,244,.18); }
+  .stat-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .stat-label {
+    font-size: 9px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  /* Highlight stat — avancement */
+  .stat.highlight { background: rgba(36,237,184,.08); border-color: rgba(36,237,184,.25); }
+  .stat.highlight .stat-val { color: var(--lc-mint); }
+
+  /* ── Header action buttons ── */
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+    z-index: 3;
+    margin-left: 16px;
+  }
+
+  .btn-hdr {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .btn-hdr:hover { border-color: var(--lc-mint); color: var(--lc-mint); background: rgba(36,237,184,.07); }
+
+  .btn-add {
+    background: var(--lc-electric);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    padding: 7px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    transition: all .15s;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-add::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+    pointer-events: none;
+  }
+  .btn-add:hover { background: #3D46C9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(82,93,244,.5); }
+
+  /* Legacy selectors kept for JS compatibility */
+  .today-line-toggle { display: none; }
+  .btn-save-session { display: none; }
+  .btn-export { display: none; }
+  .logo { display: none; }
+  .project-badge { display: none; }
+  .logo-mark { display: none; }
+  .logo-sep { display: none; }
+  .logo-name { display: none; }
+  .stat-label-old { display: none; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .zoom-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 6px;
+    width: 26px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+    font-family: 'Outfit', sans-serif;
+  }
+  .zoom-btn:hover { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.1); }
+  .zoom-label {
+    font-size: 10px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    min-width: 68px;
+    text-align: center;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 12px;
+    transition: all .15s;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+  }
+  .zoom-label:hover { background: var(--surface2); color: var(--text2); }
+  .zoom-hint {
+    font-size: 9px;
+    color: var(--text3);
+    font-style: italic;
+    margin-left: 2px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .sep { width: 1px; height: 16px; background: var(--border); margin: 0 6px; }
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    border-radius: 6px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    transition: all .15s;
+  }
+  .filter-btn:hover { border-color: rgba(82,93,244,.5); color: var(--text2); }
+  .filter-btn.active {
+    border-color: var(--lc-electric);
+    color: #fff;
+    background: var(--lc-electric);
+    box-shadow: 0 2px 10px rgba(82,93,244,.3);
+  }
+  .search-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    width: 190px;
+    outline: none;
+    margin-left: auto;
+    transition: all .15s;
+  }
+  .search-input:focus { border-color: var(--lc-electric); box-shadow: 0 0 0 3px rgba(82,93,244,.12); }
+  .search-input::placeholder { color: var(--text3); }
+
+  /* ── GANTT LAYOUT ── */
+  .gantt-wrapper {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Left panel */
+  .task-panel {
+    width: var(--label-w);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-hi);
+    overflow: hidden;
+    background: var(--surface);
+    z-index: 10;
+  }
+  .task-panel-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-hi);
+    gap: 8px;
+    background: var(--lc-intense);
+    flex-shrink: 0;
+  }
+  .col-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--lc-mint);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .col-dates {
+    font-size: 9px;
+    color: var(--text3);
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .task-list { flex: 1; overflow-y: auto; overflow-x: hidden; }
+  .task-list::-webkit-scrollbar { width: 3px; }
+  .task-list::-webkit-scrollbar-thumb { background: rgba(82,93,244,.4); border-radius: 2px; }
+
+  .task-row {
+    height: var(--row-h);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid rgba(82,93,244,.06);
+    cursor: pointer;
+    transition: background .08s;
+    user-select: none;
+    position: relative;
+  }
+  .task-row:hover { background: rgba(82,93,244,.07); }
+  .task-row.selected {
+    background: rgba(82,93,244,.15);
+    border-left: 3px solid var(--lc-electric);
+    padding-left: 13px;
+  }
+  .task-row.hidden { display: none; }
+  .task-row.level-0 { background: rgba(82,93,244,.1); border-bottom: 1px solid rgba(82,93,244,.2); }
+  .task-row.level-1 { background: rgba(36,237,184,.04); border-bottom: 1px solid rgba(36,237,184,.08); }
+
+  .task-expand {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text3);
+    font-size: 10px;
+    transition: transform .15s;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+  .task-expand:hover { color: var(--text); }
+  .task-expand.open { transform: rotate(90deg); }
+
+  .task-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .task-row.level-0 .task-name { font-weight: 700; color: #fff; font-size: 13px; letter-spacing: -.2px; }
+  .task-row.level-1 .task-name { font-weight: 600; color: var(--lc-mint); font-size: 12px; }
+  .task-row.level-2 .task-name { font-weight: 400; color: var(--text2); }
+  .task-row.level-3 .task-name { font-weight: 400; color: var(--text3); font-size: 11.5px; }
+
+  .milestone-icon { color: var(--lc-mint); margin-right: 4px; font-size: 10px; }
+
+  .task-pct {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text3);
+    margin-left: 6px;
+    flex-shrink: 0;
+  }
+  .task-pct.done { color: var(--lc-mint); }
+
+  .task-dates {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .task-date {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text3);
+    white-space: nowrap;
+    width: 52px;
+    text-align: right;
+  }
+  .task-date.start { color: var(--text3); }
+  .task-date.end { color: var(--text3); }
+  .task-date.dur {
+    color: var(--text3);
+    width: 38px;
+    text-align: right;
+  }
+  .task-date.dur.milestone-dur { color: var(--lc-mint); opacity: 0.8; }
+  .task-row.level-0 .task-date { color: var(--text2); font-size: 10px; }
+  .task-row.level-1 .task-date { color: var(--text2); }
+
+  /* Deadline line */
+  .deadline-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #f87171, rgba(248,113,113,.2));
+    z-index: 5;
+    pointer-events: none;
+    cursor: ew-resize;
+  }
+  .deadline-label {
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    font-size: 9px;
+    color: #f87171;
+    font-weight: 700;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .deadline-line-draggable {
+    pointer-events: all !important;
+    cursor: ew-resize;
+  }
+
+  /* ── SAVE SESSION BUTTON ── */
+  .btn-save-session {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.15);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 5px 13px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    transition: all .15s;
+  }
+  .btn-save-session:hover { border-color: var(--lc-mint); color: var(--lc-mint); }
+
+  /* ── SAVE/LOAD MODAL ── */
+  .save-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.65);
+    z-index: 300; display: none; align-items: center; justify-content: center;
+  }
+  .save-modal-overlay.open { display: flex; }
+  .save-modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px; width: 540px; max-height: 82vh;
+    display: flex; flex-direction: column; gap: 16px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.7);
+  }
+  .save-modal-title { font-size: 16px; font-weight: 600; }
+  .save-modal-actions { display: flex; gap: 8px; }
+  .btn-new-save {
+    background: var(--accent); border: none; color: #fff; border-radius: 6px;
+    padding: 8px 16px; cursor: pointer; font-size: 12px; font-family: 'Outfit', sans-serif;
+    font-weight: 500; transition: opacity .15s; flex: 1;
+  }
+  .btn-new-save:hover { opacity: .85; }
+  .btn-import-file {
+    background: transparent; border: 1px solid var(--border); color: var(--text2);
+    border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 12px;
+    font-family: 'Outfit', sans-serif; transition: all .15s; flex: 1; text-align: center;
+  }
+  .btn-import-file:hover { border-color: var(--accent); color: var(--accent); }
+  .save-list {
+    display: flex; flex-direction: column; gap: 6px;
+    overflow-y: auto; max-height: 360px; padding-right: 4px;
+  }
+  .save-list::-webkit-scrollbar { width: 4px; }
+  .save-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .save-item {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; display: flex;
+    align-items: center; gap: 10px; transition: border-color .15s;
+  }
+  .save-item:hover { border-color: rgba(79,124,255,.4); }
+  .save-item-info { flex: 1; min-width: 0; }
+  .save-item-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .save-item-meta { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .save-item-btns { display: flex; gap: 5px; flex-shrink: 0; }
+  .save-btn-load {
+    background: var(--accent); border: none; color: #fff; border-radius: 5px;
+    padding: 5px 12px; cursor: pointer; font-size: 11px; font-family: 'Outfit', sans-serif;
+    font-weight: 500; transition: opacity .15s;
+  }
+  .save-btn-load:hover { opacity: .85; }
+  .save-btn-export {
+    background: transparent; border: 1px solid var(--border); color: var(--text2);
+    border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 11px;
+    font-family: 'Outfit', sans-serif; transition: all .15s;
+  }
+  .save-btn-export:hover { border-color: var(--green); color: var(--green); }
+  .save-btn-del {
+    background: transparent; border: 1px solid var(--border); color: var(--text3);
+    border-radius: 5px; padding: 5px 8px; cursor: pointer; font-size: 11px; transition: all .15s;
+  }
+  .save-btn-del:hover { border-color: var(--red); color: var(--red); }
+  .save-empty { text-align: center; color: var(--text3); font-size: 13px; padding: 28px 0; }
+  .save-modal-close {
+    background: transparent; border: 1px solid var(--border); color: var(--text2);
+    border-radius: 6px; padding: 7px 16px; cursor: pointer; font-size: 12px;
+    font-family: 'Outfit', sans-serif; transition: all .15s; align-self: flex-end;
+  }
+  .save-modal-close:hover { border-color: var(--text); color: var(--text); }
+  .save-name-row { display: flex; gap: 8px; }
+  .save-name-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 8px 12px; font-size: 13px;
+    font-family: 'Outfit', sans-serif; outline: none; transition: border-color .15s;
+  }
+  .save-name-input:focus { border-color: var(--accent); }
+  .save-autosave-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text3); }
+  .save-autosave-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+
+  /* Right panel */
+  .chart-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .chart-header {
+    height: 56px;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--border);
+    background: var(--lc-intense);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .months-row {
+    height: 28px;
+    display: flex;
+    border-bottom: 1px solid rgba(82,93,244,.2);
+    position: relative;
+  }
+  .month-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgba(82,93,244,.15);
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Outfit', sans-serif;
+  }
+  .month-cell.current-month { background: rgba(82,93,244,.25); color: var(--lc-mint); }
+  .weeks-row {
+    height: 28px;
+    display: flex;
+    position: relative;
+  }
+  .week-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgba(82,93,244,.12);
+    font-size: 9px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    letter-spacing: .3px;
+  }
+  .week-cell.current-week { background: rgba(82,93,244,.15); color: var(--lc-electric); font-weight: 700; }
+
+  .chart-body {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+  }
+  .chart-body::-webkit-scrollbar { height: 6px; width: 4px; }
+  .chart-body::-webkit-scrollbar-thumb { background: var(--lc-electric); border-radius: 2px; opacity: .4; }
+
+  .gantt-canvas {
+    position: relative;
+    background: var(--bg);
+  }
+
+  .gantt-row {
+    height: var(--row-h);
+    border-bottom: 1px solid rgba(82,93,244,.07);
+    position: relative;
+  }
+  .gantt-row:hover { background: rgba(82,93,244,.05); }
+  .gantt-row.hidden { display: none; }
+  .gantt-row.level-0 {
+    background: linear-gradient(90deg, rgba(82,93,244,.12) 0%, rgba(32,46,91,.3) 300px, transparent 600px);
+    border-bottom: 1px solid rgba(82,93,244,.15);
+  }
+  .gantt-row.level-1 { background: rgba(26,35,71,.25); }
+
+  /* Weekend columns */
+  .weekend-col {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(255,255,255,.012);
+    pointer-events: none;
+  }
+
+  /* Today line */
+  .today-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--red), transparent);
+    z-index: 5;
+    pointer-events: none;
+  }
+  .today-label {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 9px;
+    color: var(--red);
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Gantt bars */
+  .gantt-bar {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: filter .15s, box-shadow .15s;
+    min-width: 2px;
+  }
+  .gantt-bar:hover { filter: brightness(1.15); box-shadow: 0 2px 12px rgba(82,93,244,.3); }
+  .gantt-bar.level-0 {
+    height: 18px;
+    background: linear-gradient(90deg, var(--lc-electric), #3D46C9);
+    border-radius: 6px;
+  }
+  .gantt-bar.level-1 {
+    height: 16px;
+    border-radius: 5px;
+  }
+  .gantt-bar.level-2 {
+    height: 12px;
+    border-radius: 4px;
+  }
+  .gantt-bar.level-3 {
+    height: 10px;
+    border-radius: 3px;
+  }
+  /* Phase colors — Linkcity identitaires rotated */
+  .gantt-bar.phase-0 { background: linear-gradient(90deg, #525DF4, #3D46C9); }
+  .gantt-bar.phase-1 { background: #24EDB8; }
+  .gantt-bar.phase-2 { background: #202E5B; border: 1px solid rgba(82,93,244,.4); }
+  .gantt-bar.phase-3 { background: #525DF4; }
+  .gantt-bar.phase-4 { background: #1ABFA0; }
+  .gantt-bar.phase-5 { background: #FF8C77; }
+  .gantt-bar.phase-6 { background: #3D46C9; }
+
+  /* Progress fill */
+  .gantt-bar-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: inherit;
+    opacity: 0.4;
+    background: rgba(255,255,255,.3);
+    pointer-events: none;
+  }
+  .gantt-bar-label {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: rgba(255,255,255,.8);
+    white-space: nowrap;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* Milestone diamond */
+  .gantt-milestone {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: var(--lc-mint);
+    cursor: pointer;
+    transition: transform .15s;
+    box-shadow: 0 0 8px rgba(36,237,184,.5);
+    border-radius: 2px;
+  }
+  .gantt-milestone:hover {
+    transform: translateY(-50%) rotate(45deg) scale(1.3);
+    box-shadow: 0 0 14px rgba(36,237,184,.7);
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: var(--lc-intense);
+    border: 1px solid rgba(82,93,244,.4);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--text);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .1s;
+    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(20,27,53,.6);
+    font-family: 'Outfit', sans-serif;
+  }
+  .tooltip.visible { opacity: 1; }
+  .tooltip-name { font-weight: 700; margin-bottom: 6px; font-size: 13px; color: #fff; }
+  .tooltip-row { display: flex; justify-content: space-between; gap: 12px; color: var(--text2); font-size: 11px; margin-top: 2px; }
+  .tooltip-val { color: var(--lc-mint); font-family: 'JetBrains Mono', monospace; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20,27,53,.75);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid rgba(82,93,244,.35);
+    border-radius: 16px;
+    padding: 28px;
+    width: 480px;
+    box-shadow: 0 32px 80px rgba(20,27,53,.8), 0 0 0 1px rgba(82,93,244,.1);
+  }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #fff; letter-spacing: -.3px; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 10px; font-weight: 700; color: var(--lc-mint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+  .form-input, .form-select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: 'Outfit', sans-serif;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--lc-electric); box-shadow: 0 0 0 3px rgba(82,93,244,.15); }
+  .form-row { display: flex; gap: 10px; }
+  .form-row .form-group { flex: 1; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+  .btn-cancel {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 7px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Outfit', sans-serif;
+    transition: all .15s;
+  }
+  .btn-cancel:hover { border-color: var(--text2); color: var(--text); }
+  .btn-save {
+    background: var(--lc-electric);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    padding: 7px 22px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    transition: all .15s;
+  }
+  .btn-save:hover { background: #3D46C9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(82,93,244,.4); }
+
+  /* Context menu */
+  .ctx-menu {
+    position: fixed;
+    background: var(--lc-intense);
+    border: 1px solid rgba(82,93,244,.35);
+    border-radius: 10px;
+    padding: 6px;
+    z-index: 500;
+    box-shadow: 0 12px 40px rgba(20,27,53,.7);
+    min-width: 170px;
+    display: none;
+  }
+  .ctx-menu.open { display: block; }
+  .ctx-item {
+    padding: 7px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: var(--text2);
+    transition: all .1s;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+  }
+  .ctx-item:hover { background: rgba(82,93,244,.2); color: #fff; }
+  .ctx-item.danger:hover { background: rgba(240,107,122,.12); color: var(--red); }
+  .ctx-sep { height: 1px; background: rgba(82,93,244,.2); margin: 4px 0; }
+
+  /* Drag & drop */
+  .gantt-bar.dragging {
+    opacity: 0.55;
+    cursor: grabbing !important;
+    box-shadow: 0 4px 20px rgba(79,124,255,.5);
+  }
+  .gantt-bar:not(.dragging) { cursor: grab; }
+  .gantt-milestone { cursor: grab; }
+  .gantt-milestone.dragging { opacity: 0.55; cursor: grabbing !important; }
+
+  .drag-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.9;
+    border-radius: 6px;
+    background: var(--lc-electric);
+    color: #fff;
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    padding: 4px 12px;
+    white-space: nowrap;
+    box-shadow: 0 6px 24px rgba(82,93,244,.5);
+    transform: translateY(-50%);
+    letter-spacing: .3px;
+  }
+
+  /* Link mode */
+  body.link-mode .gantt-bar,
+  body.link-mode .gantt-milestone { cursor: crosshair !important; }
+  body.link-mode .gantt-bar:hover { box-shadow: 0 0 0 2px var(--accent); filter: brightness(1.3); }
+
+  .btn-link {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 20px;
+    padding: 3px 11px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: .3px;
+  }
+  .btn-link:hover, .btn-link.active {
+    border-color: var(--lc-mint);
+    color: var(--lc-mint);
+    background: rgba(36,237,184,.08);
+  }
+  .btn-link.active { background: rgba(36,237,184,.15); }
+
+  /* SVG arrows overlay */
+  #linkSvg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 4;
+    overflow: visible;
+  }
+  .link-arrow {
+    fill: none;
+    stroke: rgba(251,191,36,.6);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+    marker-end: url(#arrowhead);
+  }
+  .link-arrow:hover { stroke: rgba(251,191,36,1); stroke-width: 2; }
+
+  /* ── RESIZE HANDLES ── */
+  .bar-resize-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    cursor: ew-resize;
+    z-index: 3;
+    border-radius: 3px;
+    background: rgba(255,255,255,0);
+    transition: background .15s;
+  }
+  .bar-resize-handle:hover {
+    background: rgba(255,255,255,.25);
+  }
+  .bar-resize-handle.left { left: 0; border-radius: 3px 0 0 3px; cursor: w-resize; }
+  .bar-resize-handle.right { right: 0; border-radius: 0 3px 3px 0; cursor: e-resize; }
+
+  /* Editable duration cell */
+  .task-date.dur:not(.milestone-dur) {
+    cursor: text;
+    border-radius: 3px;
+    transition: background .15s, color .15s;
+  }
+  .task-date.dur:not(.milestone-dur):hover {
+    background: rgba(79,124,255,.15);
+    color: var(--accent) !important;
+  }
+  .dur-edit-input {
+    width: 38px;
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: right;
+    padding: 0 3px;
+    outline: none;
+    height: 18px;
+    box-shadow: 0 0 0 2px rgba(79,124,255,.2);
+  }
+
+  /* Snap indicator */
+  .snap-indicator {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(79,124,255,.5);
+    pointer-events: none;
+    z-index: 6;
+    display: none;
+  }
+  .btn-export {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.15);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 5px 14px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-export:hover { border-color: var(--lc-electric); color: var(--lc-electric); }
+
+  /* ── PRINT / PDF STYLES ── */
+  @media print {
+    @page {
+      size: A3 landscape;
+      margin: 8mm 6mm;
+    }
+
+    body {
+      background: #fff !important;
+      color: #111 !important;
+      height: auto !important;
+      overflow: visible !important;
+      font-size: 9px !important;
+    }
+
+    header {
+      background: #fff !important;
+      border-bottom: 2px solid #2563eb !important;
+      padding: 4px 12px !important;
+      height: auto !important;
+      page-break-inside: avoid;
+    }
+
+    .logo-zone { filter: invert(1) brightness(0.3); }
+    .lc-logo-svg text { fill: #111 !important; }
+    .lc-logo-svg rect, .lc-logo-svg path { fill: #2563eb !important; }
+    .project-label { color: #2563eb !important; }
+    .project-title { color: #111 !important; }
+    .stat { background: #f1f5f9 !important; border-color: #e2e8f0 !important; }
+    .stat-val { color: #111 !important; }
+    .stat-label { color: #64748b !important; }
+    .stat.highlight { background: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+    .stat.highlight .stat-val { color: #059669 !important; }
+    .header-actions, .btn-hdr, .btn-add, .toolbar { display: none !important; }
+
+    .gantt-wrapper {
+      overflow: visible !important;
+      height: auto !important;
+      flex: none !important;
+    }
+
+    .task-panel {
+      background: #fafafa !important;
+      border-right: 2px solid #e2e8f0 !important;
+      overflow: visible !important;
+      height: auto !important;
+    }
+
+    .task-panel-header {
+      background: #f1f5f9 !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+
+    .col-label { color: #64748b !important; }
+
+    .task-list {
+      overflow: visible !important;
+      height: auto !important;
+    }
+
+    .task-row {
+      border-bottom: 1px solid #f0f0f0 !important;
+    }
+    .task-row.level-0 .task-name { color: #1e40af !important; font-size: 10px !important; }
+    .task-row.level-1 .task-name { color: #1e293b !important; font-size: 9px !important; }
+    .task-row.level-2 .task-name { color: #475569 !important; }
+    .task-row.level-3 .task-name { color: #94a3b8 !important; }
+    .task-row.hidden { display: none !important; }
+
+    .chart-panel {
+      overflow: visible !important;
+      height: auto !important;
+    }
+
+    .chart-header {
+      background: #f8fafc !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      overflow: visible !important;
+    }
+
+    .month-cell {
+      color: #334155 !important;
+      border-right: 1px solid #e2e8f0 !important;
+      font-size: 9px !important;
+    }
+    .month-cell.current-month { background: rgba(37,99,235,.05) !important; }
+
+    .week-cell {
+      color: #94a3b8 !important;
+      border-right: 1px solid #f1f5f9 !important;
+      font-size: 8px !important;
+    }
+    .week-cell.current-week { color: #2563eb !important; background: rgba(37,99,235,.04) !important; }
+
+    .chart-body {
+      overflow: visible !important;
+      height: auto !important;
+    }
+
+    .gantt-canvas {
+      background: #fff !important;
+    }
+
+    .gantt-row { border-bottom: 1px solid #f8fafc !important; }
+    .gantt-row.level-0 { background: rgba(241,245,249,.5) !important; }
+    .gantt-row.hidden { display: none !important; }
+
+    .weekend-col { background: rgba(0,0,0,.025) !important; }
+
+    .today-line { background: linear-gradient(to bottom, #ef4444, transparent) !important; }
+    .today-label { color: #ef4444 !important; }
+
+    /* Bar colors in print */
+    .gantt-bar.phase-0 { background: #2563eb !important; }
+    .gantt-bar.phase-1 { background: #3b82f6 !important; }
+    .gantt-bar.phase-2 { background: #7c3aed !important; }
+    .gantt-bar.phase-3 { background: #0891b2 !important; }
+    .gantt-bar.phase-4 { background: #059669 !important; }
+    .gantt-bar.phase-5 { background: #d97706 !important; }
+    .gantt-bar.phase-6 { background: #dc2626 !important; }
+
+    .gantt-bar-progress { background: rgba(255,255,255,.35) !important; }
+    .gantt-bar-label { color: rgba(255,255,255,.9) !important; font-size: 7px !important; }
+
+    .gantt-milestone { background: #f59e0b !important; box-shadow: none !important; }
+
+    .modal-overlay, .ctx-menu, .tooltip { display: none !important; }
+
+    /* Force full width canvas to print */
+    #ganttCanvas { min-width: 100% !important; }
+  }
+
+
+  /* ── COLOR PICKER ── */
+  .color-picker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .color-swatch:hover {
+    transform: scale(1.15);
+    box-shadow: 0 2px 10px rgba(0,0,0,.4);
+  }
+  .color-swatch.selected {
+    border-color: #fff;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.4), 0 2px 10px rgba(0,0,0,.4);
+    transform: scale(1.1);
+  }
+  .color-swatch.custom-color {
+    background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .color-custom-input {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    position: absolute;
+  }
+
+  /* ── COLOR PICKER POPUP (right-click shortcut) ── */
+  .color-popup {
+    position: fixed;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    z-index: 600;
+    box-shadow: 0 12px 40px rgba(0,0,0,.6);
+    display: none;
+    width: 220px;
+  }
+  .color-popup.open { display: block; }
+  .color-popup-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 10px;
+  }
+  .color-popup-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .color-popup .color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+  }
+  .color-popup-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .color-popup-btn {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    transition: all .15s;
+    text-align: center;
+  }
+  .color-popup-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .color-popup-btn.reset { color: var(--text3); }
+  .color-popup-btn.reset:hover { border-color: var(--red); color: var(--red); }
+
+  /* ══════════════════════════════════════════
+     THEME SWITCH TOGGLE
+  ══════════════════════════════════════════ */
+  .theme-switch {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    transition: border-color .15s, background .15s;
+    user-select: none;
+  }
+  .theme-switch:hover { border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.1); }
+  .theme-switch-icon { font-size: 12px; line-height: 1; }
+  .theme-switch-track {
+    width: 36px;
+    height: 20px;
+    background: rgba(82,93,244,.4);
+    border-radius: 10px;
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    transition: background .25s;
+  }
+  .theme-switch-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.35);
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+    display: block;
+  }
+  /* Checked state (light mode) — thumb slides right, track turns electric */
+  #themeCheckbox:checked ~ * .theme-switch-thumb,
+  .theme-switch:has(#themeCheckbox:checked) .theme-switch-thumb { transform: translateX(16px); }
+  .theme-switch:has(#themeCheckbox:checked) .theme-switch-track { background: var(--lc-electric); }
+  .theme-switch:has(#themeCheckbox:checked) { border-color: rgba(82,93,244,.3); background: rgba(82,93,244,.1); }
+
+  /* Fallback for browsers without :has() — driven by body.light-mode class set by JS */
+  body.light-mode .theme-switch-thumb { transform: translateX(16px); }
+  body.light-mode .theme-switch-track { background: var(--lc-electric); }
+  body.light-mode .theme-switch { border-color: rgba(82,93,244,.25); background: rgba(82,93,244,.07); }
+  body.light-mode .theme-switch:hover { border-color: rgba(82,93,244,.4); }
+
+  /* ══════════════════════════════════════════
+     LIGHT MODE — token overrides on :root
+     Activated by adding .light-mode to <body>
+  ══════════════════════════════════════════ */
+  /* Variables light-mode sur :root.light-mode pour surclasser :root correctement */
+  :root.light-mode {
+    --bg:        #E8EDF7;
+    --surface:   #F2F5FC;
+    --surface2:  #E0E6F4;
+    --surface3:  #D4DCF0;
+    --border:    rgba(82,93,244,.14);
+    --border-hi: rgba(82,93,244,.28);
+    --text:      #1A2347;
+    --text2:     #4A5578;
+    --text3:     #8B96BE;
+    --accent:    #525DF4;
+    --green:     #0B9E7A;
+    --red:       #C8304A;
+    --milestone: #0B9E7A;
+  }
+  /* Alias pour compatibilité body.light-mode (JS toggle) */
+  body.light-mode {
+    --bg:        #E8EDF7;
+    --surface:   #F2F5FC;
+    --surface2:  #E0E6F4;
+    --surface3:  #D4DCF0;
+    --border:    rgba(82,93,244,.14);
+    --border-hi: rgba(82,93,244,.28);
+    --text:      #1A2347;
+    --text2:     #4A5578;
+    --text3:     #8B96BE;
+    --accent:    #525DF4;
+    --green:     #0B9E7A;
+    --red:       #C8304A;
+    --milestone: #0B9E7A;
+  }
+
+  /* ── Header light mode ── */
+  body.light-mode header {
+    background: linear-gradient(90deg, #E8ECFA 0%, #EEF1FB 60%, #F4F6FB 100%);
+    border-bottom: 1px solid rgba(82,93,244,.2);
+  }
+  body.light-mode header::after {
+    background-image: radial-gradient(circle, rgba(82,93,244,.06) 1px, transparent 1px);
+  }
+  body.light-mode .logo-divider {
+    background: linear-gradient(to bottom, transparent, rgba(82,93,244,.2), transparent);
+  }
+  body.light-mode .project-label { color: var(--lc-electric); }
+  body.light-mode .project-title { color: #1A2347; }
+  body.light-mode .stat {
+    background: rgba(82,93,244,.07);
+    border-color: rgba(82,93,244,.15);
+  }
+  body.light-mode .stat:hover { background: rgba(82,93,244,.12); }
+  body.light-mode .stat-val { color: #1A2347; }
+  body.light-mode .stat-label { color: #8B9BC8; }
+  body.light-mode .stat.highlight { background: rgba(15,174,135,.08); border-color: rgba(15,174,135,.2); }
+  body.light-mode .stat.highlight .stat-val { color: #0FAE87; }
+  body.light-mode .btn-hdr {
+    background: rgba(82,93,244,.07);
+    border-color: rgba(82,93,244,.18);
+    color: #4A5B8A;
+  }
+  body.light-mode .btn-hdr:hover { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.12); }
+
+  /* ── Logo light mode — keep blue, invert text ── */
+  body.light-mode .lc-logo-text { fill: var(--lc-intense) !important; }
+
+  /* ── Toolbar light mode ── */
+  body.light-mode .toolbar {
+    background: #FFFFFF;
+    border-bottom: 1px solid rgba(82,93,244,.12);
+  }
+  body.light-mode .zoom-btn {
+    background: #EEF1F9;
+    border-color: rgba(82,93,244,.15);
+    color: #4A5B8A;
+  }
+  body.light-mode .zoom-btn:hover { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.08); }
+  body.light-mode .zoom-label { color: #8B9BC8; }
+  body.light-mode .zoom-hint { color: #B0BEDB; }
+  body.light-mode .sep { background: rgba(82,93,244,.12); }
+  body.light-mode .filter-btn { border-color: rgba(82,93,244,.15); color: #8B9BC8; }
+  body.light-mode .filter-btn:hover { border-color: rgba(82,93,244,.4); color: #4A5B8A; }
+  body.light-mode .filter-btn.active { border-color: var(--lc-electric); color: #fff; background: var(--lc-electric); }
+  body.light-mode .search-input { background: #EEF1F9; border-color: rgba(82,93,244,.15); color: #1A2347; }
+  body.light-mode .btn-link { border-color: rgba(82,93,244,.15); color: #4A5B8A; }
+  body.light-mode .btn-link:hover, body.light-mode .btn-link.active { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.08); }
+
+  /* ── Task panel light mode ── */
+  body.light-mode .task-panel { background: #FFFFFF; border-right-color: rgba(82,93,244,.15); }
+  body.light-mode .task-panel-header { background: #EEF1F9; border-bottom-color: rgba(82,93,244,.15); }
+  body.light-mode .col-label { color: var(--lc-electric); }
+  body.light-mode .col-dates { color: #B0BEDB; }
+  body.light-mode .task-row { border-bottom-color: rgba(82,93,244,.06); }
+  body.light-mode .task-row:hover { background: rgba(82,93,244,.05); }
+  body.light-mode .task-row.selected { background: rgba(82,93,244,.1); border-left-color: var(--lc-electric); }
+  body.light-mode .task-row.level-0 { background: rgba(82,93,244,.06); border-bottom-color: rgba(82,93,244,.12); }
+  body.light-mode .task-row.level-1 { background: rgba(82,93,244,.03); border-bottom-color: rgba(82,93,244,.06); }
+  body.light-mode .task-row.level-0 .task-name { color: var(--lc-intense); }
+  body.light-mode .task-row.level-1 .task-name { color: var(--lc-electric); }
+  body.light-mode .task-row.level-2 .task-name { color: #4A5B8A; }
+  body.light-mode .task-row.level-3 .task-name { color: #8B9BC8; }
+  body.light-mode .task-expand { color: #B0BEDB; }
+  body.light-mode .task-pct { color: #B0BEDB; }
+  body.light-mode .task-pct.done { color: #0FAE87; }
+  body.light-mode .task-date { color: #B0BEDB; }
+  body.light-mode .task-date.dur.milestone-dur { color: #0FAE87; }
+  body.light-mode .milestone-icon { color: #0FAE87; }
+
+  /* ── Gantt canvas light mode ── */
+  body.light-mode .gantt-canvas { background: #F4F6FB; }
+  body.light-mode .gantt-row { border-bottom-color: rgba(82,93,244,.05); }
+  body.light-mode .gantt-row:hover { background: rgba(82,93,244,.04); }
+  body.light-mode .gantt-row.level-0 {
+    background: linear-gradient(90deg, rgba(82,93,244,.08) 0%, rgba(82,93,244,.04) 300px, transparent 600px);
+    border-bottom-color: rgba(82,93,244,.1);
+  }
+  body.light-mode .gantt-row.level-1 { background: rgba(82,93,244,.02); }
+  body.light-mode .weekend-col { background: rgba(0,0,0,.025); }
+  body.light-mode .today-line { background: linear-gradient(to bottom, #D63558, transparent); }
+  body.light-mode .today-label { color: #D63558; }
+
+  /* ── Chart header light mode ── */
+  body.light-mode .chart-header { background: #EEF1F9; border-bottom-color: rgba(82,93,244,.15); }
+  body.light-mode .months-row { border-bottom-color: rgba(82,93,244,.12); }
+  body.light-mode .month-cell { color: var(--lc-intense); border-right-color: rgba(82,93,244,.1); }
+  body.light-mode .month-cell.current-month { background: rgba(82,93,244,.1); color: var(--lc-electric); }
+  body.light-mode .week-cell { color: #B0BEDB; border-right-color: rgba(82,93,244,.06); }
+  body.light-mode .week-cell.current-week { background: rgba(82,93,244,.08); color: var(--lc-electric); }
+  body.light-mode .chart-body::-webkit-scrollbar-thumb { background: rgba(82,93,244,.3); }
+
+  /* ── Gantt bars — slightly adjusted for light bg ── */
+  body.light-mode .gantt-bar:hover { box-shadow: 0 2px 14px rgba(82,93,244,.25); }
+  body.light-mode .gantt-milestone { box-shadow: 0 0 8px rgba(15,174,135,.35); background: #0FAE87; }
+  body.light-mode .gantt-milestone:hover { box-shadow: 0 0 14px rgba(15,174,135,.5); }
+
+  /* ── Tooltips light mode ── */
+  body.light-mode .tooltip {
+    background: #FFFFFF;
+    border-color: rgba(82,93,244,.2);
+    box-shadow: 0 8px 32px rgba(82,93,244,.12);
+    color: #1A2347;
+  }
+  body.light-mode .tooltip-name { color: var(--lc-intense); }
+  body.light-mode .tooltip-val { color: var(--lc-electric); }
+  body.light-mode .tooltip-row { color: #8B9BC8; }
+
+  /* ── Context menu light mode ── */
+  body.light-mode .ctx-menu {
+    background: #FFFFFF;
+    border-color: rgba(82,93,244,.15);
+    box-shadow: 0 8px 24px rgba(82,93,244,.15);
+  }
+  body.light-mode .ctx-item { color: #4A5B8A; }
+  body.light-mode .ctx-item:hover { background: rgba(82,93,244,.07); color: #1A2347; }
+  body.light-mode .ctx-item.danger:hover { background: rgba(214,53,88,.07); color: #D63558; }
+  body.light-mode .ctx-sep { background: rgba(82,93,244,.1); }
+
+  /* ── Modals light mode ── */
+  body.light-mode .modal-overlay { background: rgba(26,35,71,.4); }
+  body.light-mode .modal {
+    background: #FFFFFF;
+    border-color: rgba(82,93,244,.2);
+    box-shadow: 0 32px 80px rgba(82,93,244,.15);
+  }
+  body.light-mode .modal-title { color: var(--lc-intense); }
+  body.light-mode .form-input, body.light-mode .form-select {
+    background: #EEF1F9;
+    border-color: rgba(82,93,244,.15);
+    color: #1A2347;
+  }
+  body.light-mode .form-input:focus, body.light-mode .form-select:focus {
+    border-color: var(--lc-electric);
+    box-shadow: 0 0 0 3px rgba(82,93,244,.1);
+  }
+  body.light-mode .btn-cancel { border-color: rgba(82,93,244,.2); color: #4A5B8A; }
+  body.light-mode .btn-cancel:hover { border-color: #4A5B8A; color: var(--lc-intense); }
+
+  /* ── Save modal light mode ── */
+  body.light-mode .save-modal-overlay { background: rgba(26,35,71,.4); }
+  body.light-mode .save-modal {
+    background: #FFFFFF;
+    border-color: rgba(82,93,244,.2);
+    box-shadow: 0 24px 64px rgba(82,93,244,.15);
+  }
+  body.light-mode .save-modal-title { color: var(--lc-intense); }
+  body.light-mode .save-name-input {
+    background: #EEF1F9;
+    border-color: rgba(82,93,244,.15);
+    color: #1A2347;
+  }
+  body.light-mode .save-item {
+    background: #EEF1F9;
+    border-color: rgba(82,93,244,.12);
+  }
+  body.light-mode .save-item:hover { border-color: rgba(82,93,244,.3); }
+  body.light-mode .save-item-name { color: var(--lc-intense); }
+  body.light-mode .save-item-meta { color: #8B9BC8; }
+  body.light-mode .save-empty { color: #8B9BC8; }
+  body.light-mode .save-modal-close { border-color: rgba(82,93,244,.15); color: #4A5B8A; }
+  body.light-mode .save-autosave-row { color: #8B9BC8; }
+  body.light-mode .btn-import-file { border-color: rgba(82,93,244,.2); color: #4A5B8A; }
+  body.light-mode .btn-import-file:hover { border-color: var(--lc-electric); color: var(--lc-electric); }
+
+  /* ── Color picker popup light mode ── */
+  body.light-mode .color-popup {
+    background: #FFFFFF;
+    border-color: rgba(82,93,244,.15);
+    box-shadow: 0 12px 40px rgba(82,93,244,.15);
+  }
+  body.light-mode .color-popup-title { color: #8B9BC8; }
+  body.light-mode .color-popup-btn { background: #EEF1F9; border-color: rgba(82,93,244,.15); color: #4A5B8A; }
+
+  /* ── Snap indicator ── */
+  body.light-mode .snap-indicator { background: rgba(82,93,244,.4); }
+
+  /* ── Deadline line ── */
+  body.light-mode .deadline-line { background: linear-gradient(to bottom, #D63558, rgba(214,53,88,.15)); }
+  body.light-mode .deadline-label { color: #D63558; }
+
+  /* ── Drag ghost ── */
+  body.light-mode .drag-ghost { background: var(--lc-electric); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <!-- Logo zone -->
+  <div class="logo-zone">
+    <!-- Logo Linkcity — reconstruit depuis screenshot officiel -->
+    <svg class="lc-logo-svg" viewBox="0 0 188 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!--
+        Le monogramme est un carré où :
+        - Le contour forme un grand C (ouvert à droite)
+        - À l'intérieur un L + un C imbriqués
+        Structure lue depuis l'image : épaisseur des traits ~20% de la largeur totale
+      -->
+
+      <!-- Grand L extérieur : vertical left + horizontal bottom -->
+      <rect x="0"   y="0"   width="7.5" height="40"  rx="1.2" fill="#525DF4"/>
+      <rect x="0"   y="32.5" width="27"  height="7.5" rx="1.2" fill="#525DF4"/>
+
+      <!-- Grand C extérieur : top bar + right-top cap + right-bottom cap -->
+      <rect x="0"   y="0"   width="27"  height="7.5" rx="1.2" fill="#525DF4"/>
+      <rect x="19.5" y="0"   width="7.5" height="13"  rx="1.2" fill="#525DF4"/>
+      <rect x="19.5" y="27"  width="7.5" height="13"  rx="1.2" fill="#525DF4"/>
+
+      <!-- Inner L : smaller, offset inside -->
+      <rect x="10"  y="10"  width="6"   height="20"  rx="1"   fill="#525DF4"/>
+      <rect x="10"  y="24"  width="17"  height="6"   rx="1"   fill="#525DF4"/>
+
+      <!-- Inner C : top bar + right-top cap + right-bottom cap -->
+      <rect x="10"  y="10"  width="17"  height="6"   rx="1"   fill="#525DF4"/>
+      <rect x="21"  y="10"  width="6"   height="9"   rx="1"   fill="#525DF4"/>
+      <rect x="21"  y="21"  width="6"   height="9"   rx="1"   fill="#525DF4"/>
+
+      <!-- Wordmark LINKCITY — même bleu électrique -->
+      <text x="38" y="29" font-family="Outfit, sans-serif" font-weight="800" font-size="22"
+            fill="#525DF4" letter-spacing="0.5" class="lc-logo-text">LINKCITY</text>
+    </svg>
+
+    <div class="logo-divider"></div>
+
+    <div class="project-info">
+      <span class="project-label">Planning · PA3</span>
+      <span class="project-title" id="projectTitle">Secteur 3</span>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Stats cards -->
+  <div class="header-stats">
+    <div class="stat">
+      <span class="stat-val" id="statTasks">—</span>
+      <span class="stat-label">Tâches</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="statMilestones">—</span>
+      <span class="stat-label">Jalons</span>
+    </div>
+    <div class="stat highlight">
+      <span class="stat-val" id="statProgress">—</span>
+      <span class="stat-label">Avancement</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="statEnd">—</span>
+      <span class="stat-label">Livraison</span>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="header-actions">
+    <!-- Theme switch — checkbox CSS-driven, insensible aux handlers JS globaux -->
+    <label class="theme-switch" title="Mode sombre / clair">
+      <input type="checkbox" id="themeCheckbox" hidden>
+      <span class="theme-switch-icon">🌙</span>
+      <span class="theme-switch-track">
+        <span class="theme-switch-thumb"></span>
+      </span>
+      <span class="theme-switch-icon">☀️</span>
+    </label>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.1);margin:0 4px"></div>
+    <button class="btn-hdr" id="todayToggle">● Aujourd'hui</button>
+    <button class="btn-hdr" id="btnDeadline">⚑ Deadline</button>
+    <button class="btn-hdr" id="btnSaveSession">💾 Sauvegardes</button>
+    <button class="btn-hdr" id="btnExport">⬇ PDF</button>
+    <button class="btn-add" id="btnAdd">+ Tâche</button>
+  </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="zoom-btn" id="zoomOut">−</button>
+  <span class="zoom-label" id="zoomLabel" title="Cliquez pour réinitialiser le zoom">Semaine</span>
+  <button class="zoom-btn" id="zoomIn">+</button>
+  <span class="zoom-hint">Ctrl+scroll ou pinch pour zoomer</span>
+  <div class="sep"></div>
+  <button class="zoom-btn" id="btnUndo" title="Annuler (Ctrl+Z)" style="width:auto;padding:0 10px;font-size:13px;">↩</button>
+  <div class="sep"></div>
+  <button class="filter-btn active" id="filterAll">Tout</button>
+  <button class="filter-btn" id="filterMilestones">Jalons</button>
+  <button class="filter-btn" id="filterInProgress">En cours</button>
+  <button class="filter-btn" id="filterPhase1">PC</button>
+  <button class="filter-btn" id="filterPhase2">PRO/Marché</button>
+  <button class="filter-btn" id="filterPhase3">Actes</button>
+  <div class="sep"></div>
+  <button class="btn-link" id="btnLinkMode" title="Activer le mode liaison : cliquez sur une tâche source puis sur une tâche cible">
+    🔗 Lier des tâches
+  </button>
+  <div class="sep"></div>
+  <input class="search-input" id="searchInput" type="text" placeholder="🔍 Rechercher une tâche…">
+</div>
+
+<!-- MAIN -->
+<div class="gantt-wrapper">
+  <!-- Left: tasks -->
+  <div class="task-panel">
+    <div class="task-panel-header">
+      <span class="col-label">Tâche</span>
+      <div class="col-dates">
+        <span style="font-size:10px;color:var(--text3);width:52px;text-align:right">Début</span>
+        <span style="font-size:10px;color:var(--text3);width:52px;text-align:right">Fin</span>
+        <span style="font-size:10px;color:var(--text3);width:38px;text-align:right">Jours</span>
+      </div>
+    </div>
+    <div class="task-list" id="taskList"></div>
+  </div>
+
+  <!-- Right: chart -->
+  <div class="chart-panel">
+    <div class="chart-header">
+      <div class="months-row" id="monthsRow"></div>
+      <div class="weeks-row" id="weeksRow"></div>
+    </div>
+    <div class="chart-body" id="chartBody">
+      <div class="gantt-canvas" id="ganttCanvas">
+        <svg id="linkSvg">
+          <defs>
+            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="rgba(251,191,36,.8)" />
+            </marker>
+          </defs>
+        </svg>
+        <div class="snap-indicator" id="snapIndicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-name" id="ttName"></div>
+  <div class="tooltip-row"><span>Début</span><span class="tooltip-val" id="ttStart"></span></div>
+  <div class="tooltip-row"><span>Fin</span><span class="tooltip-val" id="ttEnd"></span></div>
+  <div class="tooltip-row"><span>Durée</span><span class="tooltip-val" id="ttDur"></span></div>
+  <div class="tooltip-row"><span>Avancement</span><span class="tooltip-val" id="ttPct"></span></div>
+</div>
+
+<!-- Context Menu -->
+<div class="ctx-menu" id="ctxMenu">
+  <div class="ctx-item" id="ctxEdit">✏️ Modifier</div>
+  <div class="ctx-item" id="ctxColor">🎨 Changer la couleur</div>
+  <div class="ctx-item" id="ctxAddChild">+ Sous-tâche</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" id="ctxDelete">🗑 Supprimer</div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal-overlay" id="exportModalOverlay">
+  <div class="modal" style="width:420px">
+    <div class="modal-title">⬇ Export PDF</div>
+    <div class="form-group">
+      <label class="form-label">Contenu à exporter</label>
+      <select class="form-select" id="exportScope">
+        <option value="all">Tout le planning (toutes phases visibles)</option>
+        <option value="expanded">Phases dépliées uniquement</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Zoom pour l'export</label>
+      <select class="form-select" id="exportZoom">
+        <option value="month">Vue Mois — planning complet sur une page</option>
+        <option value="week" selected>Vue Semaine — détail semaines</option>
+        <option value="day">Vue Jour — détail maximal</option>
+      </select>
+    </div>
+    <div style="background:rgba(79,124,255,.08);border:1px solid rgba(79,124,255,.2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+      💡 <strong style="color:var(--text)">Conseil :</strong> Dans la fenêtre d'impression du navigateur, sélectionnez <strong style="color:var(--text)">Format A3 Paysage</strong> et activez <strong style="color:var(--text)">"Graphiques d'arrière-plan"</strong> pour que les couleurs soient visibles.
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="exportCancel">Annuler</button>
+      <button class="btn-save" id="exportConfirm">🖨 Imprimer / Enregistrer PDF</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Nouvelle tâche</div>
+    <div class="form-group">
+      <label class="form-label">Nom de la tâche</label>
+      <input class="form-input" id="fName" type="text" placeholder="Ex: Dépôt PC">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date de début</label>
+        <input class="form-input" id="fStart" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date de fin</label>
+        <input class="form-input" id="fEnd" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Phase parente</label>
+        <select class="form-select" id="fParent"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Avancement (%)</label>
+        <input class="form-input" id="fPct" type="number" min="0" max="100" value="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Type</label>
+      <select class="form-select" id="fType">
+        <option value="task">Tâche</option>
+        <option value="milestone">Jalon</option>
+        <option value="summary">Phase / Groupe</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Couleur de la barre</label>
+      <div class="color-picker-row" id="modalColorPicker"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btnCancel">Annuler</button>
+      <button class="btn-save" id="btnSave">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Color Picker Popup (clic barre) -->
+<div class="color-popup" id="colorPopup">
+  <div class="color-popup-title">🎨 Couleur de la barre</div>
+  <div class="color-popup-grid" id="colorPopupGrid"></div>
+  <div style="margin-bottom:6px">
+    <label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;">Couleur personnalisée</label>
+    <input type="color" id="colorPopupCustom" style="width:100%;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:5px;cursor:pointer;padding:2px 4px;">
+  </div>
+  <div class="color-popup-actions">
+    <div class="color-popup-btn reset" id="colorPopupReset">↺ Défaut</div>
+    <div class="color-popup-btn" id="colorPopupClose">Fermer</div>
+  </div>
+</div>
+
+<!-- Save/Load Modal -->
+<div class="save-modal-overlay" id="saveModalOverlay">
+  <div class="save-modal">
+    <div class="save-modal-title">💾 Sauvegardes</div>
+
+    <!-- New save row -->
+    <div class="save-name-row">
+      <input class="save-name-input" id="saveNameInput" type="text" placeholder="Nom de la sauvegarde…" />
+      <button class="btn-new-save" id="btnDoSave">Sauvegarder</button>
+    </div>
+
+    <!-- Import from file -->
+    <div class="save-modal-actions">
+      <label class="btn-import-file" for="importFileInput">📂 Importer un fichier .json</label>
+      <input type="file" id="importFileInput" accept=".json" style="display:none">
+      <button class="btn-import-file" id="btnExportAll" style="flex:1">⬇ Exporter toutes les sauvegardes</button>
+    </div>
+
+    <!-- Save list -->
+    <div class="save-list" id="saveList"></div>
+
+    <div class="save-autosave-row">
+      <span class="save-autosave-dot"></span>
+      Sauvegarde automatique toutes les 2 minutes
+    </div>
+    <button class="save-modal-close" id="btnSaveModalClose">Fermer</button>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const RAW_TASKS = [{"uid":"0","id":0,"name":"PA3","level":0,"start":"2026-01-05","finish":"2027-04-05","milestone":false,"summary":true,"pct":5,"preds":[]},{"uid":"658","id":1,"name":"Missions préalables","level":1,"start":"2026-01-05","finish":"2026-06-30","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"665","id":2,"name":"Obtention accord CDC - Phase 3","level":2,"start":"2026-02-11","finish":"2026-02-11","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"667","id":3,"name":"Mission Tolila (Fiche de Lot, suivi PC…)","level":2,"start":"2026-02-02","finish":"2026-03-02","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"672","id":4,"name":"Choix architecte + BE","level":2,"start":"2026-02-02","finish":"2026-03-06","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"671","id":5,"name":"Accord SAS/EPFIF sur Secteur 3","level":2,"start":"2026-03-02","finish":"2026-03-27","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"659","id":6,"name":"Calendrier validé de démolition et calendrier ICPE","level":2,"start":"2026-05-04","finish":"2026-05-29","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"674","id":7,"name":"ICPE (à confirmer)","level":2,"start":"2026-05-29","finish":"2026-06-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"673","id":8,"name":"Travaux SAS de démolition","level":2,"start":"2027-01-04","finish":"2027-04-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"364","id":9,"name":"Promesse Vente Terrain","level":1,"start":"2026-06-01","finish":"2026-09-30","milestone":false,"summary":true,"pct":76,"preds":[]},{"uid":"677","id":11,"name":"Accord EPFIF / SAS","level":2,"start":"2026-06-15","finish":"2026-06-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"675","id":12,"name":"Accord SAS / SSCV","level":2,"start":"2026-07-01","finish":"2026-07-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"367","id":13,"name":"Réunion Lancement Notaire","level":2,"start":"2026-07-13","finish":"2026-07-13","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"369","id":15,"name":"Rédaction Projet Promesse terrain","level":2,"start":"2026-07-13","finish":"2026-08-24","milestone":false,"summary":false,"pct":100,"preds":[]},{"uid":"370","id":16,"name":"Relecture et négociations","level":2,"start":"2026-08-24","finish":"2026-09-11","milestone":false,"summary":false,"pct":100,"preds":[]},{"uid":"526","id":17,"name":"Comité d'engagement pour signature Promesse","level":2,"start":"2026-09-14","finish":"2026-09-14","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"527","id":18,"name":"Relecture et négociation","level":2,"start":"2026-09-17","finish":"2026-09-18","milestone":false,"summary":false,"pct":100,"preds":[]},{"uid":"371","id":19,"name":"Signature PUV/PSV","level":2,"start":"2026-09-21","finish":"2026-09-21","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"510","id":71,"name":"Permis de construire","level":1,"start":"2026-03-02","finish":"2026-12-02","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"670","id":72,"name":"Esquisse PC","level":2,"start":"2026-03-09","finish":"2026-04-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"666","id":73,"name":"Validation PC - Aménagement","level":2,"start":"2026-04-15","finish":"2026-04-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"668","id":74,"name":"Validation PC - Mairie","level":2,"start":"2026-05-04","finish":"2026-05-04","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"669","id":75,"name":"Validation financier avant dépôt PC","level":2,"start":"2026-05-04","finish":"2026-05-04","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"511","id":76,"name":"Dépôt du PC incomplet","level":2,"start":"2026-05-11","finish":"2026-05-11","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"516","id":77,"name":"Complétude PC","level":2,"start":"2026-05-11","finish":"2026-06-10","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"654","id":78,"name":"Instruction PC","level":2,"start":"2026-06-11","finish":"2026-09-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"517","id":79,"name":"Obtention PC","level":2,"start":"2026-09-14","finish":"2026-09-14","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"518","id":80,"name":"Délai de purge PC","level":2,"start":"2026-09-14","finish":"2026-12-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"519","id":81,"name":"Obtention PC définitif","level":2,"start":"2026-12-14","finish":"2026-12-14","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"169","id":82,"name":"Contrats de réservation","level":1,"start":"2026-05-11","finish":"2026-08-28","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"676","id":83,"name":"Validation Bailleur-Exploitant / Ville","level":2,"start":"2026-03-02","finish":"2026-04-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"173","id":84,"name":"Négociation prix","level":2,"start":"2026-05-11","finish":"2026-06-02","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"647","id":85,"name":"OFFRE FERME","level":2,"start":"2026-06-03","finish":"2026-06-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"175","id":86,"name":"Rédaction de l'Avant Contrat","level":2,"start":"2026-06-03","finish":"2026-06-16","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"176","id":87,"name":"Relecture de l'Avant Contrat","level":2,"start":"2026-06-17","finish":"2026-06-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"177","id":88,"name":"Négociation // Relecture commune","level":2,"start":"2026-06-24","finish":"2026-06-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"179","id":89,"name":"Signature de l'Avant Contrat","level":2,"start":"2026-06-30","finish":"2026-06-30","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"190","id":152,"name":"PHASE PRO/MARCHE","level":1,"start":"2026-09-01","finish":"2027-02-12","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"380","id":153,"name":"Phase pro/marché","level":2,"start":"2026-09-01","finish":"2027-02-12","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"191","id":154,"name":"Réunion lancement phase PRO","level":3,"start":"2026-09-01","finish":"2026-09-01","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"521","id":155,"name":"Demande de raccordements concessionnaires","level":3,"start":"2026-09-01","finish":"2026-09-29","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"644","id":156,"name":"Audit structure","level":3,"start":"2026-09-01","finish":"2026-10-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"582","id":157,"name":"Etudes Acoustique Thermique Handicapé Incendie","level":3,"start":"2026-09-01","finish":"2026-10-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"645","id":158,"name":"Audit HQE","level":3,"start":"2026-09-21","finish":"2026-10-09","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"583","id":159,"name":"Etudes Fluides","level":3,"start":"2026-09-21","finish":"2026-10-09","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"571","id":160,"name":"Reprise plans archi suite audits","level":3,"start":"2026-10-06","finish":"2026-10-26","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"572","id":161,"name":"Plans Architectes Figés - Plans Architecte PRO","level":3,"start":"2026-10-27","finish":"2026-10-27","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"575","id":162,"name":"Etudes clashs structure & fluides","level":3,"start":"2026-10-21","finish":"2026-11-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"577","id":163,"name":"Carnet de Détails et façades","level":3,"start":"2026-10-27","finish":"2026-11-24","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"578","id":164,"name":"Reprise Plans Architecte","level":3,"start":"2026-11-18","finish":"2026-12-01","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"585","id":165,"name":"Plans fluides","level":3,"start":"2026-11-04","finish":"2026-11-18","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"586","id":166,"name":"Plans structure","level":3,"start":"2026-11-04","finish":"2026-11-18","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"655","id":167,"name":"Plans, coupes et détails paysage/VRD","level":3,"start":"2026-11-18","finish":"2026-12-01","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"579","id":168,"name":"Plans Marché V0","level":3,"start":"2026-12-01","finish":"2026-12-01","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"580","id":169,"name":"PIC","level":3,"start":"2026-11-18","finish":"2026-12-01","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"202","id":170,"name":"Rédaction CCTP CEA et lot 00","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"203","id":171,"name":"Rédaction CCTP GO (Gros Œuvre)","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"204","id":172,"name":"Rédaction CCTP CET (Corps Etat Technique)","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"653","id":173,"name":"Rédaction CCTP Paysage et VRD","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"205","id":174,"name":"Relecture CCTP","level":3,"start":"2026-11-24","finish":"2026-12-07","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"206","id":175,"name":"Reprise des CCTP","level":3,"start":"2026-12-01","finish":"2026-12-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"207","id":176,"name":"CCTP Marché V0","level":3,"start":"2026-12-23","finish":"2026-12-23","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"216","id":177,"name":"Etablissement Evaluation Provisoire Labels","level":3,"start":"2026-11-18","finish":"2026-12-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"217","id":178,"name":"Evaluation Provisoire Labels","level":3,"start":"2026-12-23","finish":"2026-12-23","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"587","id":179,"name":"Production des plans de vente","level":3,"start":"2026-11-24","finish":"2026-12-07","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"208","id":180,"name":"Etablissement RICT","level":3,"start":"2027-01-04","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"209","id":181,"name":"RICT Marché V0","level":3,"start":"2027-01-15","finish":"2027-01-15","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"212","id":182,"name":"Etablissement PGCSPS","level":3,"start":"2027-01-04","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"214","id":183,"name":"PGCSPS Marché V0","level":3,"start":"2027-01-15","finish":"2027-01-15","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"213","id":184,"name":"Etablissement DIUO","level":3,"start":"2027-01-04","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"215","id":185,"name":"DIUO Marché V0","level":3,"start":"2027-01-15","finish":"2027-01-15","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"218","id":186,"name":"Rédaction Pièce Marché","level":3,"start":"2026-09-23","finish":"2026-10-13","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"220","id":187,"name":"Relecture & Modification Pièce Marché","level":3,"start":"2026-10-14","finish":"2026-11-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"221","id":188,"name":"Pièce Marché Définitive","level":3,"start":"2026-11-25","finish":"2026-11-25","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"581","id":189,"name":"Relecture Dossier Marché V0","level":3,"start":"2027-01-11","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"223","id":190,"name":"Intégration Remarques","level":3,"start":"2027-02-01","finish":"2027-02-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"224","id":191,"name":"Dossier Marché V1","level":3,"start":"2027-02-05","finish":"2027-02-05","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"378","id":192,"name":"ACTES AUTHENTIQUES","level":1,"start":"2026-03-31","finish":"2026-12-31","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"275","id":193,"name":"Signature Actes Authentiques","level":2,"start":"2026-03-31","finish":"2026-12-31","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"227","id":194,"name":"Réunion Lancement Assurances (DO - TRC - CNR)","level":3,"start":"2026-09-07","finish":"2026-09-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"228","id":195,"name":"Constitution Dossier Assurances (DO - TRC)","level":3,"start":"2026-10-07","finish":"2026-10-27","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"229","id":196,"name":"Obtention Attestations Assurances (DO, TRC, CNR)","level":3,"start":"2026-10-26","finish":"2026-12-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"230","id":197,"name":"Réunion Lancement GFA","level":3,"start":"2026-09-07","finish":"2026-09-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"600","id":198,"name":"Constitution Dossier GFA","level":3,"start":"2026-09-07","finish":"2026-09-25","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"601","id":199,"name":"Obtention du projet de GFA","level":3,"start":"2026-10-01","finish":"2026-10-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"602","id":200,"name":"Relecture GFA (Client)","level":3,"start":"2026-10-12","finish":"2026-10-16","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"603","id":201,"name":"Validation GFA","level":3,"start":"2026-10-31","finish":"2026-10-31","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"656","id":202,"name":"Demande des agréments CDC","level":3,"start":"2026-10-15","finish":"2026-11-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"657","id":203,"name":"Obtention des agréments CDC","level":3,"start":"2026-11-30","finish":"2026-11-30","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"591","id":204,"name":"Obtention Plans de vente et tableaux de surface","level":3,"start":"2026-10-19","finish":"2026-10-19","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"592","id":206,"name":"Réunion Lancement EDD","level":3,"start":"2026-09-07","finish":"2026-09-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"593","id":207,"name":"Rédaction EDD (Plans + Règlements)","level":3,"start":"2026-10-19","finish":"2026-10-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"595","id":208,"name":"Relecture EDD & Modification EDD","level":3,"start":"2026-11-02","finish":"2026-11-16","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"596","id":209,"name":"Rédaction Statuts EDD","level":3,"start":"2026-11-17","finish":"2026-11-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"597","id":210,"name":"Relecture Statuts EDD","level":3,"start":"2026-12-01","finish":"2026-12-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"598","id":211,"name":"Calcul de la répartition de charges","level":3,"start":"2026-11-17","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"599","id":212,"name":"EDD VF","level":3,"start":"2026-12-09","finish":"2026-12-09","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"226","id":213,"name":"Rédaction Projet VEFA","level":3,"start":"2026-11-30","finish":"2026-12-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"241","id":214,"name":"Relecture","level":3,"start":"2026-11-30","finish":"2026-12-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"249","id":215,"name":"RDV Relecture Notaires","level":3,"start":"2026-12-09","finish":"2026-12-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"250","id":216,"name":"Mise à jour Projet VEFA","level":3,"start":"2026-12-15","finish":"2026-12-21","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"251","id":217,"name":"Comité Engagement Final","level":3,"start":"2026-12-18","finish":"2026-12-18","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"604","id":218,"name":"Signature VEFA","level":3,"start":"2026-12-31","finish":"2026-12-31","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"253","id":219,"name":"Signature Dossier Marché","level":3,"start":"2026-12-18","finish":"2026-12-18","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"298","id":220,"name":"Achat du terrain","level":2,"start":"2026-12-31","finish":"2026-12-31","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"256","id":221,"name":"Purge droit de préemption autre","level":3,"start":"2026-12-31","finish":"2026-12-31","milestone":true,"summary":false,"pct":0,"preds":[]}];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let tasks = RAW_TASKS.map((t,i) => ({...t, _idx: i}));
+let collapsed = new Set();
+let selectedUid = null;
+let ctxUid = null;
+let editUid = null;
+let showToday = true;
+let zoomLevel = 1; // 0=month, 1=week, 2=day
+const ZOOM_LABELS = ['Mois', 'Semaine', 'Jour'];
+// Continuous zoom: pixels per day (replaces discrete levels for trackpad)
+let continuousZoom = 16; // default = week view
+const ZOOM_MIN = 0.8;   // très dézoomé (vue ~2 ans)
+const ZOOM_MAX = 60;    // très zoomé (vue jour détaillée)
+let isTrackpadZooming = false;
+let filterMode = 'all';
+let searchQuery = '';
+
+// Phase color assignment by level-1 parent
+const PHASE_COLORS = {};
+let phaseColorIdx = 0;
+
+// ─── DRAG STATE ──────────────────────────────────────────────────────────────
+let dragState = null;
+
+// ─── DEADLINES ───────────────────────────────────────────────────────────────
+let deadlines = []; // [{ date: 'YYYY-MM-DD', label: 'Deadline' }]
+
+// ─── LINKS (liaisons fin→début) ──────────────────────────────────────────────
+let links = {}; // { fromUid: [toUid, ...] }
+let linkMode = false;
+let linkSource = null;
+
+// ─── UNDO HISTORY ────────────────────────────────────────────────────────────
+const undoStack = [];
+const UNDO_MAX = 50;
+
+function saveSnapshot() {
+  const snapshot = {
+    tasks: tasks.map(t => ({...t})),
+    links: JSON.parse(JSON.stringify(links)),
+    colors: {...CUSTOM_TASK_COLORS}
+  };
+  undoStack.push(snapshot);
+  if (undoStack.length > UNDO_MAX) undoStack.shift();
+}
+
+function undo() {
+  if (undoStack.length === 0) {
+    showToast('Rien à annuler');
+    return;
+  }
+  const snap = undoStack.pop();
+  tasks = snap.tasks;
+  Object.keys(links).forEach(k => delete links[k]);
+  Object.assign(links, snap.links);
+  Object.keys(CUSTOM_TASK_COLORS).forEach(k => delete CUSTOM_TASK_COLORS[k]);
+  Object.assign(CUSTOM_TASK_COLORS, snap.colors);
+  render();
+  showToast('↩ Annulé');
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+    e.preventDefault();
+    undo();
+  }
+});
+
+document.getElementById('btnUndo').addEventListener('click', undo);
+
+// ─── CUSTOM COLORS ──────────────────────────────────────────────────────────
+const CUSTOM_TASK_COLORS = {}; // uid -> color string
+
+const COLOR_PALETTE = [
+  '#4f7cff','#7c5cfc','#3b82f6','#06b6d4','#10b981','#34d399',
+  '#f59e0b','#f97316','#ef4444','#f87171','#ec4899','#a855f7',
+  '#64748b','#94a3b8','#ffffff','#fbbf24',
+];
+
+let colorPopupUid = null; // which task the popup is targeting
+let modalSelectedColor = null; // color chosen in the modal
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+function parseDate(s) { return new Date(s + 'T00:00:00'); }
+
+function formatDate(d) {
+  return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+function formatShortDate(d) {
+  // dd/mm/yy
+  return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'2-digit'});
+}
+
+function daysBetween(a, b) {
+  return Math.round((b - a) / 86400000);
+}
+
+function addDays(d, n) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+
+function getPhaseColor(uid) {
+  if (!(uid in PHASE_COLORS)) {
+    PHASE_COLORS[uid] = phaseColorIdx++ % 6;
+  }
+  return PHASE_COLORS[uid];
+}
+
+// Find level-1 ancestor for color
+function getPhaseAncestor(task) {
+  if (task.level === 0) return task.uid;
+  if (task.level === 1) return task.uid;
+  // Walk up
+  const myIdx = tasks.findIndex(t => t.uid === task.uid);
+  for (let i = myIdx - 1; i >= 0; i--) {
+    if (tasks[i].level === 1) return tasks[i].uid;
+    if (tasks[i].level === 0) return tasks[i].uid;
+  }
+  return task.uid;
+}
+
+// ─── TIMELINE CONFIG ────────────────────────────────────────────────────────
+const PROJECT_START = parseDate('2026-01-05');
+const PROJECT_END = parseDate('2027-04-05');
+
+let COL_W; // pixels per day
+function getColW() {
+  return continuousZoom;
+}
+
+function getZoomLevel() {
+  if (continuousZoom < 6) return 0;   // month view
+  if (continuousZoom < 24) return 1;  // week view
+  return 2;                            // day view
+}
+
+function getZoomLabel() {
+  const z = continuousZoom;
+  if (z < 3) return 'Vue globale';
+  if (z < 6) return 'Mois';
+  if (z < 24) return 'Semaine';
+  return 'Jour';
+}
+
+function dateToX(d) {
+  const days = daysBetween(PROJECT_START, d);
+  return days * getColW();
+}
+
+function totalWidth() {
+  return daysBetween(PROJECT_START, PROJECT_END) * getColW() + 200;
+}
+
+// ─── VISIBILITY ─────────────────────────────────────────────────────────────
+function isVisible(task) {
+  if (filterMode !== 'all') {
+    if (filterMode === 'milestones' && !task.milestone) return false;
+    if (filterMode === 'inprogress' && (task.pct === 0 || task.pct === 100)) return false;
+    if (filterMode === 'pc') {
+      const ancestor = getPhaseAncestor(task);
+      const ph = tasks.find(t => t.uid === ancestor);
+      if (!ph || !ph.name.toLowerCase().includes('permis')) return false;
+    }
+    if (filterMode === 'pro') {
+      const ancestor = getPhaseAncestor(task);
+      const ph = tasks.find(t => t.uid === ancestor);
+      if (!ph || (!ph.name.toLowerCase().includes('pro') && !ph.name.toLowerCase().includes('march'))) return false;
+    }
+    if (filterMode === 'actes') {
+      const ancestor = getPhaseAncestor(task);
+      const ph = tasks.find(t => t.uid === ancestor);
+      if (!ph || !ph.name.toLowerCase().includes('actes')) return false;
+    }
+  }
+  if (searchQuery) {
+    if (!task.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+  }
+  // Check parent collapse
+  const myIdx = tasks.findIndex(t => t.uid === task.uid);
+  for (let i = myIdx - 1; i >= 0; i--) {
+    if (tasks[i].level < task.level) {
+      if (collapsed.has(tasks[i].uid)) return false;
+      if (tasks[i].level === 0) break;
+    }
+  }
+  return true;
+}
+
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  renderTaskList();
+  renderGantt();
+  updateStats();
+}
+
+function updateStats() {
+  const visible = tasks.filter(t => !t.summary && !t.milestone);
+  const milestones = tasks.filter(t => t.milestone);
+  const avgPct = visible.length ? Math.round(visible.reduce((a,t) => a + t.pct, 0) / visible.length) : 0;
+  document.getElementById('statTasks').textContent = visible.length;
+  document.getElementById('statMilestones').textContent = milestones.length;
+  document.getElementById('statProgress').textContent = avgPct + '%';
+  document.getElementById('statEnd').textContent = formatDate(PROJECT_END);
+}
+
+function renderTaskList() {
+  const list = document.getElementById('taskList');
+  list.innerHTML = '';
+  tasks.forEach(task => {
+    const vis = isVisible(task);
+    const div = document.createElement('div');
+    div.className = `task-row level-${task.level}${vis ? '' : ' hidden'}`;
+    div.dataset.uid = task.uid;
+
+    // Indent
+    const indent = task.level * 14;
+    div.style.paddingLeft = (12 + indent) + 'px';
+
+    // Expand toggle
+    const hasChildren = tasks.some(t => {
+      const ti = tasks.findIndex(x => x.uid === task.uid);
+      const ci = tasks.findIndex(x => x.uid === t.uid);
+      return ci > ti && t.level === task.level + 1 && !tasks.slice(ti+1, ci).some(x => x.level <= task.level);
+    });
+
+    const exp = document.createElement('div');
+    exp.className = 'task-expand' + (hasChildren && !collapsed.has(task.uid) ? ' open' : '');
+    exp.textContent = hasChildren ? '▶' : '';
+    if (hasChildren) {
+      exp.addEventListener('click', e => {
+        e.stopPropagation();
+        if (collapsed.has(task.uid)) collapsed.delete(task.uid);
+        else collapsed.add(task.uid);
+        render();
+      });
+    }
+    div.appendChild(exp);
+
+    // Name
+    const nameEl = document.createElement('div');
+    nameEl.className = 'task-name';
+    if (task.milestone) {
+      nameEl.innerHTML = '<span class="milestone-icon">◆</span>' + task.name;
+    } else {
+      nameEl.textContent = task.name;
+    }
+    div.appendChild(nameEl);
+
+    // Pct
+    if (!task.summary && task.pct > 0) {
+      const pctEl = document.createElement('div');
+      pctEl.className = 'task-pct' + (task.pct === 100 ? ' done' : '');
+      pctEl.textContent = task.pct + '%';
+      div.appendChild(pctEl);
+    }
+
+    // Dates
+    const datesEl = document.createElement('div');
+    datesEl.className = 'task-dates';
+    const startEl = document.createElement('div');
+    startEl.className = 'task-date start';
+    startEl.textContent = formatShortDate(parseDate(task.start));
+    const endEl = document.createElement('div');
+    endEl.className = 'task-date end';
+    // For milestones with same start/end, only show one date
+    if (task.milestone && task.start === task.finish) {
+      endEl.textContent = '—';
+    } else {
+      endEl.textContent = formatShortDate(parseDate(task.finish));
+    }
+    // Duration
+    const durEl = document.createElement('div');
+    // Duration = finish - start + 1 (start day counts as day 1)
+    const durDays = daysBetween(parseDate(task.start), parseDate(task.finish)) + 1;
+    if (task.milestone) {
+      durEl.className = 'task-date dur milestone-dur';
+      durEl.textContent = '◆';
+    } else {
+      durEl.className = 'task-date dur';
+      durEl.textContent = durDays + 'j';
+      // ── Editable duration on click ──
+      durEl.title = 'Cliquer pour modifier la durée';
+      durEl.addEventListener('click', e => {
+        e.stopPropagation();
+        const currentDays = daysBetween(parseDate(task.start), parseDate(task.finish)) + 1;
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'dur-edit-input';
+        input.value = currentDays;
+        input.min = 1;
+        input.title = 'Durée en jours';
+        durEl.textContent = '';
+        durEl.appendChild(input);
+        input.focus();
+        input.select();
+
+        const commit = () => {
+          const newDays = Math.max(parseInt(input.value) || 1, 1);
+          const oldFinish = task.finish;
+          // Start day counts as day 1, so finish = start + (newDays - 1)
+          const newFinish = addDays(parseDate(task.start), newDays - 1);
+          saveSnapshot();
+          task.finish = toDateStr(newFinish);
+          // Cascade to linked successors
+          const delta = daysBetween(parseDate(oldFinish), newFinish);
+          if (delta !== 0) propagateLinks(task.uid, delta, new Set([task.uid]));
+          render();
+          showToast(`⏱ Durée modifiée : ${newDays}j`);
+        };
+
+        input.addEventListener('keydown', ev => {
+          if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+          if (ev.key === 'Escape') { render(); }
+          ev.stopPropagation();
+        });
+        input.addEventListener('click', ev => ev.stopPropagation());
+      });
+    }
+    datesEl.appendChild(startEl);
+    datesEl.appendChild(endEl);
+    datesEl.appendChild(durEl);
+    div.appendChild(datesEl);
+
+    div.addEventListener('click', () => {
+      selectedUid = task.uid;
+      document.querySelectorAll('.task-row').forEach(r => r.classList.remove('selected'));
+      div.classList.add('selected');
+    });
+
+    div.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showCtxMenu(e.clientX, e.clientY, task.uid);
+    });
+
+    list.appendChild(div);
+  });
+
+  // Sync scroll
+  list.addEventListener('scroll', () => {
+    document.getElementById('ganttCanvas').parentElement.scrollTop = list.scrollTop;
+  });
+}
+
+function renderGantt() {
+  const canvas = document.getElementById('ganttCanvas');
+  const chartBody = document.getElementById('chartBody');
+  const w = totalWidth();
+  canvas.style.width = w + 'px';
+
+  // Remove all children except the SVG overlay and snap indicator
+  Array.from(canvas.children).forEach(c => {
+    if (c.id !== 'linkSvg' && c.id !== 'snapIndicator') canvas.removeChild(c);
+  });
+
+  // Reset bar registry for arrow drawing
+  window._barRegistry = {};
+
+  // Weekend columns
+  let d = new Date(PROJECT_START);
+  while (d <= PROJECT_END) {
+    const dow = d.getDay();
+    if (dow === 0 || dow === 6) {
+      const col = document.createElement('div');
+      col.className = 'weekend-col';
+      col.style.left = dateToX(d) + 'px';
+      col.style.width = getColW() + 'px';
+      canvas.appendChild(col);
+    }
+    d = addDays(d, 1);
+  }
+
+  // Today line
+  if (showToday) {
+    const today = new Date('2026-03-11');
+    const x = dateToX(today);
+    const line = document.createElement('div');
+    line.className = 'today-line';
+    line.style.left = x + 'px';
+    const lbl = document.createElement('div');
+    lbl.className = 'today-label';
+    lbl.textContent = 'Aujourd\'hui';
+    line.appendChild(lbl);
+    canvas.appendChild(line);
+  }
+
+  // Deadline lines
+  deadlines.forEach((dl, idx) => {
+    const dlDate = parseDate(dl.date);
+    const dlX = dateToX(dlDate);
+    const dlEl = document.createElement('div');
+    dlEl.className = 'deadline-line deadline-line-draggable';
+    dlEl.style.left = dlX + 'px';
+    dlEl.dataset.dlIdx = idx;
+    const dlLbl = document.createElement('div');
+    dlLbl.className = 'deadline-label';
+    dlLbl.textContent = dl.label + ' — ' + formatShortDate(dlDate);
+    dlEl.appendChild(dlLbl);
+
+    // Drag to reposition deadline
+    dlEl.addEventListener('mousedown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const chartBody = document.getElementById('chartBody');
+      const onMove = ev => {
+        const relX = ev.clientX - canvas.getBoundingClientRect().left + chartBody.scrollLeft;
+        const days = Math.round(relX / getColW());
+        const newDate = addDays(PROJECT_START, days);
+        deadlines[idx].date = toDateStr(newDate);
+        dlEl.style.left = dateToX(newDate) + 'px';
+        dlLbl.textContent = dl.label + ' — ' + formatShortDate(newDate);
+      };
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        render();
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
+    // Right-click to remove
+    dlEl.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      deadlines.splice(idx, 1);
+      render();
+      showToast('Deadline supprimée');
+    });
+
+    canvas.appendChild(dlEl);
+  });
+
+  // Task rows
+  tasks.forEach((task, rowIdx) => {
+    const vis = isVisible(task);
+    const row = document.createElement('div');
+    row.className = `gantt-row level-${task.level}${vis ? '' : ' hidden'}`;
+    row.dataset.uid = task.uid;
+    row.style.height = '32px';
+
+    if (vis) {
+      const start = parseDate(task.start);
+      const end = parseDate(task.finish);
+      const x = dateToX(start);
+      const phaseUid = getPhaseAncestor(task);
+      const phaseIdx = getPhaseColor(phaseUid);
+
+      if (task.milestone) {
+        const diamond = document.createElement('div');
+        diamond.className = 'gantt-milestone';
+        diamond.style.left = (x - 5) + 'px';
+        diamond.dataset.uid = task.uid;
+        // Apply custom color to milestone
+        if (CUSTOM_TASK_COLORS[task.uid]) {
+          diamond.style.background = CUSTOM_TASK_COLORS[task.uid];
+          diamond.style.boxShadow = `0 0 8px ${CUSTOM_TASK_COLORS[task.uid]}88`;
+        }
+        addBarEvents(diamond, task);
+        row.appendChild(diamond);
+        window._barRegistry[task.uid] = { el: diamond, x: x, w: 10, rowEl: row };
+      } else {
+        const dur = Math.max(daysBetween(start, end), 0.5);
+        const barW = Math.max(dur * getColW(), 4);
+
+        const bar = document.createElement('div');
+        bar.className = `gantt-bar level-${task.level} phase-${phaseIdx}`;
+        bar.style.left = x + 'px';
+        bar.style.width = barW + 'px';
+        bar.dataset.uid = task.uid;
+
+        // Apply custom color if set
+        if (CUSTOM_TASK_COLORS[task.uid]) {
+          bar.style.background = CUSTOM_TASK_COLORS[task.uid];
+          bar.classList.remove(`phase-${phaseIdx}`);
+        }
+
+        // Progress
+        if (task.pct > 0) {
+          const prog = document.createElement('div');
+          prog.className = 'gantt-bar-progress';
+          prog.style.width = task.pct + '%';
+          bar.appendChild(prog);
+        }
+
+        // Label (only if wide enough)
+        if (barW > 40 && task.level <= 2) {
+          const lbl = document.createElement('div');
+          lbl.className = 'gantt-bar-label';
+          lbl.style.maxWidth = (barW - 12) + 'px';
+          lbl.textContent = task.level <= 1 ? task.name : '';
+          bar.appendChild(lbl);
+        }
+
+        addBarEvents(bar, task);
+
+        // ── Resize handles (left / right) ──
+        if (!task.milestone) {
+          const handleL = document.createElement('div');
+          handleL.className = 'bar-resize-handle left';
+          handleL.dataset.uid = task.uid;
+          handleL.dataset.side = 'left';
+          addResizeEvents(handleL, bar, task, 'left');
+          bar.appendChild(handleL);
+
+          const handleR = document.createElement('div');
+          handleR.className = 'bar-resize-handle right';
+          handleR.dataset.uid = task.uid;
+          handleR.dataset.side = 'right';
+          addResizeEvents(handleR, bar, task, 'right');
+          bar.appendChild(handleR);
+        }
+
+        row.appendChild(bar);
+        window._barRegistry[task.uid] = { el: bar, x: x, w: barW, rowEl: row };
+      }
+    }
+
+    canvas.appendChild(row);
+  });
+
+  // Draw link arrows
+  drawLinkArrows();
+
+  // Resize SVG to canvas
+  const svg = document.getElementById('linkSvg');
+  if (svg) {
+    svg.style.width = w + 'px';
+    svg.style.height = (tasks.filter(t => isVisible(t)).length * 32) + 'px';
+  }
+
+  // Header
+  renderChartHeader(w);
+
+  // Sync scroll
+  chartBody.addEventListener('scroll', () => {
+    document.getElementById('taskList').scrollTop = chartBody.scrollTop;
+  });
+}
+
+function addBarEvents(el, task) {
+  const tt = document.getElementById('tooltip');
+
+  // ── Tooltip ──
+  el.addEventListener('mouseenter', e => {
+    if (dragState) return;
+    document.getElementById('ttName').textContent = task.name;
+    document.getElementById('ttStart').textContent = formatDate(parseDate(task.start));
+    document.getElementById('ttEnd').textContent = formatDate(parseDate(task.finish));
+    const dur = daysBetween(parseDate(task.start), parseDate(task.finish));
+    document.getElementById('ttDur').textContent = task.milestone ? 'Jalon' : dur + ' jour(s)';
+    document.getElementById('ttPct').textContent = task.pct + '%';
+    tt.classList.add('visible');
+  });
+  el.addEventListener('mousemove', e => {
+    if (dragState) return;
+    tt.style.left = (e.clientX + 14) + 'px';
+    tt.style.top = (e.clientY - 10) + 'px';
+  });
+  el.addEventListener('mouseleave', () => tt.classList.remove('visible'));
+
+  // ── Context menu & dblclick ──
+  el.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    showCtxMenu(e.clientX, e.clientY, task.uid);
+  });
+  el.addEventListener('dblclick', () => openEditModal(task.uid));
+
+  // ── Click: link mode OR color popup ──
+  el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (linkMode) {
+      handleLinkClick(task.uid);
+      return;
+    }
+    if (!dragState) openColorPopup(task.uid, el);
+  });
+
+  // ── Drag & Drop ──
+  el.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    if (linkMode) return;
+    // Don't drag if clicking on a resize handle
+    if (e.target.classList.contains('bar-resize-handle')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    tt.classList.remove('visible');
+
+    const chartBody = document.getElementById('chartBody');
+    const startMouseX = e.clientX + chartBody.scrollLeft;
+    const origStart = task.start;
+    const origFinish = task.finish;
+    const origDuration = daysBetween(parseDate(origStart), parseDate(origFinish));
+
+    el.classList.add('dragging');
+    saveSnapshot(); // snapshot before drag mutations
+
+    // Ghost label
+    const ghost = document.createElement('div');
+    ghost.className = 'drag-ghost';
+    ghost.textContent = task.name;
+    ghost.style.left = e.clientX + 'px';
+    ghost.style.top = e.clientY + 'px';
+    document.body.appendChild(ghost);
+
+    dragState = { uid: task.uid, startMouseX, origStart, origFinish, origDuration, el, ghost };
+
+    const onMove = (ev) => {
+      if (!dragState) return;
+      const currentX = ev.clientX + chartBody.scrollLeft;
+      const deltaPx = currentX - dragState.startMouseX;
+      const deltaDays = Math.round(deltaPx / getColW());
+
+      // Move ghost
+      ghost.style.left = ev.clientX + 'px';
+      ghost.style.top = ev.clientY + 'px';
+
+      // Compute new dates
+      const newStart = addDays(parseDate(dragState.origStart), deltaDays);
+      const newFinish = addDays(newStart, dragState.origDuration);
+
+      // Update task data live
+      task.start = toDateStr(newStart);
+      task.finish = toDateStr(newFinish);
+
+      // Move bar visually without full re-render
+      const newX = dateToX(newStart);
+      el.style.left = (task.milestone ? newX - 5 : newX) + 'px';
+
+      // Update task panel dates
+      updateTaskRowDates(task.uid, task.start, task.finish);
+
+      // Move linked tasks too
+      propagateLinks(task.uid, deltaDays, new Set([task.uid]));
+
+      // Redraw arrows
+      drawLinkArrows();
+    };
+
+    const onUp = () => {
+      if (!dragState) return;
+      el.classList.remove('dragging');
+      ghost.remove();
+      // Save snapshot before committing drag (we already mutated task.start/finish live,
+      // so we push a snapshot with the *previous* state captured at drag start)
+      dragState = null;
+      // Full re-render to sync everything properly
+      render();
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+// ─── RESIZE HANDLE EVENTS ─────────────────────────────────────────────────────
+function addResizeEvents(handle, barEl, task, side) {
+  handle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    if (linkMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const chartBody = document.getElementById('chartBody');
+    const startMouseX = e.clientX + chartBody.scrollLeft;
+    const origStart = task.start;
+    const origFinish = task.finish;
+    const origDuration = daysBetween(parseDate(origStart), parseDate(origFinish));
+
+    saveSnapshot();
+
+    // Ghost label showing new duration
+    const ghost = document.createElement('div');
+    ghost.className = 'drag-ghost';
+    ghost.textContent = side === 'right'
+      ? `→ ${origDuration}j`
+      : `← ${origDuration}j`;
+    ghost.style.left = e.clientX + 'px';
+    ghost.style.top = (e.clientY - 30) + 'px';
+    document.body.appendChild(ghost);
+
+    dragState = { uid: task.uid, resizing: true };
+    barEl.style.cursor = 'ew-resize';
+    document.body.style.cursor = 'ew-resize';
+
+    const onMove = ev => {
+      const currentX = ev.clientX + chartBody.scrollLeft;
+      const deltaPx = currentX - startMouseX;
+      const deltaDays = Math.round(deltaPx / getColW());
+
+      ghost.style.left = ev.clientX + 'px';
+      ghost.style.top = (ev.clientY - 30) + 'px';
+
+      if (side === 'right') {
+        // Stretch/shrink finish date
+        const newDur = Math.max(origDuration + deltaDays, 1);
+        const newFinish = addDays(parseDate(origStart), newDur);
+        task.finish = toDateStr(newFinish);
+
+        // Visual update
+        const newW = Math.max(newDur * getColW(), 4);
+        barEl.style.width = newW + 'px';
+        ghost.textContent = `→ ${newDur}j`;
+
+        // Cascade: propagate delta to linked successors
+        // delta for successors = change in finish = deltaDays clamped to actual change
+        const actualDelta = daysBetween(parseDate(origFinish), newFinish);
+        if (actualDelta !== 0) {
+          propagateLinks(task.uid, actualDelta, new Set([task.uid]));
+        }
+
+      } else {
+        // Stretch/shrink start date
+        const newDur = Math.max(origDuration - deltaDays, 1);
+        const clampedStart = addDays(parseDate(origFinish), -newDur);
+        task.start = toDateStr(clampedStart);
+
+        // Visual update
+        const newX = dateToX(clampedStart);
+        const newW = Math.max(newDur * getColW(), 4);
+        barEl.style.left = newX + 'px';
+        barEl.style.width = newW + 'px';
+        ghost.textContent = `← ${newDur}j`;
+
+        // Cascade: start moved so propagate delta to linked successors
+        const actualDelta = daysBetween(parseDate(origStart), clampedStart);
+        if (actualDelta !== 0) {
+          propagateLinks(task.uid, actualDelta, new Set([task.uid]));
+        }
+      }
+
+      // Update date cells in task panel
+      updateTaskRowDates(task.uid, task.start, task.finish);
+      drawLinkArrows();
+    };
+
+    const onUp = () => {
+      dragState = null;
+      barEl.style.cursor = '';
+      document.body.style.cursor = '';
+      ghost.remove();
+      render();
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+// ─── HELPERS FOR DRAG ────────────────────────────────────────────────────────
+function toDateStr(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+function updateTaskRowDates(uid, start, finish) {
+  // Update the date cells in the task panel without full re-render
+  const rows = document.querySelectorAll(`.task-row[data-uid="${uid}"] .task-date`);
+  if (rows.length >= 2) {
+    rows[0].textContent = formatShortDate(parseDate(start));
+    rows[1].textContent = (finish === start && tasks.find(t=>t.uid===uid)?.milestone) ? '—' : formatShortDate(parseDate(finish));
+  }
+}
+
+// Propagate move to all linked successors (cascade)
+function propagateLinks(uid, deltaDays, visited) {
+  const succs = links[uid] || [];
+  succs.forEach(succUid => {
+    if (visited.has(succUid)) return;
+    visited.add(succUid);
+    const t = tasks.find(x => x.uid === succUid);
+    if (!t) return;
+    const newStart = addDays(parseDate(t.start), deltaDays);
+    const newFinish = addDays(parseDate(t.finish), deltaDays);
+    t.start = toDateStr(newStart);
+    t.finish = toDateStr(newFinish);
+    // Move bar visually
+    const reg = window._barRegistry?.[succUid];
+    if (reg) {
+      const newX = dateToX(newStart);
+      reg.el.style.left = (t.milestone ? newX - 5 : newX) + 'px';
+    }
+    updateTaskRowDates(succUid, t.start, t.finish);
+    propagateLinks(succUid, deltaDays, visited);
+  });
+}
+
+// ─── LINK ARROWS ─────────────────────────────────────────────────────────────
+function drawLinkArrows() {
+  const svg = document.getElementById('linkSvg');
+  if (!svg) return;
+  // Clear old arrows
+  Array.from(svg.querySelectorAll('.link-arrow')).forEach(a => a.remove());
+
+  const ROW_H = 32;
+  Object.entries(links).forEach(([fromUid, toUids]) => {
+    toUids.forEach(toUid => {
+      const fromTask = tasks.find(t => t.uid === fromUid);
+      const toTask = tasks.find(t => t.uid === toUid);
+      if (!fromTask || !toTask) return;
+      if (!isVisible(fromTask) || !isVisible(toTask)) return;
+
+      // From: right edge of source bar
+      const fromX = dateToX(parseDate(fromTask.finish)) + (fromTask.milestone ? 5 : Math.max(daysBetween(parseDate(fromTask.start), parseDate(fromTask.finish)), 0.5) * getColW());
+      const fromRowIdx = getVisibleRowIndex(fromUid);
+      const toRowIdx = getVisibleRowIndex(toUid);
+      if (fromRowIdx < 0 || toRowIdx < 0) return;
+
+      const fromY = fromRowIdx * ROW_H + ROW_H / 2;
+      const toX = dateToX(parseDate(toTask.start)) + (toTask.milestone ? 0 : 0);
+      const toY = toRowIdx * ROW_H + ROW_H / 2;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('class', 'link-arrow');
+      const cx1 = fromX + Math.abs(toX - fromX) * 0.4;
+      const cx2 = toX - Math.abs(toX - fromX) * 0.4;
+      path.setAttribute('d', `M${fromX},${fromY} C${cx1},${fromY} ${cx2},${toY} ${toX},${toY}`);
+      svg.appendChild(path);
+    });
+  });
+}
+
+function getVisibleRowIndex(uid) {
+  let idx = 0;
+  for (const t of tasks) {
+    if (!isVisible(t)) continue;
+    if (t.uid === uid) return idx;
+    idx++;
+  }
+  return -1;
+}
+
+// ─── LINK MODE ────────────────────────────────────────────────────────────────
+function handleLinkClick(uid) {
+  if (!linkSource) {
+    // First click: set source
+    linkSource = uid;
+    // Highlight source
+    const reg = window._barRegistry?.[uid];
+    if (reg) reg.el.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 12px rgba(251,191,36,.5)';
+    showToast(`Source : "${tasks.find(t=>t.uid===uid)?.name}" — cliquez sur la tâche cible`);
+  } else {
+    // Second click: create link
+    if (uid === linkSource) {
+      // Cancel
+      linkSource = null;
+      render();
+      return;
+    }
+    if (!links[linkSource]) links[linkSource] = [];
+    if (!links[linkSource].includes(uid)) {
+      saveSnapshot();
+      links[linkSource].push(uid);
+      showToast(`✅ Liaison créée : ${tasks.find(t=>t.uid===linkSource)?.name} → ${tasks.find(t=>t.uid===uid)?.name}`);
+    }
+    linkSource = null;
+    render();
+  }
+}
+
+function showToast(msg) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = `
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #222535; border: 1px solid #4f7cff; color: #e2e8f0;
+      padding: 10px 20px; border-radius: 8px; font-size: 13px;
+      z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      transition: opacity .3s;
+    `;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+}
+
+// Link mode toggle button
+document.getElementById('btnLinkMode').addEventListener('click', () => {
+  linkMode = !linkMode;
+  linkSource = null;
+  const btn = document.getElementById('btnLinkMode');
+  btn.classList.toggle('active', linkMode);
+  document.body.classList.toggle('link-mode', linkMode);
+  if (linkMode) {
+    showToast('🔗 Mode liaison activé — cliquez sur la tâche source, puis sur la cible');
+  } else {
+    render();
+  }
+});
+
+// Add "Supprimer liaisons" to context menu
+document.getElementById('ctxDelete').insertAdjacentHTML('beforebegin', `
+  <div class="ctx-item" id="ctxRemoveLinks">🔗 Supprimer liaisons</div>
+  <div class="ctx-sep"></div>
+`);
+document.getElementById('ctxRemoveLinks').addEventListener('click', () => {
+  if (!ctxUid) return;
+  saveSnapshot();
+  // Remove as source
+  delete links[ctxUid];
+  // Remove as target
+  Object.keys(links).forEach(k => {
+    links[k] = links[k].filter(v => v !== ctxUid);
+  });
+  render();
+  showToast('Liaisons supprimées');
+});
+
+function renderChartHeader(totalW) {
+  const monthsRow = document.getElementById('monthsRow');
+  const weeksRow = document.getElementById('weeksRow');
+  monthsRow.innerHTML = '';
+  weeksRow.innerHTML = '';
+  monthsRow.style.width = totalW + 'px';
+  weeksRow.style.width = totalW + 'px';
+
+  const today = new Date('2026-03-11');
+
+  if (getZoomLevel() === 0) {
+    // Month view
+    let cur = new Date(PROJECT_START.getFullYear(), PROJECT_START.getMonth(), 1);
+    while (cur <= PROJECT_END) {
+      const nextMonth = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+      const x = dateToX(cur);
+      const x2 = dateToX(nextMonth);
+      const cell = document.createElement('div');
+      cell.className = 'month-cell' + (cur.getMonth() === today.getMonth() && cur.getFullYear() === today.getFullYear() ? ' current-month' : '');
+      cell.style.left = x + 'px';
+      cell.style.width = (x2 - x) + 'px';
+      cell.style.position = 'absolute';
+      cell.textContent = cur.toLocaleDateString('fr-FR', {month:'short', year:'2-digit'}).replace('. ', ' \'');
+      monthsRow.appendChild(cell);
+      cur = nextMonth;
+    }
+  } else {
+    // Month labels (week/day view)
+    let cur = new Date(PROJECT_START.getFullYear(), PROJECT_START.getMonth(), 1);
+    while (cur <= PROJECT_END) {
+      const nextMonth = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+      const x = Math.max(dateToX(cur), 0);
+      const x2 = dateToX(nextMonth);
+      const cell = document.createElement('div');
+      cell.className = 'month-cell' + (cur.getMonth() === today.getMonth() && cur.getFullYear() === today.getFullYear() ? ' current-month' : '');
+      cell.style.left = x + 'px';
+      cell.style.width = (x2 - x) + 'px';
+      cell.style.position = 'absolute';
+      cell.textContent = cur.toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
+      monthsRow.appendChild(cell);
+      cur = nextMonth;
+    }
+
+    // Week cells
+    let wd = new Date(PROJECT_START);
+    // Go to monday
+    const dow = wd.getDay();
+    wd.setDate(wd.getDate() - (dow === 0 ? 6 : dow - 1));
+    while (wd <= PROJECT_END) {
+      const x = dateToX(wd);
+      const cell = document.createElement('div');
+      const isCurrentWeek = Math.abs(daysBetween(wd, today)) < 7;
+      cell.className = 'week-cell' + (isCurrentWeek ? ' current-week' : '');
+      cell.style.left = x + 'px';
+      cell.style.width = (7 * getColW()) + 'px';
+      cell.style.position = 'absolute';
+      if (getZoomLevel() === 1) {
+        cell.textContent = 'S' + getWeekNumber(wd);
+      } else {
+        // Day labels
+        cell.textContent = wd.getDate() + '/' + (wd.getMonth()+1);
+      }
+      weeksRow.appendChild(cell);
+      wd = addDays(wd, 7);
+    }
+  }
+}
+
+function getWeekNumber(d) {
+  const date = new Date(d);
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  const week1 = new Date(date.getFullYear(), 0, 4);
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+// ─── CONTEXT MENU ───────────────────────────────────────────────────────────
+function showCtxMenu(x, y, uid) {
+  ctxUid = uid;
+  const menu = document.getElementById('ctxMenu');
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  menu.classList.add('open');
+}
+
+document.addEventListener('click', () => {
+  document.getElementById('ctxMenu').classList.remove('open');
+});
+
+document.getElementById('ctxEdit').addEventListener('click', () => {
+  if (ctxUid) openEditModal(ctxUid);
+});
+
+document.getElementById('ctxColor').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (!ctxUid) return;
+  const uid = ctxUid;
+  document.getElementById('ctxMenu').classList.remove('open');
+  // Delay so the global document click handler fires first and doesn't close the popup
+  setTimeout(() => openColorPopup(uid, { getBoundingClientRect: () => ({right: e.clientX, top: e.clientY}) }), 50);
+});
+
+document.getElementById('ctxDelete').addEventListener('click', () => {
+  if (ctxUid) {
+    saveSnapshot();
+    tasks = tasks.filter(t => t.uid !== ctxUid);
+    render();
+  }
+});
+
+document.getElementById('ctxAddChild').addEventListener('click', () => {
+  if (ctxUid) openAddModal(ctxUid);
+});
+
+// ─── COLOR POPUP ─────────────────────────────────────────────────────────────
+function openColorPopup(uid, anchorEl) {
+  colorPopupUid = uid;
+  const popup = document.getElementById('colorPopup');
+
+  // Build swatches in popup
+  buildColorSwatches('colorPopupGrid', CUSTOM_TASK_COLORS[uid] || null, (color) => {
+    saveSnapshot();
+    CUSTOM_TASK_COLORS[colorPopupUid] = color;
+    render();
+  });
+
+  // Custom color input in popup
+  const customInput = document.getElementById('colorPopupCustom');
+  customInput.value = CUSTOM_TASK_COLORS[uid] || '#4f7cff';
+  customInput.oninput = () => {
+    CUSTOM_TASK_COLORS[colorPopupUid] = customInput.value;
+    // Mark all swatches as deselected
+    document.querySelectorAll('#colorPopupGrid .color-swatch').forEach(s => s.classList.remove('selected'));
+    render();
+  };
+
+  // Position popup near anchor
+  const rect = anchorEl ? anchorEl.getBoundingClientRect() : {right: 200, top: 200};
+  popup.style.left = Math.min(rect.right + 8, window.innerWidth - 240) + 'px';
+  popup.style.top = Math.min(rect.top, window.innerHeight - 300) + 'px';
+  popup.classList.add('open');
+}
+
+document.getElementById('colorPopupReset').addEventListener('click', () => {
+  if (colorPopupUid) {
+    delete CUSTOM_TASK_COLORS[colorPopupUid];
+    document.getElementById('colorPopup').classList.remove('open');
+    render();
+  }
+});
+
+document.getElementById('colorPopupClose').addEventListener('click', () => {
+  document.getElementById('colorPopup').classList.remove('open');
+});
+
+document.addEventListener('click', (e) => {
+  const popup = document.getElementById('colorPopup');
+  if (!popup.contains(e.target)) {
+    popup.classList.remove('open');
+  }
+});
+
+// ─── MODAL ──────────────────────────────────────────────────────────────────
+
+function openEditModal(uid) {
+  editUid = uid;
+  const task = tasks.find(t => t.uid === uid);
+  modalSelectedColor = CUSTOM_TASK_COLORS[uid] || null;
+  document.getElementById('modalTitle').textContent = 'Modifier la tâche';
+  document.getElementById('fName').value = task.name;
+  document.getElementById('fStart').value = task.start;
+  document.getElementById('fEnd').value = task.finish;
+  document.getElementById('fPct').value = task.pct;
+  document.getElementById('fType').value = task.milestone ? 'milestone' : task.summary ? 'summary' : 'task';
+  populateParentSelect(null);
+  buildColorSwatches('modalColorPicker', CUSTOM_TASK_COLORS[uid] || null, (c) => { modalSelectedColor = c; });
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function populateParentSelect(defaultUid) {
+  const sel = document.getElementById('fParent');
+  sel.innerHTML = '<option value="">— Aucun parent —</option>';
+  tasks.filter(t => t.summary).forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.uid;
+    opt.textContent = '  '.repeat(t.level) + t.name;
+    if (t.uid === defaultUid) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+document.getElementById('btnCancel').addEventListener('click', () => {
+  document.getElementById('modalOverlay').classList.remove('open');
+});
+
+document.getElementById('btnSave').addEventListener('click', () => {
+  const name = document.getElementById('fName').value.trim();
+  if (!name) return;
+  saveSnapshot();
+  const start = document.getElementById('fStart').value;
+  const finish = document.getElementById('fEnd').value;
+  const pct = parseInt(document.getElementById('fPct').value) || 0;
+  const type = document.getElementById('fType').value;
+  const parentUid = document.getElementById('fParent').value;
+
+  let level = 0;
+  if (parentUid) {
+    const parent = tasks.find(t => t.uid === parentUid);
+    if (parent) level = parent.level + 1;
+  }
+
+  if (editUid) {
+    const task = tasks.find(t => t.uid === editUid);
+    task.name = name;
+    task.start = start;
+    task.finish = finish;
+    task.pct = pct;
+    task.milestone = type === 'milestone';
+    task.summary = type === 'summary';
+    if (modalSelectedColor) CUSTOM_TASK_COLORS[editUid] = modalSelectedColor;
+  } else {
+    const newUid = 'new_' + Date.now();
+    const newTask = {
+      uid: newUid,
+      id: tasks.length,
+      name, level, start, finish,
+      milestone: type === 'milestone',
+      summary: type === 'summary',
+      pct, preds: []
+    };
+    if (modalSelectedColor) CUSTOM_TASK_COLORS[newUid] = modalSelectedColor;
+    if (parentUid) {
+      const pIdx = tasks.findIndex(t => t.uid === parentUid);
+      tasks.splice(pIdx + 1, 0, newTask);
+    } else {
+      tasks.push(newTask);
+    }
+  }
+
+  document.getElementById('modalOverlay').classList.remove('open');
+  render();
+});
+
+document.getElementById('btnAdd').addEventListener('click', () => openAddModal(null));
+
+// ─── COLOR PICKER HELPERS ────────────────────────────────────────────────────
+function buildColorSwatches(containerId, currentColor, onSelect) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  COLOR_PALETTE.forEach(color => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (currentColor === color ? ' selected' : '');
+    sw.style.background = color;
+    if (color === '#ffffff') sw.style.border = '2px solid #64748b';
+    sw.addEventListener('click', () => {
+      container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      onSelect(color);
+    });
+    container.appendChild(sw);
+  });
+
+  // Custom color swatch
+  const customSw = document.createElement('div');
+  customSw.className = 'color-swatch custom-color' + (!COLOR_PALETTE.includes(currentColor) && currentColor ? ' selected' : '');
+  customSw.title = 'Couleur personnalisée';
+  customSw.textContent = '+';
+  customSw.style.fontSize = '16px';
+  customSw.style.fontWeight = '300';
+  customSw.style.color = '#fff';
+  const hiddenInput = document.createElement('input');
+  hiddenInput.type = 'color';
+  hiddenInput.className = 'color-custom-input';
+  hiddenInput.value = currentColor && !COLOR_PALETTE.includes(currentColor) ? currentColor : '#ff6b6b';
+  customSw.appendChild(hiddenInput);
+  customSw.addEventListener('click', () => hiddenInput.click());
+  hiddenInput.addEventListener('input', () => {
+    container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    customSw.classList.add('selected');
+    customSw.style.background = hiddenInput.value;
+    onSelect(hiddenInput.value);
+  });
+  container.appendChild(customSw);
+}
+
+// ─── MODAL COLOR PICKER ────────────────────────────────────────────────────
+function openAddModal(parentUid) {
+  editUid = null;
+  modalSelectedColor = null;
+  document.getElementById('modalTitle').textContent = 'Nouvelle tâche';
+  document.getElementById('fName').value = '';
+  document.getElementById('fStart').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fEnd').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fPct').value = 0;
+  document.getElementById('fType').value = 'task';
+  populateParentSelect(parentUid);
+  buildColorSwatches('modalColorPicker', null, (c) => { modalSelectedColor = c; });
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+// ─── ZOOM ────────────────────────────────────────────────────────────────────
+function applyZoom(newZoom, anchorScrollLeft) {
+  const chartBody = document.getElementById('chartBody');
+  // Calculate the ratio to preserve scroll position relative to visible center
+  const oldZoom = continuousZoom;
+  const scrollCenter = (anchorScrollLeft !== undefined ? anchorScrollLeft : chartBody.scrollLeft) + chartBody.clientWidth / 2;
+  const dayAtCenter = scrollCenter / oldZoom;
+
+  continuousZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, newZoom));
+  document.getElementById('zoomLabel').textContent = getZoomLabel();
+
+  render();
+
+  // Re-center scroll on same day
+  const newScrollCenter = dayAtCenter * continuousZoom;
+  chartBody.scrollLeft = Math.max(0, newScrollCenter - chartBody.clientWidth / 2);
+}
+
+document.getElementById('zoomIn').addEventListener('click', () => {
+  applyZoom(continuousZoom * 1.5);
+});
+document.getElementById('zoomOut').addEventListener('click', () => {
+  applyZoom(continuousZoom / 1.5);
+});
+
+// Trackpad pinch-to-zoom and Ctrl+scroll
+document.getElementById('chartBody').addEventListener('wheel', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault();
+    // deltaY negative = zoom in, positive = zoom out
+    const factor = e.deltaY > 0 ? 0.92 : 1.09;
+    applyZoom(continuousZoom * factor, e.currentTarget.scrollLeft + e.offsetX);
+  }
+}, { passive: false });
+
+// Also handle on the gantt wrapper for trackpad pinch gesture
+document.querySelector('.gantt-wrapper').addEventListener('wheel', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault();
+    const factor = e.deltaY > 0 ? 0.92 : 1.09;
+    const chartBody = document.getElementById('chartBody');
+    applyZoom(continuousZoom * factor, chartBody.scrollLeft);
+  }
+}, { passive: false });
+
+// Click on zoom label resets to default week view
+document.getElementById('zoomLabel').addEventListener('click', () => {
+  applyZoom(16);
+});
+
+// ─── EXPORT PDF ─────────────────────────────────────────────────────────────
+document.getElementById('btnExport').addEventListener('click', () => {
+  document.getElementById('exportModalOverlay').classList.add('open');
+});
+document.getElementById('exportCancel').addEventListener('click', () => {
+  document.getElementById('exportModalOverlay').classList.remove('open');
+});
+
+document.getElementById('exportConfirm').addEventListener('click', () => {
+  const scope = document.getElementById('exportScope').value;
+  const zoomChoice = document.getElementById('exportZoom').value;
+  document.getElementById('exportModalOverlay').classList.remove('open');
+
+  // Save current state
+  const savedZoom = continuousZoom;
+  const savedCollapsed = new Set(collapsed);
+
+  // Apply export zoom
+  const zoomMap = { month: 3.5, week: 14, day: 38 };
+  continuousZoom = zoomMap[zoomChoice];
+
+  // Expand all if needed
+  if (scope === 'all') {
+    collapsed.clear();
+  }
+
+  // Re-render with export settings
+  render();
+
+  // Expand chart body to show full canvas for printing
+  const chartBody = document.getElementById('chartBody');
+  const canvas = document.getElementById('ganttCanvas');
+  const taskList = document.getElementById('taskList');
+
+  const origChartBodyStyle = chartBody.getAttribute('style') || '';
+  const origTaskListStyle = taskList.getAttribute('style') || '';
+
+  // Force full height for print
+  chartBody.style.overflow = 'visible';
+  chartBody.style.height = canvas.scrollHeight + 'px';
+  taskList.style.overflow = 'visible';
+  taskList.style.height = canvas.scrollHeight + 'px';
+
+  // Set document title for PDF filename
+  document.title = 'Planning_PA3_' + new Date().toISOString().slice(0,10);
+
+  setTimeout(() => {
+    window.print();
+
+    // Restore state after print dialog
+    setTimeout(() => {
+      continuousZoom = savedZoom;
+      collapsed.clear();
+      savedCollapsed.forEach(uid => collapsed.add(uid));
+      chartBody.setAttribute('style', origChartBodyStyle);
+      taskList.setAttribute('style', origTaskListStyle);
+      chartBody.style.overflow = '';
+      taskList.style.overflow = '';
+      document.title = 'Planning Immobilier — PA3';
+      render();
+    }, 500);
+  }, 300);
+});
+
+
+document.getElementById('todayToggle').addEventListener('click', () => {
+  showToday = !showToday;
+  const btn = document.getElementById('todayToggle');
+  btn.style.opacity = showToday ? 1 : 0.4;
+  render();
+});
+
+// ─── DEADLINE ────────────────────────────────────────────────────────────────
+let deadlinePickMode = false;
+
+document.getElementById('btnDeadline').addEventListener('click', () => {
+  deadlinePickMode = !deadlinePickMode;
+  const btn = document.getElementById('btnDeadline');
+  if (deadlinePickMode) {
+    btn.style.borderColor = '#f87171';
+    btn.style.color = '#f87171';
+    document.getElementById('chartBody').style.cursor = 'crosshair';
+    showToast('⚑ Cliquez sur le Gantt pour placer la deadline — clic droit sur la ligne pour la supprimer');
+  } else {
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    document.getElementById('chartBody').style.cursor = '';
+  }
+});
+
+document.getElementById('chartBody').addEventListener('click', e => {
+  if (!deadlinePickMode) return;
+  if (e.target.closest('.deadline-line')) return;
+  const canvas = document.getElementById('ganttCanvas');
+  const chartBody = document.getElementById('chartBody');
+  const relX = e.clientX - canvas.getBoundingClientRect().left + chartBody.scrollLeft;
+  const days = Math.round(relX / getColW());
+  const dlDate = addDays(PROJECT_START, days);
+  const label = 'Deadline ' + (deadlines.length + 1);
+  deadlines.push({ date: toDateStr(dlDate), label });
+  deadlinePickMode = false;
+  const btn = document.getElementById('btnDeadline');
+  btn.style.borderColor = '';
+  btn.style.color = '';
+  chartBody.style.cursor = '';
+  render();
+  showToast(`⚑ ${label} placée au ${formatShortDate(dlDate)} — glissez-la pour ajuster, clic droit pour supprimer`);
+});
+
+// ─── FILTERS ─────────────────────────────────────────────────────────────────
+function setFilter(mode) {
+  filterMode = mode;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById({all:'filterAll',milestones:'filterMilestones',inprogress:'filterInProgress',pc:'filterPhase1',pro:'filterPhase2',actes:'filterPhase3'}[mode]).classList.add('active');
+  render();
+}
+document.getElementById('filterAll').addEventListener('click', () => setFilter('all'));
+document.getElementById('filterMilestones').addEventListener('click', () => setFilter('milestones'));
+document.getElementById('filterInProgress').addEventListener('click', () => setFilter('inprogress'));
+document.getElementById('filterPhase1').addEventListener('click', () => setFilter('pc'));
+document.getElementById('filterPhase2').addEventListener('click', () => setFilter('pro'));
+document.getElementById('filterPhase3').addEventListener('click', () => setFilter('actes'));
+
+// ─── SEARCH ──────────────────────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  render();
+});
+
+// ─── SAVE / LOAD SYSTEM ──────────────────────────────────────────────────────
+const SAVE_KEY = 'planningpro_saves';
+
+function getAllSaves() {
+  try { return JSON.parse(localStorage.getItem(SAVE_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function writeSaves(saves) {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
+}
+
+function buildStateSnapshot(name) {
+  return {
+    id: Date.now(),
+    name: name || ('Sauvegarde ' + new Date().toLocaleString('fr-FR')),
+    date: new Date().toISOString(),
+    tasks: tasks.map(t => ({...t})),
+    links: JSON.parse(JSON.stringify(links)),
+    deadlines: [...deadlines],
+    colors: {...CUSTOM_TASK_COLORS},
+    zoom: continuousZoom,
+    collapsed: [...collapsed]
+  };
+}
+
+function doSave(name) {
+  const saves = getAllSaves();
+  saves.unshift(buildStateSnapshot(name));
+  // Keep max 30 saves
+  if (saves.length > 30) saves.splice(30);
+  writeSaves(saves);
+  showToast('✅ Sauvegarde "' + name + '" créée');
+  renderSaveList();
+}
+
+function loadSave(id) {
+  const saves = getAllSaves();
+  const snap = saves.find(s => s.id === id);
+  if (!snap) return;
+  saveSnapshot(); // push current state to undo before loading
+  tasks = snap.tasks.map(t => ({...t}));
+  Object.keys(links).forEach(k => delete links[k]);
+  Object.assign(links, snap.links || {});
+  deadlines = snap.deadlines || [];
+  Object.keys(CUSTOM_TASK_COLORS).forEach(k => delete CUSTOM_TASK_COLORS[k]);
+  Object.assign(CUSTOM_TASK_COLORS, snap.colors || {});
+  continuousZoom = snap.zoom || 16;
+  collapsed = new Set(snap.collapsed || []);
+  document.getElementById('saveModalOverlay').classList.remove('open');
+  render();
+  showToast('📂 Sauvegarde "' + snap.name + '" chargée');
+}
+
+function deleteSave(id) {
+  let saves = getAllSaves();
+  saves = saves.filter(s => s.id !== id);
+  writeSaves(saves);
+  renderSaveList();
+  showToast('🗑 Sauvegarde supprimée');
+}
+
+function exportSave(id) {
+  const saves = getAllSaves();
+  const snap = saves.find(s => s.id === id);
+  if (!snap) return;
+  const blob = new Blob([JSON.stringify(snap, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = snap.name.replace(/[^a-z0-9]/gi, '_') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportAllSaves() {
+  const saves = getAllSaves();
+  const blob = new Blob([JSON.stringify(saves, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'planning_sauvegardes_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const saves = getAllSaves();
+      const toImport = Array.isArray(data) ? data : [data];
+      toImport.forEach(snap => {
+        snap.id = Date.now() + Math.random();
+        snap.name = (snap.name || 'Importé') + ' (import)';
+        saves.unshift(snap);
+      });
+      writeSaves(saves.slice(0, 30));
+      renderSaveList();
+      showToast(`📂 ${toImport.length} sauvegarde(s) importée(s)`);
+    } catch {
+      showToast('❌ Fichier invalide');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function renderSaveList() {
+  const saves = getAllSaves();
+  const list = document.getElementById('saveList');
+  list.innerHTML = '';
+
+  if (saves.length === 0) {
+    list.innerHTML = '<div class="save-empty">Aucune sauvegarde pour le moment.<br>Créez votre première sauvegarde ci-dessus.</div>';
+    return;
+  }
+
+  saves.forEach(snap => {
+    const item = document.createElement('div');
+    item.className = 'save-item';
+
+    const info = document.createElement('div');
+    info.className = 'save-item-info';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'save-item-name';
+    nameEl.textContent = snap.name;
+
+    const meta = document.createElement('div');
+    meta.className = 'save-item-meta';
+    const d = new Date(snap.date);
+    const taskCount = (snap.tasks || []).filter(t => !t.summary && !t.milestone).length;
+    meta.textContent = d.toLocaleString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) + ' · ' + taskCount + ' tâches';
+
+    info.appendChild(nameEl);
+    info.appendChild(meta);
+
+    const btns = document.createElement('div');
+    btns.className = 'save-item-btns';
+
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'save-btn-load';
+    loadBtn.textContent = '▶ Charger';
+    loadBtn.onclick = () => loadSave(snap.id);
+
+    const exportBtn = document.createElement('button');
+    exportBtn.className = 'save-btn-export';
+    exportBtn.textContent = '⬇';
+    exportBtn.title = 'Exporter en .json';
+    exportBtn.onclick = () => exportSave(snap.id);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'save-btn-del';
+    delBtn.textContent = '🗑';
+    delBtn.title = 'Supprimer';
+    delBtn.onclick = () => {
+      if (confirm('Supprimer "' + snap.name + '" ?')) deleteSave(snap.id);
+    };
+
+    btns.appendChild(loadBtn);
+    btns.appendChild(exportBtn);
+    btns.appendChild(delBtn);
+    item.appendChild(info);
+    item.appendChild(btns);
+    list.appendChild(item);
+  });
+}
+
+// Open/close modal
+document.getElementById('btnSaveSession').addEventListener('click', () => {
+  document.getElementById('saveNameInput').value = 'Planning du ' + new Date().toLocaleDateString('fr-FR');
+  renderSaveList();
+  document.getElementById('saveModalOverlay').classList.add('open');
+});
+document.getElementById('btnSaveModalClose').addEventListener('click', () => {
+  document.getElementById('saveModalOverlay').classList.remove('open');
+});
+document.getElementById('saveModalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('saveModalOverlay'))
+    document.getElementById('saveModalOverlay').classList.remove('open');
+});
+
+// Save button inside modal
+document.getElementById('btnDoSave').addEventListener('click', () => {
+  const name = document.getElementById('saveNameInput').value.trim() || ('Sauvegarde ' + new Date().toLocaleString('fr-FR'));
+  doSave(name);
+});
+document.getElementById('saveNameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btnDoSave').click();
+});
+
+// Import file
+document.getElementById('importFileInput').addEventListener('change', e => {
+  if (e.target.files[0]) importFromFile(e.target.files[0]);
+  e.target.value = '';
+});
+
+// Export all
+document.getElementById('btnExportAll').addEventListener('click', exportAllSaves);
+
+// Keyboard shortcut: Ctrl+S to quick-save
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    doSave('Sauvegarde rapide — ' + new Date().toLocaleString('fr-FR'));
+  }
+});
+
+// Auto-save every 2 minutes
+setInterval(() => {
+  doSave('Auto-save — ' + new Date().toLocaleString('fr-FR'));
+}, 2 * 60 * 1000);
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+// Collapse level-2+ by default for cleaner initial view
+tasks.forEach(t => { if (t.level >= 2 && t.summary) collapsed.add(t.uid); });
+render();
+
+// Scroll to today on load
+setTimeout(() => {
+  const today = new Date('2026-03-11');
+  const x = daysBetween(PROJECT_START, today) * getColW() - 200;
+  document.getElementById('chartBody').scrollLeft = Math.max(0, x);
+  document.getElementById('zoomLabel').textContent = getZoomLabel();
+}, 100);
+
+// ─── PWA SETUP ───────────────────────────────────────────────────────────────
+(function() {
+  // Generate app icon as a canvas data URL (blue gradient with "PP" text)
+  function makeIcon(size) {
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, size, size);
+    grad.addColorStop(0, '#1a1d27');
+    grad.addColorStop(1, '#0f1117');
+    ctx.fillStyle = grad;
+    // Rounded rect
+    const r = size * 0.2;
+    ctx.beginPath();
+    ctx.moveTo(r, 0); ctx.lineTo(size-r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size-r);
+    ctx.quadraticCurveTo(size, size, size-r, size);
+    ctx.lineTo(r, size); ctx.quadraticCurveTo(0, size, 0, size-r);
+    ctx.lineTo(0, r); ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Accent bar left
+    const barGrad = ctx.createLinearGradient(0, 0, 0, size);
+    barGrad.addColorStop(0, '#4f7cff');
+    barGrad.addColorStop(1, '#7c5cfc');
+    ctx.fillStyle = barGrad;
+    ctx.fillRect(size*0.1, size*0.2, size*0.07, size*0.6);
+
+    // Gantt bars illustration
+    const bars = [
+      { y: 0.28, x: 0.22, w: 0.52, c: '#4f7cff' },
+      { y: 0.43, x: 0.22, w: 0.35, c: '#7c5cfc' },
+      { y: 0.58, x: 0.22, w: 0.45, c: '#06b6d4' },
+      { y: 0.73, x: 0.22, w: 0.28, c: '#34d399' },
+    ];
+    bars.forEach(b => {
+      ctx.fillStyle = b.c;
+      const bh = size * 0.1;
+      const br = bh / 2;
+      const bx = size * b.x, by = size * b.y, bw = size * b.w;
+      ctx.beginPath();
+      ctx.moveTo(bx + br, by); ctx.lineTo(bx + bw - br, by);
+      ctx.quadraticCurveTo(bx+bw, by, bx+bw, by+br);
+      ctx.lineTo(bx+bw, by+bh-br);
+      ctx.quadraticCurveTo(bx+bw, by+bh, bx+bw-br, by+bh);
+      ctx.lineTo(bx+br, by+bh); ctx.quadraticCurveTo(bx, by+bh, bx, by+bh-br);
+      ctx.lineTo(bx, by+br); ctx.quadraticCurveTo(bx, by, bx+br, by);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    return c.toDataURL('image/png');
+  }
+
+  const icon192 = makeIcon(192);
+  const icon512 = makeIcon(512);
+
+  // Set apple touch icon
+  document.getElementById('appleTouchIcon').href = icon192;
+
+  // Inject manifest as blob URL
+  const manifest = {
+    name: 'PlanningPro — Immobilier',
+    short_name: 'PlanningPro',
+    description: 'Planning de conception immobilière',
+    start_url: '.',
+    display: 'standalone',
+    background_color: '#0f1117',
+    theme_color: '#0f1117',
+    orientation: 'landscape',
+    icons: [
+      { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+    ]
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const manifestURL = URL.createObjectURL(manifestBlob);
+  document.getElementById('pwaManifest').href = manifestURL;
+
+  // Register inline Service Worker for offline support
+  const swCode = `
+    const CACHE = 'planningpro-v1';
+    self.addEventListener('install', e => {
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(clients.claim());
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request).catch(() => new Response('Offline')))
+      );
+    });
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  const swURL = URL.createObjectURL(swBlob);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(swURL, { scope: '/' }).catch(() => {});
+  }
+
+  // ── Install prompt banner ──────────────────────────────────────────────────
+  let deferredPrompt = null;
+
+  const banner = document.createElement('div');
+  banner.id = 'installBanner';
+  banner.style.cssText = `
+    display: none; position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: #1a1d27; border: 1px solid #4f7cff;
+    border-radius: 12px; padding: 16px 20px; width: 300px;
+    box-shadow: 0 8px 32px rgba(79,124,255,.3);
+    font-family: 'Outfit', sans-serif; color: #e2e8f0;
+    animation: slideUp .3s ease;
+  `;
+  banner.innerHTML = `
+    <style>@keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }</style>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <canvas id="bannerIcon" width="40" height="40" style="border-radius:8px;flex-shrink:0"></canvas>
+      <div>
+        <div style="font-weight:600;font-size:14px">Installer PlanningPro</div>
+        <div style="font-size:11px;color:#64748b;margin-top:1px">Accès rapide depuis votre bureau</div>
+      </div>
+      <button onclick="document.getElementById('installBanner').style.display='none'"
+        style="margin-left:auto;background:none;border:none;color:#64748b;cursor:pointer;font-size:18px;line-height:1">×</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button id="installBtn" style="
+        flex:1; background:#4f7cff; border:none; color:#fff; border-radius:7px;
+        padding:9px; cursor:pointer; font-size:13px; font-family:'Outfit',sans-serif; font-weight:500;">
+        📲 Installer
+      </button>
+      <button onclick="document.getElementById('installBanner').style.display='none'" style="
+        background:transparent; border:1px solid #2e3248; color:#94a3b8; border-radius:7px;
+        padding:9px 14px; cursor:pointer; font-size:13px; font-family:'Outfit',sans-serif;">
+        Plus tard
+      </button>
+    </div>
+  `;
+  document.body.appendChild(banner);
+
+  // Draw mini icon on banner canvas
+  setTimeout(() => {
+    const bc = document.getElementById('bannerIcon');
+    if (bc) {
+      const ctx = bc.getContext('2d');
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0, 40, 40);
+      img.src = makeIcon(40);
+    }
+  }, 100);
+
+  document.getElementById('installBtn')?.addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      // Safari / manual instructions
+      showToast('Sur Safari : appuyez sur Partager → "Sur l\'écran d\'accueil". Sur Chrome : menu ⋮ → "Installer l\'application".');
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') showToast('✅ PlanningPro installé !');
+    deferredPrompt = null;
+    banner.style.display = 'none';
+  });
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    setTimeout(() => { banner.style.display = 'block'; }, 1500);
+  });
+
+  window.addEventListener('appinstalled', () => {
+    banner.style.display = 'none';
+    showToast('✅ PlanningPro installé sur votre bureau !');
+  });
+
+  // Add install button to header
+  const installHeaderBtn = document.createElement('button');
+  installHeaderBtn.id = 'btnInstall';
+  installHeaderBtn.title = 'Installer comme application bureau';
+  installHeaderBtn.style.cssText = `
+    background: transparent; border: 1px solid #2e3248; color: #94a3b8;
+    border-radius: 6px; padding: 5px 13px; cursor: pointer; font-size: 12px;
+    font-family: 'Outfit', sans-serif; transition: all .15s;
+  `;
+  installHeaderBtn.textContent = '📲 Installer';
+  installHeaderBtn.onmouseenter = () => { installHeaderBtn.style.borderColor = '#4f7cff'; installHeaderBtn.style.color = '#4f7cff'; };
+  installHeaderBtn.onmouseleave = () => { installHeaderBtn.style.borderColor = '#2e3248'; installHeaderBtn.style.color = '#94a3b8'; };
+  installHeaderBtn.onclick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+    } else {
+      banner.style.display = banner.style.display === 'block' ? 'none' : 'block';
+    }
+  };
+  // Insert before the first header button
+  const header = document.querySelector('header');
+  const firstBtn = header.querySelector('button');
+  if (firstBtn) header.insertBefore(installHeaderBtn, firstBtn);
+  else header.appendChild(installHeaderBtn);
+
+})();
+
+// ─── THEME SWITCH ────────────────────────────────────────────────────────────
+(function() {
+  const checkbox = document.getElementById('themeCheckbox');
+  if (!checkbox) return;
+
+  function applyTheme(isLight) {
+    // Classe sur html → active :root.light-mode (variables CSS)
+    // Classe sur body → active body.light-mode (règles de composants)
+    document.documentElement.classList.toggle('light-mode', isLight);
+    document.body.classList.toggle('light-mode', isLight);
+    checkbox.checked = isLight;
+    try { localStorage.setItem('planningpro_theme', isLight ? 'light' : 'dark'); } catch(e) {}
+  }
+
+  // Restore preference
+  try {
+    const saved = localStorage.getItem('planningpro_theme');
+    if (saved === 'light') applyTheme(true);
+  } catch(e) {}
+
+  // The 'change' event fires on the checkbox natively — nothing can intercept it
+  checkbox.addEventListener('change', () => {
+    applyTheme(checkbox.checked);
+    showToast(checkbox.checked ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
+  });
+})();
+</script>
+
+<!-- ── PIN PROTECTION ────────────────────────────────────────────────────── -->
+<div id="pinOverlay" style="
+  position:fixed;inset:0;z-index:99999;
+  background:linear-gradient(135deg,#0D1428 0%,#192244 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Outfit',sans-serif;
+">
+  <div style="
+    background:#121C3A;border:1px solid rgba(82,93,244,.35);
+    border-radius:20px;padding:40px 48px;width:340px;text-align:center;
+    box-shadow:0 32px 80px rgba(0,0,0,.6);
+  ">
+    <!-- Logo -->
+    <svg viewBox="0 0 160 32" style="height:28px;margin-bottom:24px;display:block;margin-left:auto;margin-right:auto">
+      <rect x="2" y="2" width="4" height="22" fill="#525DF4"/>
+      <rect x="2" y="22" width="14" height="4" fill="#525DF4"/>
+      <rect x="22" y="2" width="14" height="4" fill="#525DF4"/>
+      <rect x="22" y="22" width="14" height="4" fill="#525DF4"/>
+      <rect x="32" y="6" width="4" height="16" fill="#525DF4"/>
+      <text x="42" y="23" font-family="Outfit,sans-serif" font-weight="800" font-size="18" fill="#525DF4" letter-spacing="-0.5">LINKCITY</text>
+    </svg>
+
+    <div style="font-size:11px;font-weight:600;color:#24EDB8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Planning · PA3</div>
+    <div style="font-size:22px;font-weight:700;color:#F0F4FF;margin-bottom:6px;letter-spacing:-.5px">Accès sécurisé</div>
+    <div style="font-size:13px;color:#445078;margin-bottom:32px">Entrez votre code PIN pour continuer</div>
+
+    <!-- PIN dots display -->
+    <div id="pinDots" style="display:flex;justify-content:center;gap:12px;margin-bottom:28px">
+      <div class="pin-dot" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(82,93,244,.4);background:transparent;transition:all .15s"></div>
+      <div class="pin-dot" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(82,93,244,.4);background:transparent;transition:all .15s"></div>
+      <div class="pin-dot" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(82,93,244,.4);background:transparent;transition:all .15s"></div>
+    </div>
+
+    <!-- Numpad -->
+    <div id="pinPad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+    </div>
+
+    <!-- Error message -->
+    <div id="pinError" style="font-size:12px;color:#EF5072;min-height:18px;margin-top:4px;opacity:0;transition:opacity .2s"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Configuration ──────────────────────────────────────────────
+  const CORRECT_PIN = '123';
+  const SESSION_KEY = 'lc_pa3_auth';
+  const SESSION_HOURS = 8; // session valable 8h
+
+  // ── Vérif session existante ────────────────────────────────────
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+    if (saved && Date.now() < saved.exp) {
+      document.getElementById('pinOverlay').style.display = 'none';
+      return;
+    }
+  } catch(e) {}
+
+  // ── State ──────────────────────────────────────────────────────
+  let entered = '';
+  const PIN_LEN = CORRECT_PIN.length;
+  const overlay = document.getElementById('pinOverlay');
+  const dots    = document.querySelectorAll('.pin-dot');
+  const error   = document.getElementById('pinError');
+  const pad     = document.getElementById('pinPad');
+
+  // ── Build numpad ───────────────────────────────────────────────
+  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  keys.forEach(k => {
+    const btn = document.createElement('button');
+    btn.textContent = k || '';
+    btn.disabled = !k && k !== '0';
+    btn.style.cssText = `
+      height:54px;border-radius:10px;font-size:20px;font-weight:600;
+      font-family:'Outfit',sans-serif;cursor:${k ? 'pointer' : 'default'};
+      border:1px solid rgba(82,93,244,${k ? '.25' : '0'});
+      background:${k ? 'rgba(82,93,244,.1)' : 'transparent'};
+      color:${k ? '#F0F4FF' : 'transparent'};
+      transition:all .1s;outline:none;
+    `;
+    if (k) {
+      btn.onmouseenter = () => { btn.style.background='rgba(82,93,244,.22)'; btn.style.borderColor='rgba(82,93,244,.5)'; };
+      btn.onmouseleave = () => { btn.style.background='rgba(82,93,244,.1)'; btn.style.borderColor='rgba(82,93,244,.25)'; };
+      btn.onmousedown  = () => { btn.style.transform='scale(.94)'; };
+      btn.onmouseup    = () => { btn.style.transform='scale(1)'; };
+      btn.addEventListener('click', () => handleKey(k));
+    }
+    pad.appendChild(btn);
+  });
+
+  // ── Update dots display ────────────────────────────────────────
+  function updateDots() {
+    dots.forEach((d, i) => {
+      if (i < entered.length) {
+        d.style.background = '#525DF4';
+        d.style.borderColor = '#525DF4';
+        d.style.boxShadow = '0 0 8px rgba(82,93,244,.6)';
+      } else {
+        d.style.background = 'transparent';
+        d.style.borderColor = 'rgba(82,93,244,.4)';
+        d.style.boxShadow = 'none';
+      }
+    });
+  }
+
+  // ── Handle key press ──────────────────────────────────────────
+  function handleKey(k) {
+    error.style.opacity = '0';
+    if (k === '⌫') {
+      entered = entered.slice(0, -1);
+      updateDots();
+      return;
+    }
+    if (entered.length >= PIN_LEN) return;
+    entered += k;
+    updateDots();
+    if (entered.length === PIN_LEN) {
+      setTimeout(validate, 120);
+    }
+  }
+
+  // ── Validate PIN ───────────────────────────────────────────────
+  function validate() {
+    if (entered === CORRECT_PIN) {
+      // Success
+      try {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+          exp: Date.now() + SESSION_HOURS * 3600000
+        }));
+      } catch(e) {}
+      overlay.style.transition = 'opacity .4s';
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 420);
+    } else {
+      // Error — shake animation
+      error.textContent = 'Code incorrect — réessayez';
+      error.style.opacity = '1';
+      entered = '';
+      updateDots();
+      // Shake the card
+      const card = overlay.querySelector('div');
+      card.style.transition = 'transform .08s';
+      let shakes = 0;
+      const shake = setInterval(() => {
+        card.style.transform = shakes % 2 === 0 ? 'translateX(-8px)' : 'translateX(8px)';
+        if (++shakes > 5) { clearInterval(shake); card.style.transform = 'translateX(0)'; }
+      }, 80);
+    }
+  }
+
+  // ── Keyboard support ───────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (overlay.style.display === 'none') return;
+    if (e.key >= '0' && e.key <= '9') handleKey(e.key);
+    if (e.key === 'Backspace') handleKey('⌫');
+    if (e.key === 'Enter' && entered.length === PIN_LEN) validate();
+    e.preventDefault();
+  }, { capture: true });
+
+})();
+</script>
+
+</body>
+</html>
