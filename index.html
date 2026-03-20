@@ -10,37 +10,37 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PlanningPro">
-<meta name="theme-color" content="#0f1117">
+<meta name="theme-color" content="#F0F4FB">
 <meta name="description" content="Planning de conception immobilière — PA3">
 <link rel="manifest" id="pwaManifest">
 <link rel="apple-touch-icon" id="appleTouchIcon">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
   :root {
     /* ── Linkcity brand ── */
     --lc-electric: #525DF4;
     --lc-intense:  #202E5B;
-    --lc-mint:     #24EDB8;
+    --lc-mint:     #0FAE87;
     --lc-coral:    #FF8C77;
 
-    /* ── Dark UI palette built on brand ── */
-    --bg:       #0D1428;
-    --surface:  #121C3A;
-    --surface2: #192244;
-    --surface3: #1E2A52;
-    --border:   rgba(82,93,244,.16);
-    --border-hi: rgba(82,93,244,.35);
+    /* ── Light UI palette (default) ── */
+    --bg:       #EEF2F8;
+    --surface:  #FAFBFE;
+    --surface2: #E8EDF7;
+    --surface3: #DDE3F2;
+    --border:   rgba(82,93,244,.13);
+    --border-hi: rgba(82,93,244,.28);
 
     --accent:   #525DF4;
-    --green:    #24EDB8;
+    --green:    #0FAE87;
     --orange:   #FF8C77;
-    --red:      #EF5072;
-    --milestone: #24EDB8;
+    --red:      #D63558;
+    --milestone: #0FAE87;
 
-    --text:  #F0F4FF;
-    --text2: #8B9BC8;
-    --text3: #445078;
+    --text:  #1A2347;
+    --text2: #4A5578;
+    --text3: #8B9BC8;
 
     --row-h:    32px;
     --label-w:  510px;
@@ -52,7 +52,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     height: 100vh;
     display: flex;
@@ -62,11 +62,11 @@
 
 
   /* ══════════════════════════════════════════
-     HEADER — Linkcity total redesign
+     HEADER — Linkcity v8
   ══════════════════════════════════════════ */
   header {
-    background: linear-gradient(90deg, var(--lc-intense) 0%, #162048 60%, #0D1428 100%);
-    border-bottom: 1px solid var(--border-hi);
+    background: #202E5B;
+    border-bottom: 3px solid #24C5A8;
     padding: 0 28px;
     height: var(--header-h);
     display: flex;
@@ -83,7 +83,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(82,93,244,.12) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
     background-size: 24px 24px;
     pointer-events: none;
   }
@@ -94,7 +94,7 @@
     position: absolute;
     bottom: 0; left: 0;
     width: 6px; height: 100%;
-    background: linear-gradient(to bottom, var(--lc-electric), var(--lc-mint));
+    background: linear-gradient(to bottom, #24C5A8, #1ABFA0);
     z-index: 2;
   }
 
@@ -109,14 +109,12 @@
     flex-shrink: 0;
   }
 
-  /* Real Linkcity SVG logo */
+  /* Real Linkcity PNG logo */
   .lc-logo-svg {
-    height: 36px;
+    height: 30px;
     width: auto;
     flex-shrink: 0;
   }
-  /* Dark mode — logo stays electric blue on dark bg (already fine) */
-  /* Light mode — logo keeps electric blue (looks great on light bg too) */
 
   .logo-divider {
     width: 1px;
@@ -127,35 +125,78 @@
 
   .project-info {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
   }
   .project-label {
     font-size: 9px;
     font-weight: 600;
-    color: var(--lc-mint);
+    color: #24C5A8;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     font-family: 'JetBrains Mono', monospace;
   }
   .project-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -0.3px;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,.95);
+    letter-spacing: -0.2px;
     line-height: 1;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
   }
 
-  /* ── Stats ── */
-  .spacer { flex: 1; }
 
-  .header-stats {
+  .project-title[contenteditable] {
+    outline: none;
+    border-radius: 5px;
+    padding: 3px 8px;
+    transition: background .15s;
+    cursor: text;
+    min-width: 80px;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  .project-title[contenteditable]:hover { background: rgba(255,255,255,.1); }
+  .project-title[contenteditable]:focus { background: rgba(255,255,255,.15); box-shadow: 0 0 0 2px rgba(36,197,168,.5); }
+
+
+  /* ── Header tools (Aujourd'hui, Deadline, Lier) ── */
+  .header-tools {
     display: flex;
     gap: 4px;
     align-items: center;
     position: relative;
     z-index: 3;
   }
+  .tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.8);
+    border-radius: 8px;
+    padding: 5px 11px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .tool-btn:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff; }
+  .tool-btn.active { background: rgba(36,197,168,.2); border-color: #24C5A8; color: #24C5A8; }
+  .header-sep {
+    width: 1px; height: 24px;
+    background: rgba(255,255,255,.15);
+    margin: 0 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── Stats ── */
+  .spacer { flex: 1; }
+
+  .header-stats { display: none; }
 
   .stat {
     display: flex;
@@ -164,36 +205,36 @@
     gap: 2px;
     padding: 6px 14px;
     border-radius: 10px;
-    background: rgba(82,93,244,.1);
-    border: 1px solid rgba(82,93,244,.18);
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
     min-width: 72px;
     transition: background .15s;
   }
-  .stat:hover { background: rgba(82,93,244,.18); }
+  .stat:hover { background: rgba(255,255,255,.13); }
   .stat-val {
     font-size: 15px;
     font-weight: 700;
-    color: #fff;
+    color: #FFFFFF;
     font-family: 'JetBrains Mono', monospace;
     line-height: 1;
     letter-spacing: -0.5px;
   }
   .stat-label {
     font-size: 9px;
-    color: var(--text3);
+    color: rgba(255,255,255,.55);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
   }
 
   /* Highlight stat — avancement */
-  .stat.highlight { background: rgba(36,237,184,.08); border-color: rgba(36,237,184,.25); }
-  .stat.highlight .stat-val { color: var(--lc-mint); }
+  .stat.highlight { background: rgba(36,197,168,.15); border-color: rgba(36,197,168,.3); }
+  .stat.highlight .stat-val { color: #24C5A8; }
 
   /* ── Header action buttons ── */
   .header-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     position: relative;
     z-index: 3;
@@ -201,19 +242,19 @@
   }
 
   .btn-hdr {
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.12);
-    color: var(--text2);
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.75);
     border-radius: 8px;
     padding: 6px 12px;
     cursor: pointer;
     font-size: 11px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 500;
     transition: all .15s;
     white-space: nowrap;
   }
-  .btn-hdr:hover { border-color: var(--lc-mint); color: var(--lc-mint); background: rgba(36,237,184,.07); }
+  .btn-hdr:hover { border-color: #24C5A8; color: #24C5A8; background: rgba(36,197,168,.12); }
 
   .btn-add {
     background: var(--lc-electric);
@@ -223,7 +264,7 @@
     padding: 7px 16px;
     cursor: pointer;
     font-size: 12px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 600;
     transition: all .15s;
     white-space: nowrap;
@@ -237,7 +278,7 @@
     background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
     pointer-events: none;
   }
-  .btn-add:hover { background: #3D46C9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(82,93,244,.5); }
+  .btn-add:hover { background: #3D46C9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(82,93,244,.4); }
 
   /* Legacy selectors kept for JS compatibility */
   .today-line-toggle { display: none; }
@@ -255,12 +296,15 @@
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     padding: 0 24px;
-    height: 40px;
+    height: 44px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-shrink: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
+  .toolbar::-webkit-scrollbar { height: 0; }
   .zoom-btn {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -274,7 +318,7 @@
     align-items: center;
     justify-content: center;
     transition: all .15s;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
   }
   .zoom-btn:hover { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.1); }
   .zoom-label {
@@ -296,7 +340,7 @@
     color: var(--text3);
     font-style: italic;
     margin-left: 2px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
   }
   .sep { width: 1px; height: 16px; background: var(--border); margin: 0 6px; }
   .filter-btn {
@@ -307,7 +351,7 @@
     padding: 3px 10px;
     cursor: pointer;
     font-size: 11px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 500;
     transition: all .15s;
   }
@@ -319,20 +363,28 @@
     box-shadow: 0 2px 10px rgba(82,93,244,.3);
   }
   .search-input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
+    background: #EEF1F9;
+    border: 1px solid rgba(82,93,244,.15);
     color: var(--text);
     border-radius: 8px;
     padding: 5px 14px;
     font-size: 11px;
-    font-family: 'Outfit', sans-serif;
-    width: 190px;
+    font-family: 'DM Sans', sans-serif;
+    width: 170px;
     outline: none;
     margin-left: auto;
     transition: all .15s;
+    flex-shrink: 0;
   }
   .search-input:focus { border-color: var(--lc-electric); box-shadow: 0 0 0 3px rgba(82,93,244,.12); }
   .search-input::placeholder { color: var(--text3); }
+
+
+  /* ── Linked hover: task row + gantt row highlight together ── */
+  .task-row.row-hover { background: rgba(82,93,244,.1) !important; }
+  .gantt-row.row-hover { background: rgba(82,93,244,.08) !important; }
+  /* Continuous highlight bridge - the task panel row and chart row light up together */
+  .task-row.row-hover .task-name { color: var(--lc-electric) !important; }
 
   /* ── GANTT LAYOUT ── */
   .gantt-wrapper {
@@ -358,15 +410,15 @@
     display: flex;
     align-items: center;
     padding: 0 16px;
-    border-bottom: 1px solid var(--border-hi);
+    border-bottom: 1px solid rgba(82,93,244,.15);
     gap: 8px;
-    background: var(--lc-intense);
+    background: #EEF1F9;
     flex-shrink: 0;
   }
   .col-label {
     font-size: 9px;
     font-weight: 700;
-    color: var(--lc-mint);
+    color: #24C5A8;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     font-family: 'JetBrains Mono', monospace;
@@ -383,7 +435,7 @@
   }
   .task-list { flex: 1; overflow-y: auto; overflow-x: hidden; }
   .task-list::-webkit-scrollbar { width: 3px; }
-  .task-list::-webkit-scrollbar-thumb { background: rgba(82,93,244,.4); border-radius: 2px; }
+  .task-list::-webkit-scrollbar-thumb { background: rgba(82,93,244,.3); border-radius: 2px; }
 
   .task-row {
     height: var(--row-h);
@@ -396,15 +448,15 @@
     user-select: none;
     position: relative;
   }
-  .task-row:hover { background: rgba(82,93,244,.07); }
+  .task-row:hover { background: rgba(82,93,244,.04); }
   .task-row.selected {
-    background: rgba(82,93,244,.15);
+    background: rgba(82,93,244,.12);
     border-left: 3px solid var(--lc-electric);
     padding-left: 13px;
   }
   .task-row.hidden { display: none; }
-  .task-row.level-0 { background: rgba(82,93,244,.1); border-bottom: 1px solid rgba(82,93,244,.2); }
-  .task-row.level-1 { background: rgba(36,237,184,.04); border-bottom: 1px solid rgba(36,237,184,.08); }
+  .task-row.level-0 { background: rgba(82,93,244,.08); border-bottom: 1px solid rgba(82,93,244,.14); }
+  .task-row.level-1 { background: rgba(82,93,244,.03); border-bottom: 1px solid rgba(82,93,244,.07); }
 
   .task-expand {
     width: 14px;
@@ -429,8 +481,8 @@
     white-space: nowrap;
     font-size: 12px;
   }
-  .task-row.level-0 .task-name { font-weight: 700; color: #fff; font-size: 13px; letter-spacing: -.2px; }
-  .task-row.level-1 .task-name { font-weight: 600; color: var(--lc-mint); font-size: 12px; }
+  .task-row.level-0 .task-name { font-weight: 700; color: var(--lc-intense); font-size: 13px; letter-spacing: -.2px; }
+  .task-row.level-1 .task-name { font-weight: 600; color: var(--lc-electric); font-size: 12px; }
   .task-row.level-2 .task-name { font-weight: 400; color: var(--text2); }
   .task-row.level-3 .task-name { font-weight: 400; color: var(--text3); font-size: 11.5px; }
 
@@ -506,7 +558,7 @@
     padding: 5px 13px;
     cursor: pointer;
     font-size: 11px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 500;
     transition: all .15s;
   }
@@ -522,20 +574,20 @@
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 14px; padding: 28px; width: 540px; max-height: 82vh;
     display: flex; flex-direction: column; gap: 16px;
-    box-shadow: 0 24px 64px rgba(0,0,0,.7);
+    box-shadow: 0 24px 64px rgba(82,93,244,.15);
   }
   .save-modal-title { font-size: 16px; font-weight: 600; }
   .save-modal-actions { display: flex; gap: 8px; }
   .btn-new-save {
     background: var(--accent); border: none; color: #fff; border-radius: 6px;
-    padding: 8px 16px; cursor: pointer; font-size: 12px; font-family: 'Outfit', sans-serif;
+    padding: 8px 16px; cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif;
     font-weight: 500; transition: opacity .15s; flex: 1;
   }
   .btn-new-save:hover { opacity: .85; }
   .btn-import-file {
     background: transparent; border: 1px solid var(--border); color: var(--text2);
     border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 12px;
-    font-family: 'Outfit', sans-serif; transition: all .15s; flex: 1; text-align: center;
+    font-family: 'DM Sans', sans-serif; transition: all .15s; flex: 1; text-align: center;
   }
   .btn-import-file:hover { border-color: var(--accent); color: var(--accent); }
   .save-list {
@@ -556,14 +608,14 @@
   .save-item-btns { display: flex; gap: 5px; flex-shrink: 0; }
   .save-btn-load {
     background: var(--accent); border: none; color: #fff; border-radius: 5px;
-    padding: 5px 12px; cursor: pointer; font-size: 11px; font-family: 'Outfit', sans-serif;
+    padding: 5px 12px; cursor: pointer; font-size: 11px; font-family: 'DM Sans', sans-serif;
     font-weight: 500; transition: opacity .15s;
   }
   .save-btn-load:hover { opacity: .85; }
   .save-btn-export {
     background: transparent; border: 1px solid var(--border); color: var(--text2);
     border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 11px;
-    font-family: 'Outfit', sans-serif; transition: all .15s;
+    font-family: 'DM Sans', sans-serif; transition: all .15s;
   }
   .save-btn-export:hover { border-color: var(--green); color: var(--green); }
   .save-btn-del {
@@ -575,16 +627,16 @@
   .save-modal-close {
     background: transparent; border: 1px solid var(--border); color: var(--text2);
     border-radius: 6px; padding: 7px 16px; cursor: pointer; font-size: 12px;
-    font-family: 'Outfit', sans-serif; transition: all .15s; align-self: flex-end;
+    font-family: 'DM Sans', sans-serif; transition: all .15s; align-self: flex-end;
   }
   .save-modal-close:hover { border-color: var(--text); color: var(--text); }
   .save-name-row { display: flex; gap: 8px; }
   .save-name-input {
-    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    flex: 1; background: #EEF1F9; border: 1px solid rgba(82,93,244,.15);
     color: var(--text); border-radius: 6px; padding: 8px 12px; font-size: 13px;
-    font-family: 'Outfit', sans-serif; outline: none; transition: border-color .15s;
+    font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .15s;
   }
-  .save-name-input:focus { border-color: var(--accent); }
+  .save-name-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(82,93,244,.1); }
   .save-autosave-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text3); }
   .save-autosave-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
 
@@ -599,33 +651,41 @@
     height: 56px;
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid var(--border);
-    background: var(--lc-intense);
+    border-bottom: 1px solid rgba(82,93,244,.15);
+    background: #EEF1F9;
     flex-shrink: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  /* Inner scroll container — synced to chartBody via JS */
+  .chart-header-inner {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    min-width: 100%;
   }
   .months-row {
     height: 28px;
     display: flex;
-    border-bottom: 1px solid rgba(82,93,244,.2);
+    border-bottom: 1px solid rgba(82,93,244,.12);
     position: relative;
   }
   .month-cell {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-right: 1px solid rgba(82,93,244,.15);
+    border-right: 1px solid rgba(82,93,244,.1);
     font-size: 10px;
     font-weight: 700;
-    color: #fff;
+    color: var(--lc-intense);
     text-transform: uppercase;
     letter-spacing: 1px;
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
   }
-  .month-cell.current-month { background: rgba(82,93,244,.25); color: var(--lc-mint); }
+  .month-cell.current-month { background: rgba(82,93,244,.1); color: var(--lc-electric); }
   .weeks-row {
     height: 28px;
     display: flex;
@@ -635,14 +695,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-right: 1px solid rgba(82,93,244,.12);
+    border-right: 1px solid rgba(82,93,244,.07);
     font-size: 9px;
     color: var(--text3);
     font-family: 'JetBrains Mono', monospace;
     flex-shrink: 0;
     letter-spacing: .3px;
   }
-  .week-cell.current-week { background: rgba(82,93,244,.15); color: var(--lc-electric); font-weight: 700; }
+  .week-cell.current-week { background: rgba(82,93,244,.08); color: var(--lc-electric); font-weight: 700; }
 
   .chart-body {
     flex: 1;
@@ -654,28 +714,28 @@
 
   .gantt-canvas {
     position: relative;
-    background: var(--bg);
+    background: #F7F9FC;
   }
 
   .gantt-row {
     height: var(--row-h);
-    border-bottom: 1px solid rgba(82,93,244,.07);
+    border-bottom: 1px solid rgba(82,93,244,.06);
     position: relative;
   }
-  .gantt-row:hover { background: rgba(82,93,244,.05); }
+  /* gantt row hover handled by JS linked highlight */
   .gantt-row.hidden { display: none; }
   .gantt-row.level-0 {
-    background: linear-gradient(90deg, rgba(82,93,244,.12) 0%, rgba(32,46,91,.3) 300px, transparent 600px);
-    border-bottom: 1px solid rgba(82,93,244,.15);
+    background: linear-gradient(90deg, rgba(82,93,244,.07) 0%, rgba(82,93,244,.03) 300px, transparent 600px);
+    border-bottom: 1px solid rgba(82,93,244,.1);
   }
-  .gantt-row.level-1 { background: rgba(26,35,71,.25); }
+  .gantt-row.level-1 { background: rgba(82,93,244,.02); }
 
   /* Weekend columns */
   .weekend-col {
     position: absolute;
     top: 0;
     bottom: 0;
-    background: rgba(255,255,255,.012);
+    background: rgba(0,0,0,.025);
     pointer-events: none;
   }
 
@@ -685,7 +745,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: linear-gradient(to bottom, var(--red), transparent);
+    background: linear-gradient(to bottom, var(--red), rgba(214,53,88,.15));
     z-index: 5;
     pointer-events: none;
   }
@@ -730,12 +790,12 @@
   }
   /* Phase colors — Linkcity identitaires rotated */
   .gantt-bar.phase-0 { background: linear-gradient(90deg, #525DF4, #3D46C9); }
-  .gantt-bar.phase-1 { background: #24EDB8; }
-  .gantt-bar.phase-2 { background: #202E5B; border: 1px solid rgba(82,93,244,.4); }
-  .gantt-bar.phase-3 { background: #525DF4; }
-  .gantt-bar.phase-4 { background: #1ABFA0; }
-  .gantt-bar.phase-5 { background: #FF8C77; }
-  .gantt-bar.phase-6 { background: #3D46C9; }
+  .gantt-bar.phase-1 { background: linear-gradient(90deg, #0FAE87, #0D9276); }
+  .gantt-bar.phase-2 { background: linear-gradient(90deg, #8B5CF6, #7C3AED); }
+  .gantt-bar.phase-3 { background: linear-gradient(90deg, #F59E0B, #D97706); }
+  .gantt-bar.phase-4 { background: linear-gradient(90deg, #10B981, #059669); }
+  .gantt-bar.phase-5 { background: linear-gradient(90deg, #FF8C77, #EF6C50); }
+  .gantt-bar.phase-6 { background: linear-gradient(90deg, #3B82F6, #2563EB); }
 
   /* Progress fill */
   .gantt-bar-progress {
@@ -744,8 +804,7 @@
     top: 0;
     bottom: 0;
     border-radius: inherit;
-    opacity: 0.4;
-    background: rgba(255,255,255,.3);
+    background: rgba(255,255,255,.45);
     pointer-events: none;
   }
   .gantt-bar-label {
@@ -753,11 +812,14 @@
     left: 6px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 10px;
-    color: rgba(255,255,255,.8);
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255,255,255,.9);
     white-space: nowrap;
     overflow: hidden;
     pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .3px;
   }
 
   /* Milestone diamond */
@@ -770,19 +832,57 @@
     background: var(--lc-mint);
     cursor: pointer;
     transition: transform .15s;
-    box-shadow: 0 0 8px rgba(36,237,184,.5);
+    box-shadow: 0 0 8px rgba(15,174,135,.45);
     border-radius: 2px;
   }
   .gantt-milestone:hover {
     transform: translateY(-50%) rotate(45deg) scale(1.3);
-    box-shadow: 0 0 14px rgba(36,237,184,.7);
+    box-shadow: 0 0 14px rgba(15,174,135,.65);
   }
+
+  /* Contractual milestone icons */
+  .milestone-key-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    z-index: 4;
+  }
+  .milestone-key-icon:hover { transform: translateY(-50%) rotate(45deg) scale(1.35); }
+  .milestone-key-icon.type-pc       { background: #525DF4; box-shadow: 0 0 10px rgba(82,93,244,.5); }
+  .milestone-key-icon.type-pc-purge { background: #3D46C9; box-shadow: 0 0 10px rgba(61,70,201,.5); }
+  .milestone-key-icon.type-acte     { background: #F59E0B; box-shadow: 0 0 10px rgba(245,158,11,.5); }
+  .milestone-key-icon.type-gfa      { background: #8B5CF6; box-shadow: 0 0 10px rgba(139,92,246,.5); }
+  .milestone-key-icon.type-vefa     { background: #10B981; box-shadow: 0 0 10px rgba(16,185,129,.5); }
+  .milestone-key-icon.type-livraison{ background: #EF4444; box-shadow: 0 0 10px rgba(239,68,68,.5); }
+  .milestone-key-icon.type-engagement{ background: #F97316; box-shadow: 0 0 10px rgba(249,115,22,.5); }
+
+  .milestone-key-label {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    font-weight: 700;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .3px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .gantt-milestone:hover + .milestone-key-label,
+  .milestone-key-icon:hover .milestone-key-label { opacity: 1; }
 
   /* Tooltip */
   .tooltip {
     position: fixed;
-    background: var(--lc-intense);
-    border: 1px solid rgba(82,93,244,.4);
+    background: #FFFFFF;
+    border: 1px solid rgba(82,93,244,.2);
     border-radius: 10px;
     padding: 10px 14px;
     font-size: 12px;
@@ -792,19 +892,19 @@
     opacity: 0;
     transition: opacity .1s;
     max-width: 280px;
-    box-shadow: 0 8px 32px rgba(20,27,53,.6);
-    font-family: 'Outfit', sans-serif;
+    box-shadow: 0 8px 32px rgba(82,93,244,.12);
+    font-family: 'DM Sans', sans-serif;
   }
   .tooltip.visible { opacity: 1; }
-  .tooltip-name { font-weight: 700; margin-bottom: 6px; font-size: 13px; color: #fff; }
+  .tooltip-name { font-weight: 700; margin-bottom: 6px; font-size: 13px; color: var(--lc-intense); }
   .tooltip-row { display: flex; justify-content: space-between; gap: 12px; color: var(--text2); font-size: 11px; margin-top: 2px; }
-  .tooltip-val { color: var(--lc-mint); font-family: 'JetBrains Mono', monospace; }
+  .tooltip-val { color: var(--lc-electric); font-family: 'JetBrains Mono', monospace; }
 
   /* Modal */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(20,27,53,.75);
+    background: rgba(26,35,71,.45);
     backdrop-filter: blur(4px);
     z-index: 200;
     display: none;
@@ -813,29 +913,29 @@
   }
   .modal-overlay.open { display: flex; }
   .modal {
-    background: var(--surface);
-    border: 1px solid rgba(82,93,244,.35);
+    background: #FFFFFF;
+    border: 1px solid rgba(82,93,244,.2);
     border-radius: 16px;
     padding: 28px;
     width: 480px;
-    box-shadow: 0 32px 80px rgba(20,27,53,.8), 0 0 0 1px rgba(82,93,244,.1);
+    box-shadow: 0 32px 80px rgba(82,93,244,.15), 0 0 0 1px rgba(82,93,244,.06);
   }
-  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #fff; letter-spacing: -.3px; }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--lc-intense); letter-spacing: -.3px; }
   .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 10px; font-weight: 700; color: var(--lc-mint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+  .form-label { font-size: 10px; font-weight: 700; color: var(--lc-electric); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
   .form-input, .form-select {
     width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
+    background: #EEF1F9;
+    border: 1px solid rgba(82,93,244,.15);
     color: var(--text);
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 13px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     outline: none;
     transition: border-color .15s;
   }
-  .form-input:focus, .form-select:focus { border-color: var(--lc-electric); box-shadow: 0 0 0 3px rgba(82,93,244,.15); }
+  .form-input:focus, .form-select:focus { border-color: var(--lc-electric); box-shadow: 0 0 0 3px rgba(82,93,244,.12); }
   .form-row { display: flex; gap: 10px; }
   .form-row .form-group { flex: 1; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
@@ -847,7 +947,7 @@
     padding: 7px 16px;
     cursor: pointer;
     font-size: 13px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     transition: all .15s;
   }
   .btn-cancel:hover { border-color: var(--text2); color: var(--text); }
@@ -859,7 +959,7 @@
     padding: 7px 22px;
     cursor: pointer;
     font-size: 13px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 600;
     transition: all .15s;
   }
@@ -868,12 +968,12 @@
   /* Context menu */
   .ctx-menu {
     position: fixed;
-    background: var(--lc-intense);
-    border: 1px solid rgba(82,93,244,.35);
+    background: #FFFFFF;
+    border: 1px solid rgba(82,93,244,.15);
     border-radius: 10px;
     padding: 6px;
     z-index: 500;
-    box-shadow: 0 12px 40px rgba(20,27,53,.7);
+    box-shadow: 0 12px 40px rgba(82,93,244,.15);
     min-width: 170px;
     display: none;
   }
@@ -885,12 +985,12 @@
     border-radius: 6px;
     color: var(--text2);
     transition: all .1s;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 500;
   }
-  .ctx-item:hover { background: rgba(82,93,244,.2); color: #fff; }
-  .ctx-item.danger:hover { background: rgba(240,107,122,.12); color: var(--red); }
-  .ctx-sep { height: 1px; background: rgba(82,93,244,.2); margin: 4px 0; }
+  .ctx-item:hover { background: rgba(82,93,244,.08); color: var(--lc-intense); }
+  .ctx-item.danger:hover { background: rgba(214,53,88,.07); color: #D63558; }
+  .ctx-sep { height: 1px; background: rgba(82,93,244,.1); margin: 4px 0; }
 
   /* Drag & drop */
   .gantt-bar.dragging {
@@ -911,7 +1011,7 @@
     background: var(--lc-electric);
     color: #fff;
     font-size: 11px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 600;
     padding: 4px 12px;
     white-space: nowrap;
@@ -933,7 +1033,7 @@
     padding: 3px 11px;
     cursor: pointer;
     font-size: 11px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 500;
     transition: all .15s;
     display: flex;
@@ -942,11 +1042,42 @@
     letter-spacing: .3px;
   }
   .btn-link:hover, .btn-link.active {
-    border-color: var(--lc-mint);
-    color: var(--lc-mint);
-    background: rgba(36,237,184,.08);
+    border-color: var(--lc-electric);
+    color: var(--lc-electric);
+    background: rgba(82,93,244,.08);
   }
-  .btn-link.active { background: rgba(36,237,184,.15); }
+  .btn-link.active { background: rgba(82,93,244,.12); }
+
+  /* ── Milestone legend ── */
+  .milestone-legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .ml-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--text3);
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    letter-spacing: .2px;
+  }
+  .ml-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    display: inline-block;
+  }
+  .ml-dot.type-pc        { background: #525DF4; }
+  .ml-dot.type-pc-purge  { background: #3D46C9; }
+  .ml-dot.type-acte      { background: #F59E0B; }
+  .ml-dot.type-gfa       { background: #8B5CF6; }
+  .ml-dot.type-engagement{ background: #F97316; }
 
   /* SVG arrows overlay */
   #linkSvg {
@@ -1028,7 +1159,7 @@
     padding: 5px 14px;
     cursor: pointer;
     font-size: 11px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 500;
     transition: all .15s;
     display: flex;
@@ -1212,12 +1343,12 @@
   /* ── COLOR PICKER POPUP (right-click shortcut) ── */
   .color-popup {
     position: fixed;
-    background: var(--surface2);
-    border: 1px solid var(--border);
+    background: #FFFFFF;
+    border: 1px solid rgba(82,93,244,.15);
     border-radius: 12px;
     padding: 14px;
     z-index: 600;
-    box-shadow: 0 12px 40px rgba(0,0,0,.6);
+    box-shadow: 0 12px 40px rgba(82,93,244,.15);
     display: none;
     width: 220px;
   }
@@ -1255,7 +1386,7 @@
     padding: 5px 8px;
     font-size: 11px;
     cursor: pointer;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     transition: all .15s;
     text-align: center;
   }
@@ -1275,17 +1406,17 @@
     z-index: 3;
     padding: 4px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(82,93,244,.2);
+    background: rgba(82,93,244,.07);
     transition: border-color .15s, background .15s;
     user-select: none;
   }
-  .theme-switch:hover { border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.1); }
+  .theme-switch:hover { border-color: rgba(82,93,244,.35); background: rgba(82,93,244,.12); }
   .theme-switch-icon { font-size: 12px; line-height: 1; }
   .theme-switch-track {
     width: 36px;
     height: 20px;
-    background: rgba(82,93,244,.4);
+    background: rgba(82,93,244,.25);
     border-radius: 10px;
     position: relative;
     display: inline-block;
@@ -1297,334 +1428,171 @@
     top: 3px; left: 3px;
     width: 14px; height: 14px;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 4px rgba(0,0,0,.35);
+    background: var(--lc-electric);
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
     transition: transform .25s cubic-bezier(.34,1.56,.64,1);
     display: block;
   }
-  /* Checked state (light mode) — thumb slides right, track turns electric */
+  /* Default (light): thumb at left. Checked (dark): thumb slides right */
   #themeCheckbox:checked ~ * .theme-switch-thumb,
   .theme-switch:has(#themeCheckbox:checked) .theme-switch-thumb { transform: translateX(16px); }
-  .theme-switch:has(#themeCheckbox:checked) .theme-switch-track { background: var(--lc-electric); }
-  .theme-switch:has(#themeCheckbox:checked) { border-color: rgba(82,93,244,.3); background: rgba(82,93,244,.1); }
+  .theme-switch:has(#themeCheckbox:checked) .theme-switch-track { background: #202E5B; }
+  .theme-switch:has(#themeCheckbox:checked) { border-color: rgba(82,93,244,.3); background: rgba(20,27,53,.15); }
 
-  /* Fallback for browsers without :has() — driven by body.light-mode class set by JS */
-  body.light-mode .theme-switch-thumb { transform: translateX(16px); }
-  body.light-mode .theme-switch-track { background: var(--lc-electric); }
-  body.light-mode .theme-switch { border-color: rgba(82,93,244,.25); background: rgba(82,93,244,.07); }
-  body.light-mode .theme-switch:hover { border-color: rgba(82,93,244,.4); }
+  /* JS fallback for dark mode */
+  body.dark-mode .theme-switch-thumb { transform: translateX(16px); }
+  body.dark-mode .theme-switch-track { background: #202E5B; }
+  body.dark-mode .theme-switch { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
 
   /* ══════════════════════════════════════════
-     LIGHT MODE — token overrides on :root
-     Activated by adding .light-mode to <body>
+     DARK MODE — token overrides
+     Activated by adding .dark-mode to <body>
   ══════════════════════════════════════════ */
-  /* Variables light-mode sur :root.light-mode pour surclasser :root correctement */
-  :root.light-mode {
-    --bg:        #E8EDF7;
-    --surface:   #F2F5FC;
-    --surface2:  #E0E6F4;
-    --surface3:  #D4DCF0;
-    --border:    rgba(82,93,244,.14);
-    --border-hi: rgba(82,93,244,.28);
-    --text:      #1A2347;
-    --text2:     #4A5578;
-    --text3:     #8B96BE;
-    --accent:    #525DF4;
-    --green:     #0B9E7A;
-    --red:       #C8304A;
-    --milestone: #0B9E7A;
-  }
-  /* Alias pour compatibilité body.light-mode (JS toggle) */
-  body.light-mode {
-    --bg:        #E8EDF7;
-    --surface:   #F2F5FC;
-    --surface2:  #E0E6F4;
-    --surface3:  #D4DCF0;
-    --border:    rgba(82,93,244,.14);
-    --border-hi: rgba(82,93,244,.28);
-    --text:      #1A2347;
-    --text2:     #4A5578;
-    --text3:     #8B96BE;
-    --accent:    #525DF4;
-    --green:     #0B9E7A;
-    --red:       #C8304A;
-    --milestone: #0B9E7A;
+  :root.dark-mode, body.dark-mode {
+    --bg:       #0D1428;
+    --surface:  #121C3A;
+    --surface2: #192244;
+    --surface3: #1E2A52;
+    --border:   rgba(82,93,244,.16);
+    --border-hi: rgba(82,93,244,.35);
+    --text:  #F0F4FF;
+    --text2: #8B9BC8;
+    --text3: #445078;
+    --green:    #24EDB8;
+    --red:      #EF5072;
+    --milestone: #24EDB8;
   }
 
-  /* ── Header light mode ── */
-  body.light-mode header {
-    background: linear-gradient(90deg, #E8ECFA 0%, #EEF1FB 60%, #F4F6FB 100%);
-    border-bottom: 1px solid rgba(82,93,244,.2);
+  /* ── Header dark mode ── */
+  body.dark-mode header {
+    background: linear-gradient(90deg, #202E5B 0%, #162048 60%, #0D1428 100%);
+    border-bottom: 1px solid rgba(82,93,244,.35);
   }
-  body.light-mode header::after {
-    background-image: radial-gradient(circle, rgba(82,93,244,.06) 1px, transparent 1px);
+  body.dark-mode header::after {
+    background-image: radial-gradient(circle, rgba(82,93,244,.12) 1px, transparent 1px);
   }
-  body.light-mode .logo-divider {
-    background: linear-gradient(to bottom, transparent, rgba(82,93,244,.2), transparent);
-  }
-  body.light-mode .project-label { color: var(--lc-electric); }
-  body.light-mode .project-title { color: #1A2347; }
-  body.light-mode .stat {
-    background: rgba(82,93,244,.07);
-    border-color: rgba(82,93,244,.15);
-  }
-  body.light-mode .stat:hover { background: rgba(82,93,244,.12); }
-  body.light-mode .stat-val { color: #1A2347; }
-  body.light-mode .stat-label { color: #8B9BC8; }
-  body.light-mode .stat.highlight { background: rgba(15,174,135,.08); border-color: rgba(15,174,135,.2); }
-  body.light-mode .stat.highlight .stat-val { color: #0FAE87; }
-  body.light-mode .btn-hdr {
-    background: rgba(82,93,244,.07);
-    border-color: rgba(82,93,244,.18);
-    color: #4A5B8A;
-  }
-  body.light-mode .btn-hdr:hover { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.12); }
+  body.dark-mode .project-label { color: #24EDB8; }
+  body.dark-mode .project-title { color: #fff; }
+  body.dark-mode .logo-divider { background: linear-gradient(to bottom, transparent, rgba(255,255,255,.25), transparent); }
+  body.dark-mode .stat { background: rgba(82,93,244,.1); border-color: rgba(82,93,244,.18); }
+  body.dark-mode .stat:hover { background: rgba(82,93,244,.18); }
+  body.dark-mode .stat-val { color: #fff; }
+  body.dark-mode .btn-hdr { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: #8B9BC8; }
+  body.dark-mode .btn-hdr:hover { border-color: #24EDB8; color: #24EDB8; background: rgba(36,237,184,.07); }
 
-  /* ── Logo light mode — keep blue, invert text ── */
-  body.light-mode .lc-logo-text { fill: var(--lc-intense) !important; }
+  /* ── Toolbar dark mode ── */
+  body.dark-mode .toolbar { background: #121C3A; border-bottom-color: rgba(82,93,244,.16); }
+  body.dark-mode .zoom-btn { background: #192244; border-color: rgba(82,93,244,.16); color: #8B9BC8; }
+  body.dark-mode .filter-btn { border-color: rgba(82,93,244,.2); color: #445078; }
+  body.dark-mode .filter-btn:hover { border-color: rgba(82,93,244,.5); color: #8B9BC8; }
+  body.dark-mode .filter-btn.active { background: #525DF4; border-color: #525DF4; color: #fff; }
+  body.dark-mode .search-input { background: #192244; border-color: rgba(82,93,244,.2); color: #F0F4FF; }
+  body.dark-mode .ml-item { color: #445078; }
 
-  /* ── Toolbar light mode ── */
-  body.light-mode .toolbar {
-    background: #FFFFFF;
-    border-bottom: 1px solid rgba(82,93,244,.12);
-  }
-  body.light-mode .zoom-btn {
-    background: #EEF1F9;
-    border-color: rgba(82,93,244,.15);
-    color: #4A5B8A;
-  }
-  body.light-mode .zoom-btn:hover { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.08); }
-  body.light-mode .zoom-label { color: #8B9BC8; }
-  body.light-mode .zoom-hint { color: #B0BEDB; }
-  body.light-mode .sep { background: rgba(82,93,244,.12); }
-  body.light-mode .filter-btn { border-color: rgba(82,93,244,.15); color: #8B9BC8; }
-  body.light-mode .filter-btn:hover { border-color: rgba(82,93,244,.4); color: #4A5B8A; }
-  body.light-mode .filter-btn.active { border-color: var(--lc-electric); color: #fff; background: var(--lc-electric); }
-  body.light-mode .search-input { background: #EEF1F9; border-color: rgba(82,93,244,.15); color: #1A2347; }
-  body.light-mode .btn-link { border-color: rgba(82,93,244,.15); color: #4A5B8A; }
-  body.light-mode .btn-link:hover, body.light-mode .btn-link.active { border-color: var(--lc-electric); color: var(--lc-electric); background: rgba(82,93,244,.08); }
+  /* ── Task panel dark mode ── */
+  body.dark-mode .task-panel { background: #121C3A; border-right-color: rgba(82,93,244,.35); }
+  body.dark-mode .task-panel-header { background: #202E5B; border-bottom-color: rgba(82,93,244,.35); }
+  body.dark-mode .col-label { color: #24EDB8; }
+  body.dark-mode .task-row { border-bottom-color: rgba(82,93,244,.07); }
+  body.dark-mode .task-row:hover { background: rgba(82,93,244,.07); }
+  body.dark-mode .task-row.level-0 { background: rgba(82,93,244,.1); border-bottom-color: rgba(82,93,244,.2); }
+  body.dark-mode .task-row.level-1 { background: rgba(36,237,184,.04); border-bottom-color: rgba(36,237,184,.08); }
+  body.dark-mode .task-row.level-0 .task-name { color: #fff; }
+  body.dark-mode .task-row.level-1 .task-name { color: #24EDB8; }
+  body.dark-mode .task-row.level-2 .task-name { color: #8B9BC8; }
+  body.dark-mode .task-row.level-3 .task-name { color: #445078; }
 
-  /* ── Task panel light mode ── */
-  body.light-mode .task-panel { background: #FFFFFF; border-right-color: rgba(82,93,244,.15); }
-  body.light-mode .task-panel-header { background: #EEF1F9; border-bottom-color: rgba(82,93,244,.15); }
-  body.light-mode .col-label { color: var(--lc-electric); }
-  body.light-mode .col-dates { color: #B0BEDB; }
-  body.light-mode .task-row { border-bottom-color: rgba(82,93,244,.06); }
-  body.light-mode .task-row:hover { background: rgba(82,93,244,.05); }
-  body.light-mode .task-row.selected { background: rgba(82,93,244,.1); border-left-color: var(--lc-electric); }
-  body.light-mode .task-row.level-0 { background: rgba(82,93,244,.06); border-bottom-color: rgba(82,93,244,.12); }
-  body.light-mode .task-row.level-1 { background: rgba(82,93,244,.03); border-bottom-color: rgba(82,93,244,.06); }
-  body.light-mode .task-row.level-0 .task-name { color: var(--lc-intense); }
-  body.light-mode .task-row.level-1 .task-name { color: var(--lc-electric); }
-  body.light-mode .task-row.level-2 .task-name { color: #4A5B8A; }
-  body.light-mode .task-row.level-3 .task-name { color: #8B9BC8; }
-  body.light-mode .task-expand { color: #B0BEDB; }
-  body.light-mode .task-pct { color: #B0BEDB; }
-  body.light-mode .task-pct.done { color: #0FAE87; }
-  body.light-mode .task-date { color: #B0BEDB; }
-  body.light-mode .task-date.dur.milestone-dur { color: #0FAE87; }
-  body.light-mode .milestone-icon { color: #0FAE87; }
+  /* ── Gantt dark mode ── */
+  body.dark-mode .gantt-canvas { background: #0D1428; }
+  body.dark-mode .gantt-row { border-bottom-color: rgba(82,93,244,.07); }
+  body.dark-mode .gantt-row.level-0 { background: linear-gradient(90deg, rgba(82,93,244,.12) 0%, rgba(32,46,91,.3) 300px, transparent 600px); }
+  body.dark-mode .gantt-row.level-1 { background: rgba(26,35,71,.25); }
+  body.dark-mode .chart-header { background: #202E5B; }
+  body.dark-mode .month-cell { color: #fff; }
+  body.dark-mode .week-cell { color: #445078; }
+  body.dark-mode .tooltip { background: #1E2A52; border-color: rgba(82,93,244,.4); box-shadow: 0 8px 32px rgba(0,0,0,.6); }
+  body.dark-mode .tooltip-name { color: #fff; }
+  body.dark-mode .tooltip-val { color: #24EDB8; }
+  body.dark-mode .modal { background: #121C3A; border-color: rgba(82,93,244,.35); }
+  body.dark-mode .modal-title { color: #fff; }
+  body.dark-mode .form-label { color: #24EDB8; }
+  body.dark-mode .form-input, body.dark-mode .form-select { background: #192244; border-color: rgba(82,93,244,.2); color: #F0F4FF; }
+  body.dark-mode .save-modal { background: #121C3A; border-color: rgba(82,93,244,.3); }
+  body.dark-mode .save-modal-title { color: #fff; }
+  body.dark-mode .save-name-input { background: #192244; border-color: rgba(82,93,244,.2); color: #F0F4FF; }
+  body.dark-mode .save-item { background: #192244; border-color: rgba(82,93,244,.12); }
+  body.dark-mode .save-item-name { color: #F0F4FF; }
+  body.dark-mode .gantt-milestone { background: #24EDB8; box-shadow: 0 0 8px rgba(36,237,184,.5); }
+  body.dark-mode .color-popup { background: #192244; border-color: rgba(82,93,244,.2); }
+  body.dark-mode .ctx-menu { background: #192244; border-color: rgba(82,93,244,.2); }
+  body.dark-mode .ctx-item { color: #8B9BC8; }
 
-  /* ── Gantt canvas light mode ── */
-  body.light-mode .gantt-canvas { background: #F4F6FB; }
-  body.light-mode .gantt-row { border-bottom-color: rgba(82,93,244,.05); }
-  body.light-mode .gantt-row:hover { background: rgba(82,93,244,.04); }
-  body.light-mode .gantt-row.level-0 {
-    background: linear-gradient(90deg, rgba(82,93,244,.08) 0%, rgba(82,93,244,.04) 300px, transparent 600px);
-    border-bottom-color: rgba(82,93,244,.1);
-  }
-  body.light-mode .gantt-row.level-1 { background: rgba(82,93,244,.02); }
-  body.light-mode .weekend-col { background: rgba(0,0,0,.025); }
-  body.light-mode .today-line { background: linear-gradient(to bottom, #D63558, transparent); }
-  body.light-mode .today-label { color: #D63558; }
+  /* theme switch in dark mode */
 
-  /* ── Chart header light mode ── */
-  body.light-mode .chart-header { background: #EEF1F9; border-bottom-color: rgba(82,93,244,.15); }
-  body.light-mode .months-row { border-bottom-color: rgba(82,93,244,.12); }
-  body.light-mode .month-cell { color: var(--lc-intense); border-right-color: rgba(82,93,244,.1); }
-  body.light-mode .month-cell.current-month { background: rgba(82,93,244,.1); color: var(--lc-electric); }
-  body.light-mode .week-cell { color: #B0BEDB; border-right-color: rgba(82,93,244,.06); }
-  body.light-mode .week-cell.current-week { background: rgba(82,93,244,.08); color: var(--lc-electric); }
-  body.light-mode .chart-body::-webkit-scrollbar-thumb { background: rgba(82,93,244,.3); }
-
-  /* ── Gantt bars — slightly adjusted for light bg ── */
-  body.light-mode .gantt-bar:hover { box-shadow: 0 2px 14px rgba(82,93,244,.25); }
-  body.light-mode .gantt-milestone { box-shadow: 0 0 8px rgba(15,174,135,.35); background: #0FAE87; }
-  body.light-mode .gantt-milestone:hover { box-shadow: 0 0 14px rgba(15,174,135,.5); }
-
-  /* ── Tooltips light mode ── */
-  body.light-mode .tooltip {
-    background: #FFFFFF;
-    border-color: rgba(82,93,244,.2);
-    box-shadow: 0 8px 32px rgba(82,93,244,.12);
-    color: #1A2347;
-  }
-  body.light-mode .tooltip-name { color: var(--lc-intense); }
-  body.light-mode .tooltip-val { color: var(--lc-electric); }
-  body.light-mode .tooltip-row { color: #8B9BC8; }
-
-  /* ── Context menu light mode ── */
-  body.light-mode .ctx-menu {
-    background: #FFFFFF;
-    border-color: rgba(82,93,244,.15);
-    box-shadow: 0 8px 24px rgba(82,93,244,.15);
-  }
-  body.light-mode .ctx-item { color: #4A5B8A; }
-  body.light-mode .ctx-item:hover { background: rgba(82,93,244,.07); color: #1A2347; }
-  body.light-mode .ctx-item.danger:hover { background: rgba(214,53,88,.07); color: #D63558; }
-  body.light-mode .ctx-sep { background: rgba(82,93,244,.1); }
-
-  /* ── Modals light mode ── */
-  body.light-mode .modal-overlay { background: rgba(26,35,71,.4); }
-  body.light-mode .modal {
-    background: #FFFFFF;
-    border-color: rgba(82,93,244,.2);
-    box-shadow: 0 32px 80px rgba(82,93,244,.15);
-  }
-  body.light-mode .modal-title { color: var(--lc-intense); }
-  body.light-mode .form-input, body.light-mode .form-select {
-    background: #EEF1F9;
-    border-color: rgba(82,93,244,.15);
-    color: #1A2347;
-  }
-  body.light-mode .form-input:focus, body.light-mode .form-select:focus {
-    border-color: var(--lc-electric);
-    box-shadow: 0 0 0 3px rgba(82,93,244,.1);
-  }
-  body.light-mode .btn-cancel { border-color: rgba(82,93,244,.2); color: #4A5B8A; }
-  body.light-mode .btn-cancel:hover { border-color: #4A5B8A; color: var(--lc-intense); }
-
-  /* ── Save modal light mode ── */
-  body.light-mode .save-modal-overlay { background: rgba(26,35,71,.4); }
-  body.light-mode .save-modal {
-    background: #FFFFFF;
-    border-color: rgba(82,93,244,.2);
-    box-shadow: 0 24px 64px rgba(82,93,244,.15);
-  }
-  body.light-mode .save-modal-title { color: var(--lc-intense); }
-  body.light-mode .save-name-input {
-    background: #EEF1F9;
-    border-color: rgba(82,93,244,.15);
-    color: #1A2347;
-  }
-  body.light-mode .save-item {
-    background: #EEF1F9;
-    border-color: rgba(82,93,244,.12);
-  }
-  body.light-mode .save-item:hover { border-color: rgba(82,93,244,.3); }
-  body.light-mode .save-item-name { color: var(--lc-intense); }
-  body.light-mode .save-item-meta { color: #8B9BC8; }
-  body.light-mode .save-empty { color: #8B9BC8; }
-  body.light-mode .save-modal-close { border-color: rgba(82,93,244,.15); color: #4A5B8A; }
-  body.light-mode .save-autosave-row { color: #8B9BC8; }
-  body.light-mode .btn-import-file { border-color: rgba(82,93,244,.2); color: #4A5B8A; }
-  body.light-mode .btn-import-file:hover { border-color: var(--lc-electric); color: var(--lc-electric); }
-
-  /* ── Color picker popup light mode ── */
-  body.light-mode .color-popup {
-    background: #FFFFFF;
-    border-color: rgba(82,93,244,.15);
-    box-shadow: 0 12px 40px rgba(82,93,244,.15);
-  }
-  body.light-mode .color-popup-title { color: #8B9BC8; }
-  body.light-mode .color-popup-btn { background: #EEF1F9; border-color: rgba(82,93,244,.15); color: #4A5B8A; }
-
-  /* ── Snap indicator ── */
-  body.light-mode .snap-indicator { background: rgba(82,93,244,.4); }
-
-  /* ── Deadline line ── */
-  body.light-mode .deadline-line { background: linear-gradient(to bottom, #D63558, rgba(214,53,88,.15)); }
-  body.light-mode .deadline-label { color: #D63558; }
-
-  /* ── Drag ghost ── */
-  body.light-mode .drag-ghost { background: var(--lc-electric); }
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header>
-  <!-- Logo zone -->
   <div class="logo-zone">
-    <!-- Logo Linkcity — reconstruit depuis screenshot officiel -->
-    <svg class="lc-logo-svg" viewBox="0 0 188 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!--
-        Le monogramme est un carré où :
-        - Le contour forme un grand C (ouvert à droite)
-        - À l'intérieur un L + un C imbriqués
-        Structure lue depuis l'image : épaisseur des traits ~20% de la largeur totale
-      -->
-
-      <!-- Grand L extérieur : vertical left + horizontal bottom -->
-      <rect x="0"   y="0"   width="7.5" height="40"  rx="1.2" fill="#525DF4"/>
-      <rect x="0"   y="32.5" width="27"  height="7.5" rx="1.2" fill="#525DF4"/>
-
-      <!-- Grand C extérieur : top bar + right-top cap + right-bottom cap -->
-      <rect x="0"   y="0"   width="27"  height="7.5" rx="1.2" fill="#525DF4"/>
-      <rect x="19.5" y="0"   width="7.5" height="13"  rx="1.2" fill="#525DF4"/>
-      <rect x="19.5" y="27"  width="7.5" height="13"  rx="1.2" fill="#525DF4"/>
-
-      <!-- Inner L : smaller, offset inside -->
-      <rect x="10"  y="10"  width="6"   height="20"  rx="1"   fill="#525DF4"/>
-      <rect x="10"  y="24"  width="17"  height="6"   rx="1"   fill="#525DF4"/>
-
-      <!-- Inner C : top bar + right-top cap + right-bottom cap -->
-      <rect x="10"  y="10"  width="17"  height="6"   rx="1"   fill="#525DF4"/>
-      <rect x="21"  y="10"  width="6"   height="9"   rx="1"   fill="#525DF4"/>
-      <rect x="21"  y="21"  width="6"   height="9"   rx="1"   fill="#525DF4"/>
-
-      <!-- Wordmark LINKCITY — même bleu électrique -->
-      <text x="38" y="29" font-family="Outfit, sans-serif" font-weight="800" font-size="22"
-            fill="#525DF4" letter-spacing="0.5" class="lc-logo-text">LINKCITY</text>
-    </svg>
-
+    <svg class="lc-logo-svg" viewBox="0 0 180 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- LC monogram: outer bracket C shape + inner L + inner C -->
+  <!-- Outer vertical bar (left) -->
+  <rect x="0" y="0" width="7" height="38" rx="1.5" fill="white"/>
+  <!-- Outer top bar -->
+  <rect x="0" y="0" width="26" height="7" rx="1.5" fill="white"/>
+  <!-- Outer bottom bar -->
+  <rect x="0" y="31" width="26" height="7" rx="1.5" fill="white"/>
+  <!-- Outer top-right cap -->
+  <rect x="19" y="0" width="7" height="13" rx="1.5" fill="white"/>
+  <!-- Outer bottom-right cap -->
+  <rect x="19" y="25" width="7" height="13" rx="1.5" fill="white"/>
+  <!-- Inner top bar -->
+  <rect x="10" y="10" width="16" height="5.5" rx="1" fill="white"/>
+  <!-- Inner bottom bar -->
+  <rect x="10" y="22.5" width="16" height="5.5" rx="1" fill="white"/>
+  <!-- Inner left vertical (L) -->
+  <rect x="10" y="10" width="5.5" height="18" rx="1" fill="white"/>
+  <!-- Inner top-right cap (C) -->
+  <rect x="21" y="10" width="5" height="8" rx="1" fill="white"/>
+  <!-- Inner bottom-right cap (C) -->
+  <rect x="21" y="20" width="5" height="8" rx="1" fill="white"/>
+  <!-- Wordmark LINKCITY -->
+  <text x="36" y="28" font-family="DM Sans, sans-serif" font-weight="700" font-size="20" fill="white" letter-spacing="1">LINKCITY</text>
+</svg>
     <div class="logo-divider"></div>
-
     <div class="project-info">
-      <span class="project-label">Planning · PA3</span>
-      <span class="project-title" id="projectTitle">Secteur 3</span>
+      <span class="project-title" id="projectTitle" contenteditable="true" spellcheck="false" title="Cliquez pour renommer">Planning Secteur 3 · PA3</span>
     </div>
   </div>
 
   <div class="spacer"></div>
 
-  <!-- Stats cards -->
-  <div class="header-stats">
-    <div class="stat">
-      <span class="stat-val" id="statTasks">—</span>
-      <span class="stat-label">Tâches</span>
-    </div>
-    <div class="stat">
-      <span class="stat-val" id="statMilestones">—</span>
-      <span class="stat-label">Jalons</span>
-    </div>
-    <div class="stat highlight">
-      <span class="stat-val" id="statProgress">—</span>
-      <span class="stat-label">Avancement</span>
-    </div>
-    <div class="stat">
-      <span class="stat-val" id="statEnd">—</span>
-      <span class="stat-label">Livraison</span>
-    </div>
+  <!-- Outils -->
+  <div class="header-tools">
+    <button class="tool-btn" id="todayToggle" title="Aller à aujourd'hui">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><line x1="7" y1="3" x2="7" y2="7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="7.5" x2="9.5" y2="9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Aujourd'hui
+    </button>
+    <button class="tool-btn" id="btnDeadline" title="Poser une deadline">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
+      Deadline
+    </button>
+    <button class="tool-btn" id="btnLinkModeHeader" title="Lier des tâches (Fin→Début)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="11" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><line x1="5" y1="7" x2="9" y2="7" stroke="currentColor" stroke-width="1.3"/></svg>
+      Lier
+    </button>
   </div>
+
+  <div class="header-sep"></div>
 
   <!-- Actions -->
   <div class="header-actions">
-    <!-- Theme switch — checkbox CSS-driven, insensible aux handlers JS globaux -->
-    <label class="theme-switch" title="Mode sombre / clair">
-      <input type="checkbox" id="themeCheckbox" hidden>
-      <span class="theme-switch-icon">🌙</span>
-      <span class="theme-switch-track">
-        <span class="theme-switch-thumb"></span>
-      </span>
-      <span class="theme-switch-icon">☀️</span>
-    </label>
-    <div style="width:1px;height:20px;background:rgba(255,255,255,.1);margin:0 4px"></div>
-    <button class="btn-hdr" id="todayToggle">● Aujourd'hui</button>
-    <button class="btn-hdr" id="btnDeadline">⚑ Deadline</button>
-    <button class="btn-hdr" id="btnSaveSession">💾 Sauvegardes</button>
-    <button class="btn-hdr" id="btnExport">⬇ PDF</button>
-    <button class="btn-add" id="btnAdd">+ Tâche</button>
+    <button class="btn-hdr" id="btnSaveExport" title="Sauvegardes &amp; Export">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 9v2h9V9M6.5 2v6M4 6l2.5 2.5L9 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Fichier
+    </button>
   </div>
 </header>
 
@@ -1633,22 +1601,15 @@
   <button class="zoom-btn" id="zoomOut">−</button>
   <span class="zoom-label" id="zoomLabel" title="Cliquez pour réinitialiser le zoom">Semaine</span>
   <button class="zoom-btn" id="zoomIn">+</button>
-  <span class="zoom-hint">Ctrl+scroll ou pinch pour zoomer</span>
+  <span class="zoom-hint">Ctrl+scroll</span>
   <div class="sep"></div>
   <button class="zoom-btn" id="btnUndo" title="Annuler (Ctrl+Z)" style="width:auto;padding:0 10px;font-size:13px;">↩</button>
   <div class="sep"></div>
   <button class="filter-btn active" id="filterAll">Tout</button>
   <button class="filter-btn" id="filterMilestones">Jalons</button>
-  <button class="filter-btn" id="filterInProgress">En cours</button>
-  <button class="filter-btn" id="filterPhase1">PC</button>
-  <button class="filter-btn" id="filterPhase2">PRO/Marché</button>
-  <button class="filter-btn" id="filterPhase3">Actes</button>
+  <div id="phaseFilterBtns" style="display:contents"></div>
   <div class="sep"></div>
-  <button class="btn-link" id="btnLinkMode" title="Activer le mode liaison : cliquez sur une tâche source puis sur une tâche cible">
-    🔗 Lier des tâches
-  </button>
-  <div class="sep"></div>
-  <input class="search-input" id="searchInput" type="text" placeholder="🔍 Rechercher une tâche…">
+  <input class="search-input" id="searchInput" type="text" placeholder="🔍 Rechercher…">
 </div>
 
 <!-- MAIN -->
@@ -1668,12 +1629,14 @@
 
   <!-- Right: chart -->
   <div class="chart-panel">
-    <div class="chart-header">
-      <div class="months-row" id="monthsRow"></div>
-      <div class="weeks-row" id="weeksRow"></div>
+    <div class="chart-header" id="chartHeader">
+      <div class="chart-header-inner" id="chartHeaderInner">
+        <div class="months-row" id="monthsRow"></div>
+        <div class="weeks-row" id="weeksRow"></div>
+      </div>
     </div>
     <div class="chart-body" id="chartBody">
-      <div class="gantt-canvas" id="ganttCanvas">
+<div class="gantt-canvas" id="ganttCanvas">
         <svg id="linkSvg">
           <defs>
             <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
@@ -1682,20 +1645,13 @@
           </defs>
         </svg>
         <div class="snap-indicator" id="snapIndicator"></div>
+
       </div>
     </div>
   </div>
 </div>
 
 <!-- Tooltip -->
-<div class="tooltip" id="tooltip">
-  <div class="tooltip-name" id="ttName"></div>
-  <div class="tooltip-row"><span>Début</span><span class="tooltip-val" id="ttStart"></span></div>
-  <div class="tooltip-row"><span>Fin</span><span class="tooltip-val" id="ttEnd"></span></div>
-  <div class="tooltip-row"><span>Durée</span><span class="tooltip-val" id="ttDur"></span></div>
-  <div class="tooltip-row"><span>Avancement</span><span class="tooltip-val" id="ttPct"></span></div>
-</div>
-
 <!-- Context Menu -->
 <div class="ctx-menu" id="ctxMenu">
   <div class="ctx-item" id="ctxEdit">✏️ Modifier</div>
@@ -1807,7 +1763,10 @@
     </div>
 
     <!-- Import from file -->
-    <div class="save-modal-actions">
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+    <button class="btn-save" id="btnExportFromModal" style="background:#EF6C50;flex:1;font-size:12px;padding:7px 12px;">⬇ Exporter en PDF</button>
+  </div>
+  <div class="save-modal-actions">
       <label class="btn-import-file" for="importFileInput">📂 Importer un fichier .json</label>
       <input type="file" id="importFileInput" accept=".json" style="display:none">
       <button class="btn-import-file" id="btnExportAll" style="flex:1">⬇ Exporter toutes les sauvegardes</button>
@@ -1843,6 +1802,7 @@ const ZOOM_MIN = 0.8;   // très dézoomé (vue ~2 ans)
 const ZOOM_MAX = 60;    // très zoomé (vue jour détaillée)
 let isTrackpadZooming = false;
 let filterMode = 'all';
+let filterPhaseUid = null;
 let searchQuery = '';
 
 // Phase color assignment by level-1 parent
@@ -1888,6 +1848,10 @@ function undo() {
   render();
   showToast('↩ Annulé');
 }
+
+
+// ─── DOM READY ───────────────────────────────────────────────────────────────
+
 
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
@@ -1988,21 +1952,9 @@ function totalWidth() {
 function isVisible(task) {
   if (filterMode !== 'all') {
     if (filterMode === 'milestones' && !task.milestone) return false;
-    if (filterMode === 'inprogress' && (task.pct === 0 || task.pct === 100)) return false;
-    if (filterMode === 'pc') {
+    if (filterMode === 'phase' && filterPhaseUid) {
       const ancestor = getPhaseAncestor(task);
-      const ph = tasks.find(t => t.uid === ancestor);
-      if (!ph || !ph.name.toLowerCase().includes('permis')) return false;
-    }
-    if (filterMode === 'pro') {
-      const ancestor = getPhaseAncestor(task);
-      const ph = tasks.find(t => t.uid === ancestor);
-      if (!ph || (!ph.name.toLowerCase().includes('pro') && !ph.name.toLowerCase().includes('march'))) return false;
-    }
-    if (filterMode === 'actes') {
-      const ancestor = getPhaseAncestor(task);
-      const ph = tasks.find(t => t.uid === ancestor);
-      if (!ph || !ph.name.toLowerCase().includes('actes')) return false;
+      if (ancestor !== filterPhaseUid && task.uid !== filterPhaseUid) return false;
     }
   }
   if (searchQuery) {
@@ -2020,7 +1972,38 @@ function isVisible(task) {
 }
 
 // ─── RENDER ─────────────────────────────────────────────────────────────────
+// ── Dynamic phase filter buttons ────────────────────────────────────────────
+function renderPhaseButtons() {
+  const container = document.getElementById('phaseFilterBtns');
+  if (!container) return;
+
+  // Get current level-1 summary tasks (phases)
+  const phases = tasks.filter(t => t.level === 1 && t.summary);
+
+  // Rebuild buttons only if phases changed (by uid+name)
+  const sig = phases.map(p => p.uid + ':' + p.name).join('|');
+  if (container._sig === sig) return; // no change
+  container._sig = sig;
+
+  container.innerHTML = '';
+  phases.forEach(phase => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn filter-phase-btn';
+    btn.dataset.phaseUid = phase.uid;
+    // Truncate long names for button display
+    const label = phase.name.length > 14 ? phase.name.slice(0, 13) + '…' : phase.name;
+    btn.textContent = label;
+    btn.title = phase.name;
+    if (filterMode === 'phase' && filterPhaseUid === phase.uid) {
+      btn.classList.add('active');
+    }
+    btn.addEventListener('click', () => setFilter('phase', phase.uid));
+    container.appendChild(btn);
+  });
+}
+
 function render() {
+  renderPhaseButtons();
   renderTaskList();
   renderGantt();
   updateStats();
@@ -2030,10 +2013,10 @@ function updateStats() {
   const visible = tasks.filter(t => !t.summary && !t.milestone);
   const milestones = tasks.filter(t => t.milestone);
   const avgPct = visible.length ? Math.round(visible.reduce((a,t) => a + t.pct, 0) / visible.length) : 0;
-  document.getElementById('statTasks').textContent = visible.length;
-  document.getElementById('statMilestones').textContent = milestones.length;
-  document.getElementById('statProgress').textContent = avgPct + '%';
-  document.getElementById('statEnd').textContent = formatDate(PROJECT_END);
+  // statTasks removed
+  // statMilestones removed
+  // statProgress removed
+  // statEnd removed
 }
 
 function renderTaskList() {
@@ -2078,14 +2061,6 @@ function renderTaskList() {
       nameEl.textContent = task.name;
     }
     div.appendChild(nameEl);
-
-    // Pct
-    if (!task.summary && task.pct > 0) {
-      const pctEl = document.createElement('div');
-      pctEl.className = 'task-pct' + (task.pct === 100 ? ' done' : '');
-      pctEl.textContent = task.pct + '%';
-      div.appendChild(pctEl);
-    }
 
     // Dates
     const datesEl = document.createElement('div');
@@ -2158,6 +2133,30 @@ function renderTaskList() {
       selectedUid = task.uid;
       document.querySelectorAll('.task-row').forEach(r => r.classList.remove('selected'));
       div.classList.add('selected');
+
+      // Scroll Gantt horizontally to show the task bar
+      const barReg = window._barRegistry?.[task.uid];
+      if (barReg) {
+        const chartBody = document.getElementById('chartBody');
+        const barX = barReg.x;
+        const barW = barReg.w || 10;
+        const viewW = chartBody.clientWidth;
+        // Center the bar in the view, with padding
+        const targetScroll = barX - viewW / 2 + barW / 2;
+        chartBody.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' });
+      }
+    });
+
+    // Linked hover: highlight both task row and gantt row
+    div.addEventListener('mouseenter', () => {
+      div.classList.add('row-hover');
+      const ganttRow = document.querySelector(`.gantt-row[data-uid="${task.uid}"]`);
+      if (ganttRow) ganttRow.classList.add('row-hover');
+    });
+    div.addEventListener('mouseleave', () => {
+      div.classList.remove('row-hover');
+      const ganttRow = document.querySelector(`.gantt-row[data-uid="${task.uid}"]`);
+      if (ganttRow) ganttRow.classList.remove('row-hover');
     });
 
     div.addEventListener('contextmenu', e => {
@@ -2171,6 +2170,33 @@ function renderTaskList() {
   // Sync scroll
   list.addEventListener('scroll', () => {
     document.getElementById('ganttCanvas').parentElement.scrollTop = list.scrollTop;
+  });
+
+  // Sync header scroll with chart body horizontal scroll
+  const _chartBody = document.getElementById('chartBody');
+  const _headerInner = document.getElementById('chartHeaderInner');
+  _chartBody.addEventListener('scroll', () => {
+    if (_headerInner) _headerInner.style.transform = `translateX(-${_chartBody.scrollLeft}px)`;
+  });
+
+  // ── Vertical cursor line on mouse move ──
+  // ── Vertical cursor line — pure JS, no DOM obstruction ──
+  let _cursorEl = null;
+  function _ensureCursor() {
+    if (_cursorEl) return;
+    _cursorEl = document.createElement('div');
+    _cursorEl.style.cssText = 'position:fixed;top:0;bottom:0;width:1px;background:rgba(82,93,244,.22);pointer-events:none;z-index:8;display:none;';
+    document.body.appendChild(_cursorEl);
+  }
+  _chartBody.addEventListener('mousemove', (e) => {
+    _ensureCursor();
+    const rect = _chartBody.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX > rect.right) return;
+    _cursorEl.style.display = 'block';
+    _cursorEl.style.left = e.clientX + 'px';
+  });
+  _chartBody.addEventListener('mouseleave', () => {
+    if (_cursorEl) _cursorEl.style.display = 'none';
   });
 }
 
@@ -2280,8 +2306,36 @@ function renderGantt() {
 
       if (task.milestone) {
         const diamond = document.createElement('div');
-        diamond.className = 'gantt-milestone';
-        diamond.style.left = (x - 5) + 'px';
+        // Detect contractual milestone type by name keywords
+        const mName = task.name.toLowerCase();
+        let mType = null;
+        let mEmoji = '◆';
+        if (mName.includes('dépôt') && mName.includes('pc') || mName.includes('depot') && mName.includes('pc')) {
+          mType = 'type-pc'; mEmoji = '📋';
+        } else if ((mName.includes('obtention') && mName.includes('pc')) || mName.includes('pc définitif') || mName.includes('pc definitif') || mName.includes('obtention pc')) {
+          mType = 'type-pc-purge'; mEmoji = '✅';
+        } else if (mName.includes('achat') || mName.includes('vefa') || mName.includes('acte') || mName.includes('foncier') || mName.includes('terrain')) {
+          mType = 'type-acte'; mEmoji = '🔑';
+        } else if (mName.includes('gfa') || mName.includes('garantie')) {
+          mType = 'type-gfa'; mEmoji = '🏦';
+        } else if (mName.includes('livraison') || mName.includes('dot') || mName.includes('doc') || mName.includes('dat')) {
+          mType = 'type-livraison'; mEmoji = '🏠';
+        } else if (mName.includes('engagement') || mName.includes('comité')) {
+          mType = 'type-engagement'; mEmoji = '🎯';
+        }
+        diamond.className = mType ? `gantt-milestone milestone-key-icon ${mType}` : 'gantt-milestone';
+        if (mType) {
+          diamond.style.width = '13px';
+          diamond.style.height = '13px';
+          diamond.style.left = (x - 6) + 'px';
+          // Emoji label above
+          const lbl = document.createElement('span');
+          lbl.style.cssText = `position:absolute;top:-16px;left:50%;transform:translateX(-50%) rotate(-45deg);font-size:10px;white-space:nowrap;pointer-events:none;z-index:5;`;
+          lbl.textContent = mEmoji;
+          diamond.appendChild(lbl);
+        } else {
+          diamond.style.left = (x - 5) + 'px';
+        }
         diamond.dataset.uid = task.uid;
         // Apply custom color to milestone
         if (CUSTOM_TASK_COLORS[task.uid]) {
@@ -2307,16 +2361,8 @@ function renderGantt() {
           bar.classList.remove(`phase-${phaseIdx}`);
         }
 
-        // Progress
-        if (task.pct > 0) {
-          const prog = document.createElement('div');
-          prog.className = 'gantt-bar-progress';
-          prog.style.width = task.pct + '%';
-          bar.appendChild(prog);
-        }
-
-        // Label (only if wide enough)
-        if (barW > 40 && task.level <= 2) {
+        // Task name label (only if wide enough and no pct already shown)
+        if (barW > 60 && task.level <= 2 && task.pct === 0) {
           const lbl = document.createElement('div');
           lbl.className = 'gantt-bar-label';
           lbl.style.maxWidth = (barW - 12) + 'px';
@@ -2371,26 +2417,6 @@ function renderGantt() {
 }
 
 function addBarEvents(el, task) {
-  const tt = document.getElementById('tooltip');
-
-  // ── Tooltip ──
-  el.addEventListener('mouseenter', e => {
-    if (dragState) return;
-    document.getElementById('ttName').textContent = task.name;
-    document.getElementById('ttStart').textContent = formatDate(parseDate(task.start));
-    document.getElementById('ttEnd').textContent = formatDate(parseDate(task.finish));
-    const dur = daysBetween(parseDate(task.start), parseDate(task.finish));
-    document.getElementById('ttDur').textContent = task.milestone ? 'Jalon' : dur + ' jour(s)';
-    document.getElementById('ttPct').textContent = task.pct + '%';
-    tt.classList.add('visible');
-  });
-  el.addEventListener('mousemove', e => {
-    if (dragState) return;
-    tt.style.left = (e.clientX + 14) + 'px';
-    tt.style.top = (e.clientY - 10) + 'px';
-  });
-  el.addEventListener('mouseleave', () => tt.classList.remove('visible'));
-
   // ── Context menu & dblclick ──
   el.addEventListener('contextmenu', e => {
     e.preventDefault();
@@ -2399,14 +2425,12 @@ function addBarEvents(el, task) {
   });
   el.addEventListener('dblclick', () => openEditModal(task.uid));
 
-  // ── Click: link mode OR color popup ──
+  // ── Click: link mode only ──
   el.addEventListener('click', (e) => {
     e.stopPropagation();
     if (linkMode) {
       handleLinkClick(task.uid);
-      return;
     }
-    if (!dragState) openColorPopup(task.uid, el);
   });
 
   // ── Drag & Drop ──
@@ -2417,7 +2441,6 @@ function addBarEvents(el, task) {
     if (e.target.classList.contains('bar-resize-handle')) return;
     e.preventDefault();
     e.stopPropagation();
-    tt.classList.remove('visible');
 
     const chartBody = document.getElementById('chartBody');
     const startMouseX = e.clientX + chartBody.scrollLeft;
@@ -2425,24 +2448,31 @@ function addBarEvents(el, task) {
     const origFinish = task.finish;
     const origDuration = daysBetween(parseDate(origStart), parseDate(origFinish));
 
-    el.classList.add('dragging');
-    saveSnapshot(); // snapshot before drag mutations
+    // Ghost label — created only after real drag movement (> 4px)
+    let ghost = null;
+    let hasDragged = false;
 
-    // Ghost label
-    const ghost = document.createElement('div');
-    ghost.className = 'drag-ghost';
-    ghost.textContent = task.name;
-    ghost.style.left = e.clientX + 'px';
-    ghost.style.top = e.clientY + 'px';
-    document.body.appendChild(ghost);
-
-    dragState = { uid: task.uid, startMouseX, origStart, origFinish, origDuration, el, ghost };
+    dragState = { uid: task.uid, startMouseX, origStart, origFinish, origDuration, el, ghost: null };
 
     const onMove = (ev) => {
       if (!dragState) return;
       const currentX = ev.clientX + chartBody.scrollLeft;
       const deltaPx = currentX - dragState.startMouseX;
       const deltaDays = Math.round(deltaPx / getColW());
+
+      // Only start real drag after 4px movement
+      if (!hasDragged && Math.abs(deltaPx) < 4) return;
+
+      if (!hasDragged) {
+        hasDragged = true;
+        el.classList.add('dragging');
+        saveSnapshot();
+        ghost = document.createElement('div');
+        ghost.className = 'drag-ghost';
+        ghost.textContent = task.name;
+        document.body.appendChild(ghost);
+        dragState.ghost = ghost;
+      }
 
       // Move ghost
       ghost.style.left = ev.clientX + 'px';
@@ -2471,14 +2501,14 @@ function addBarEvents(el, task) {
     };
 
     const onUp = () => {
-      if (!dragState) return;
+      if (ghost) ghost.remove();
       el.classList.remove('dragging');
-      ghost.remove();
-      // Save snapshot before committing drag (we already mutated task.start/finish live,
-      // so we push a snapshot with the *previous* state captured at drag start)
-      dragState = null;
-      // Full re-render to sync everything properly
-      render();
+      if (hasDragged) {
+        dragState = null;
+        render();
+      } else {
+        dragState = null;
+      }
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
     };
@@ -2504,15 +2534,9 @@ function addResizeEvents(handle, barEl, task, side) {
 
     saveSnapshot();
 
-    // Ghost label showing new duration
-    const ghost = document.createElement('div');
-    ghost.className = 'drag-ghost';
-    ghost.textContent = side === 'right'
-      ? `→ ${origDuration}j`
-      : `← ${origDuration}j`;
-    ghost.style.left = e.clientX + 'px';
-    ghost.style.top = (e.clientY - 30) + 'px';
-    document.body.appendChild(ghost);
+    // Ghost label — created only after real resize movement
+    let ghost = null;
+    let hasResized = false;
 
     dragState = { uid: task.uid, resizing: true };
     barEl.style.cursor = 'ew-resize';
@@ -2522,6 +2546,16 @@ function addResizeEvents(handle, barEl, task, side) {
       const currentX = ev.clientX + chartBody.scrollLeft;
       const deltaPx = currentX - startMouseX;
       const deltaDays = Math.round(deltaPx / getColW());
+
+      if (!hasResized && Math.abs(deltaPx) < 4) return;
+
+      if (!hasResized) {
+        hasResized = true;
+        ghost = document.createElement('div');
+        ghost.className = 'drag-ghost';
+        ghost.textContent = side === 'right' ? `→ ${origDuration}j` : `← ${origDuration}j`;
+        document.body.appendChild(ghost);
+      }
 
       ghost.style.left = ev.clientX + 'px';
       ghost.style.top = (ev.clientY - 30) + 'px';
@@ -2535,7 +2569,7 @@ function addResizeEvents(handle, barEl, task, side) {
         // Visual update
         const newW = Math.max(newDur * getColW(), 4);
         barEl.style.width = newW + 'px';
-        ghost.textContent = `→ ${newDur}j`;
+        if (ghost) ghost.textContent = `→ ${newDur}j`;
 
         // Cascade: propagate delta to linked successors
         // delta for successors = change in finish = deltaDays clamped to actual change
@@ -2555,7 +2589,7 @@ function addResizeEvents(handle, barEl, task, side) {
         const newW = Math.max(newDur * getColW(), 4);
         barEl.style.left = newX + 'px';
         barEl.style.width = newW + 'px';
-        ghost.textContent = `← ${newDur}j`;
+        if (ghost) ghost.textContent = `← ${newDur}j`;
 
         // Cascade: start moved so propagate delta to linked successors
         const actualDelta = daysBetween(parseDate(origStart), clampedStart);
@@ -2573,7 +2607,7 @@ function addResizeEvents(handle, barEl, task, side) {
       dragState = null;
       barEl.style.cursor = '';
       document.body.style.cursor = '';
-      ghost.remove();
+      if (ghost) ghost.remove();
       render();
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
@@ -2701,10 +2735,10 @@ function showToast(msg) {
     toast.id = 'toast';
     toast.style.cssText = `
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: #222535; border: 1px solid #4f7cff; color: #e2e8f0;
-      padding: 10px 20px; border-radius: 8px; font-size: 13px;
-      z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,.4);
-      transition: opacity .3s;
+      background: #FFFFFF; border: 1px solid rgba(82,93,244,.3); color: #1A2347;
+      padding: 10px 20px; border-radius: 10px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+      font-weight: 500; z-index: 9999; box-shadow: 0 8px 32px rgba(82,93,244,.15);
+      transition: opacity .3s; white-space: nowrap;
     `;
     document.body.appendChild(toast);
   }
@@ -2714,19 +2748,22 @@ function showToast(msg) {
   toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
 }
 
-// Link mode toggle button
-document.getElementById('btnLinkMode').addEventListener('click', () => {
+
+// Link mode toggle
+function toggleLinkMode() {
   linkMode = !linkMode;
   linkSource = null;
-  const btn = document.getElementById('btnLinkMode');
-  btn.classList.toggle('active', linkMode);
+  const btn = document.getElementById('btnLinkModeHeader');
+  if (btn) btn.classList.toggle('active', linkMode);
   document.body.classList.toggle('link-mode', linkMode);
   if (linkMode) {
     showToast('🔗 Mode liaison activé — cliquez sur la tâche source, puis sur la cible');
   } else {
     render();
   }
-});
+}
+const _btnLinkHeader = document.getElementById('btnLinkModeHeader');
+if (_btnLinkHeader) _btnLinkHeader.addEventListener('click', toggleLinkMode);
 
 // Add "Supprimer liaisons" to context menu
 document.getElementById('ctxDelete').insertAdjacentHTML('beforebegin', `
@@ -2989,7 +3026,7 @@ document.getElementById('btnSave').addEventListener('click', () => {
   render();
 });
 
-document.getElementById('btnAdd').addEventListener('click', () => openAddModal(null));
+// btnAdd removed from header — use context menu right-click to add tasks
 
 // ─── COLOR PICKER HELPERS ────────────────────────────────────────────────────
 function buildColorSwatches(containerId, currentColor, onSelect) {
@@ -3098,14 +3135,14 @@ document.getElementById('zoomLabel').addEventListener('click', () => {
 });
 
 // ─── EXPORT PDF ─────────────────────────────────────────────────────────────
-document.getElementById('btnExport').addEventListener('click', () => {
+document.getElementById('btnExport')?.addEventListener('click', () => {
   document.getElementById('exportModalOverlay').classList.add('open');
 });
-document.getElementById('exportCancel').addEventListener('click', () => {
+document.getElementById('exportCancel')?.addEventListener('click', () => {
   document.getElementById('exportModalOverlay').classList.remove('open');
 });
 
-document.getElementById('exportConfirm').addEventListener('click', () => {
+document.getElementById('exportConfirm')?.addEventListener('click', () => {
   const scope = document.getElementById('exportScope').value;
   const zoomChoice = document.getElementById('exportZoom').value;
   document.getElementById('exportModalOverlay').classList.remove('open');
@@ -3162,9 +3199,9 @@ document.getElementById('exportConfirm').addEventListener('click', () => {
 });
 
 
-document.getElementById('todayToggle').addEventListener('click', () => {
+document.getElementById('todayToggle')?.addEventListener('click', () => {
   showToday = !showToday;
-  const btn = document.getElementById('todayToggle');
+  const btn = document.getElementById('todayToggle'); if(!btn) return;
   btn.style.opacity = showToday ? 1 : 0.4;
   render();
 });
@@ -3172,9 +3209,9 @@ document.getElementById('todayToggle').addEventListener('click', () => {
 // ─── DEADLINE ────────────────────────────────────────────────────────────────
 let deadlinePickMode = false;
 
-document.getElementById('btnDeadline').addEventListener('click', () => {
+document.getElementById('btnDeadline')?.addEventListener('click', () => {
   deadlinePickMode = !deadlinePickMode;
-  const btn = document.getElementById('btnDeadline');
+  const btn = document.getElementById('btnDeadline'); if(!btn) return;
   if (deadlinePickMode) {
     btn.style.borderColor = '#f87171';
     btn.style.color = '#f87171';
@@ -3198,7 +3235,7 @@ document.getElementById('chartBody').addEventListener('click', e => {
   const label = 'Deadline ' + (deadlines.length + 1);
   deadlines.push({ date: toDateStr(dlDate), label });
   deadlinePickMode = false;
-  const btn = document.getElementById('btnDeadline');
+  const btn = document.getElementById('btnDeadline'); if(!btn) return;
   btn.style.borderColor = '';
   btn.style.color = '';
   chartBody.style.cursor = '';
@@ -3207,18 +3244,24 @@ document.getElementById('chartBody').addEventListener('click', e => {
 });
 
 // ─── FILTERS ─────────────────────────────────────────────────────────────────
-function setFilter(mode) {
+// filterPhaseUid declared at top level
+
+function setFilter(mode, phaseUid) {
   filterMode = mode;
+  filterPhaseUid = phaseUid || null;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById({all:'filterAll',milestones:'filterMilestones',inprogress:'filterInProgress',pc:'filterPhase1',pro:'filterPhase2',actes:'filterPhase3'}[mode]).classList.add('active');
+  if (mode === 'all') document.getElementById('filterAll')?.classList.add('active');
+  else if (mode === 'milestones') document.getElementById('filterMilestones')?.classList.add('active');
+  else if (mode === 'phase' && phaseUid) {
+    document.querySelector(`.filter-phase-btn[data-phase-uid="${phaseUid}"]`)?.classList.add('active');
+  }
   render();
 }
+
 document.getElementById('filterAll').addEventListener('click', () => setFilter('all'));
 document.getElementById('filterMilestones').addEventListener('click', () => setFilter('milestones'));
-document.getElementById('filterInProgress').addEventListener('click', () => setFilter('inprogress'));
-document.getElementById('filterPhase1').addEventListener('click', () => setFilter('pc'));
-document.getElementById('filterPhase2').addEventListener('click', () => setFilter('pro'));
-document.getElementById('filterPhase3').addEventListener('click', () => setFilter('actes'));
+// Phase buttons are rendered dynamically in renderPhaseButtons()
+// called from render() — no static wiring needed here
 
 // ─── SEARCH ──────────────────────────────────────────────────────────────────
 document.getElementById('searchInput').addEventListener('input', e => {
@@ -3396,10 +3439,21 @@ function renderSaveList() {
 }
 
 // Open/close modal
-document.getElementById('btnSaveSession').addEventListener('click', () => {
+// Wire new combined save/export button
+const _btnSaveExport = document.getElementById('btnSaveExport');
+if (_btnSaveExport) _btnSaveExport.addEventListener('click', () => {
   document.getElementById('saveNameInput').value = 'Planning du ' + new Date().toLocaleDateString('fr-FR');
   renderSaveList();
   document.getElementById('saveModalOverlay').classList.add('open');
+});
+document.getElementById('btnSaveSession')?.addEventListener('click', () => { /* legacy */
+  document.getElementById('saveNameInput').value = 'Planning du ' + new Date().toLocaleDateString('fr-FR');
+  renderSaveList();
+  document.getElementById('saveModalOverlay').classList.add('open');
+});
+document.getElementById('btnExportFromModal')?.addEventListener('click', () => {
+  document.getElementById('saveModalOverlay').classList.remove('open');
+  setTimeout(() => document.getElementById('exportModalOverlay').classList.add('open'), 100);
 });
 document.getElementById('btnSaveModalClose').addEventListener('click', () => {
   document.getElementById('saveModalOverlay').classList.remove('open');
@@ -3419,13 +3473,13 @@ document.getElementById('saveNameInput').addEventListener('keydown', e => {
 });
 
 // Import file
-document.getElementById('importFileInput').addEventListener('change', e => {
+document.getElementById('importFileInput')?.addEventListener('change', e => {
   if (e.target.files[0]) importFromFile(e.target.files[0]);
   e.target.value = '';
 });
 
 // Export all
-document.getElementById('btnExportAll').addEventListener('click', exportAllSaves);
+document.getElementById('btnExportAll')?.addEventListener('click', exportAllSaves);
 
 // Keyboard shortcut: Ctrl+S to quick-save
 document.addEventListener('keydown', e => {
@@ -3462,8 +3516,8 @@ setTimeout(() => {
     const ctx = c.getContext('2d');
     // Background gradient
     const grad = ctx.createLinearGradient(0, 0, size, size);
-    grad.addColorStop(0, '#1a1d27');
-    grad.addColorStop(1, '#0f1117');
+    grad.addColorStop(0, '#EBF0FC');
+    grad.addColorStop(1, '#F2F5FD');
     ctx.fillStyle = grad;
     // Rounded rect
     const r = size * 0.2;
@@ -3523,8 +3577,8 @@ setTimeout(() => {
     description: 'Planning de conception immobilière',
     start_url: '.',
     display: 'standalone',
-    background_color: '#0f1117',
-    theme_color: '#0f1117',
+    background_color: '#F0F4FB',
+    theme_color: '#F0F4FB',
     orientation: 'landscape',
     icons: [
       { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
@@ -3563,10 +3617,10 @@ setTimeout(() => {
   banner.id = 'installBanner';
   banner.style.cssText = `
     display: none; position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-    background: #1a1d27; border: 1px solid #4f7cff;
-    border-radius: 12px; padding: 16px 20px; width: 300px;
-    box-shadow: 0 8px 32px rgba(79,124,255,.3);
-    font-family: 'Outfit', sans-serif; color: #e2e8f0;
+    background: #FFFFFF; border: 1px solid rgba(82,93,244,.25);
+    border-radius: 14px; padding: 16px 20px; width: 300px;
+    box-shadow: 0 8px 32px rgba(82,93,244,.18);
+    font-family: 'DM Sans', sans-serif; color: #1A2347;
     animation: slideUp .3s ease;
   `;
   banner.innerHTML = `
@@ -3574,21 +3628,21 @@ setTimeout(() => {
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
       <canvas id="bannerIcon" width="40" height="40" style="border-radius:8px;flex-shrink:0"></canvas>
       <div>
-        <div style="font-weight:600;font-size:14px">Installer PlanningPro</div>
-        <div style="font-size:11px;color:#64748b;margin-top:1px">Accès rapide depuis votre bureau</div>
+        <div style="font-weight:600;font-size:14px;color:#1A2347">Installer PlanningPro</div>
+        <div style="font-size:11px;color:#8B9BC8;margin-top:1px">Accès rapide depuis votre bureau</div>
       </div>
       <button onclick="document.getElementById('installBanner').style.display='none'"
-        style="margin-left:auto;background:none;border:none;color:#64748b;cursor:pointer;font-size:18px;line-height:1">×</button>
+        style="margin-left:auto;background:none;border:none;color:#8B9BC8;cursor:pointer;font-size:18px;line-height:1">×</button>
     </div>
     <div style="display:flex;gap:8px">
       <button id="installBtn" style="
-        flex:1; background:#4f7cff; border:none; color:#fff; border-radius:7px;
-        padding:9px; cursor:pointer; font-size:13px; font-family:'Outfit',sans-serif; font-weight:500;">
+        flex:1; background:#525DF4; border:none; color:#fff; border-radius:8px;
+        padding:9px; cursor:pointer; font-size:13px; font-family:'DM Sans',sans-serif; font-weight:500;">
         📲 Installer
       </button>
       <button onclick="document.getElementById('installBanner').style.display='none'" style="
-        background:transparent; border:1px solid #2e3248; color:#94a3b8; border-radius:7px;
-        padding:9px 14px; cursor:pointer; font-size:13px; font-family:'Outfit',sans-serif;">
+        background:transparent; border:1px solid rgba(82,93,244,.2); color:#4A5578; border-radius:8px;
+        padding:9px 14px; cursor:pointer; font-size:13px; font-family:'DM Sans',sans-serif;">
         Plus tard
       </button>
     </div>
@@ -3635,13 +3689,13 @@ setTimeout(() => {
   installHeaderBtn.id = 'btnInstall';
   installHeaderBtn.title = 'Installer comme application bureau';
   installHeaderBtn.style.cssText = `
-    background: transparent; border: 1px solid #2e3248; color: #94a3b8;
+    background: rgba(82,93,244,.07); border: 1px solid rgba(82,93,244,.18); color: #4A5578;
     border-radius: 6px; padding: 5px 13px; cursor: pointer; font-size: 12px;
-    font-family: 'Outfit', sans-serif; transition: all .15s;
+    font-family: 'DM Sans', sans-serif; transition: all .15s;
   `;
   installHeaderBtn.textContent = '📲 Installer';
-  installHeaderBtn.onmouseenter = () => { installHeaderBtn.style.borderColor = '#4f7cff'; installHeaderBtn.style.color = '#4f7cff'; };
-  installHeaderBtn.onmouseleave = () => { installHeaderBtn.style.borderColor = '#2e3248'; installHeaderBtn.style.color = '#94a3b8'; };
+  installHeaderBtn.onmouseenter = () => { installHeaderBtn.style.borderColor = '#525DF4'; installHeaderBtn.style.color = '#525DF4'; };
+  installHeaderBtn.onmouseleave = () => { installHeaderBtn.style.borderColor = 'rgba(82,93,244,.18)'; installHeaderBtn.style.color = '#4A5578'; };
   installHeaderBtn.onclick = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
@@ -3662,190 +3716,34 @@ setTimeout(() => {
   const checkbox = document.getElementById('themeCheckbox');
   if (!checkbox) return;
 
-  function applyTheme(isLight) {
-    // Classe sur html → active :root.light-mode (variables CSS)
-    // Classe sur body → active body.light-mode (règles de composants)
-    document.documentElement.classList.toggle('light-mode', isLight);
-    document.body.classList.toggle('light-mode', isLight);
-    checkbox.checked = isLight;
-    try { localStorage.setItem('planningpro_theme', isLight ? 'light' : 'dark'); } catch(e) {}
+  // Light is the DEFAULT — dark mode is the "checked" state
+  function applyTheme(isDark) {
+    document.documentElement.classList.toggle('dark-mode', isDark);
+    document.body.classList.toggle('dark-mode', isDark);
+    checkbox.checked = isDark;
+    try { localStorage.setItem('planningpro_theme', isDark ? 'dark' : 'light'); } catch(e) {}
   }
 
-  // Restore preference
+  // Restore preference — default is light (no dark-mode class)
   try {
     const saved = localStorage.getItem('planningpro_theme');
-    if (saved === 'light') applyTheme(true);
+    if (saved === 'dark') applyTheme(true);
+    // else stay in light mode (default)
   } catch(e) {}
 
-  // The 'change' event fires on the checkbox natively — nothing can intercept it
   checkbox.addEventListener('change', () => {
     applyTheme(checkbox.checked);
-    showToast(checkbox.checked ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
+    showToast(checkbox.checked ? '🌙 Mode sombre activé' : '☀️ Mode clair activé');
   });
 })();
+
+
+
 </script>
 
-<!-- ── PIN PROTECTION ────────────────────────────────────────────────────── -->
-<div id="pinOverlay" style="
-  position:fixed;inset:0;z-index:99999;
-  background:linear-gradient(135deg,#0D1428 0%,#192244 100%);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Outfit',sans-serif;
-">
-  <div style="
-    background:#121C3A;border:1px solid rgba(82,93,244,.35);
-    border-radius:20px;padding:40px 48px;width:340px;text-align:center;
-    box-shadow:0 32px 80px rgba(0,0,0,.6);
-  ">
-    <!-- Logo -->
-    <svg viewBox="0 0 160 32" style="height:28px;margin-bottom:24px;display:block;margin-left:auto;margin-right:auto">
-      <rect x="2" y="2" width="4" height="22" fill="#525DF4"/>
-      <rect x="2" y="22" width="14" height="4" fill="#525DF4"/>
-      <rect x="22" y="2" width="14" height="4" fill="#525DF4"/>
-      <rect x="22" y="22" width="14" height="4" fill="#525DF4"/>
-      <rect x="32" y="6" width="4" height="16" fill="#525DF4"/>
-      <text x="42" y="23" font-family="Outfit,sans-serif" font-weight="800" font-size="18" fill="#525DF4" letter-spacing="-0.5">LINKCITY</text>
-    </svg>
-
-    <div style="font-size:11px;font-weight:600;color:#24EDB8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Planning · PA3</div>
-    <div style="font-size:22px;font-weight:700;color:#F0F4FF;margin-bottom:6px;letter-spacing:-.5px">Accès sécurisé</div>
-    <div style="font-size:13px;color:#445078;margin-bottom:32px">Entrez votre code PIN pour continuer</div>
-
-    <!-- PIN dots display -->
-    <div id="pinDots" style="display:flex;justify-content:center;gap:12px;margin-bottom:28px">
-      <div class="pin-dot" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(82,93,244,.4);background:transparent;transition:all .15s"></div>
-      <div class="pin-dot" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(82,93,244,.4);background:transparent;transition:all .15s"></div>
-      <div class="pin-dot" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(82,93,244,.4);background:transparent;transition:all .15s"></div>
-    </div>
-
-    <!-- Numpad -->
-    <div id="pinPad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-    </div>
-
-    <!-- Error message -->
-    <div id="pinError" style="font-size:12px;color:#EF5072;min-height:18px;margin-top:4px;opacity:0;transition:opacity .2s"></div>
-  </div>
-</div>
-
-<script>
-(function() {
-  // ── Configuration ──────────────────────────────────────────────
-  const CORRECT_PIN = '123';
-  const SESSION_KEY = 'lc_pa3_auth';
-  const SESSION_HOURS = 8; // session valable 8h
-
-  // ── Vérif session existante ────────────────────────────────────
-  try {
-    const saved = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
-    if (saved && Date.now() < saved.exp) {
-      document.getElementById('pinOverlay').style.display = 'none';
-      return;
-    }
-  } catch(e) {}
-
-  // ── State ──────────────────────────────────────────────────────
-  let entered = '';
-  const PIN_LEN = CORRECT_PIN.length;
-  const overlay = document.getElementById('pinOverlay');
-  const dots    = document.querySelectorAll('.pin-dot');
-  const error   = document.getElementById('pinError');
-  const pad     = document.getElementById('pinPad');
-
-  // ── Build numpad ───────────────────────────────────────────────
-  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
-  keys.forEach(k => {
-    const btn = document.createElement('button');
-    btn.textContent = k || '';
-    btn.disabled = !k && k !== '0';
-    btn.style.cssText = `
-      height:54px;border-radius:10px;font-size:20px;font-weight:600;
-      font-family:'Outfit',sans-serif;cursor:${k ? 'pointer' : 'default'};
-      border:1px solid rgba(82,93,244,${k ? '.25' : '0'});
-      background:${k ? 'rgba(82,93,244,.1)' : 'transparent'};
-      color:${k ? '#F0F4FF' : 'transparent'};
-      transition:all .1s;outline:none;
-    `;
-    if (k) {
-      btn.onmouseenter = () => { btn.style.background='rgba(82,93,244,.22)'; btn.style.borderColor='rgba(82,93,244,.5)'; };
-      btn.onmouseleave = () => { btn.style.background='rgba(82,93,244,.1)'; btn.style.borderColor='rgba(82,93,244,.25)'; };
-      btn.onmousedown  = () => { btn.style.transform='scale(.94)'; };
-      btn.onmouseup    = () => { btn.style.transform='scale(1)'; };
-      btn.addEventListener('click', () => handleKey(k));
-    }
-    pad.appendChild(btn);
-  });
-
-  // ── Update dots display ────────────────────────────────────────
-  function updateDots() {
-    dots.forEach((d, i) => {
-      if (i < entered.length) {
-        d.style.background = '#525DF4';
-        d.style.borderColor = '#525DF4';
-        d.style.boxShadow = '0 0 8px rgba(82,93,244,.6)';
-      } else {
-        d.style.background = 'transparent';
-        d.style.borderColor = 'rgba(82,93,244,.4)';
-        d.style.boxShadow = 'none';
-      }
-    });
-  }
-
-  // ── Handle key press ──────────────────────────────────────────
-  function handleKey(k) {
-    error.style.opacity = '0';
-    if (k === '⌫') {
-      entered = entered.slice(0, -1);
-      updateDots();
-      return;
-    }
-    if (entered.length >= PIN_LEN) return;
-    entered += k;
-    updateDots();
-    if (entered.length === PIN_LEN) {
-      setTimeout(validate, 120);
-    }
-  }
-
-  // ── Validate PIN ───────────────────────────────────────────────
-  function validate() {
-    if (entered === CORRECT_PIN) {
-      // Success
-      try {
-        sessionStorage.setItem(SESSION_KEY, JSON.stringify({
-          exp: Date.now() + SESSION_HOURS * 3600000
-        }));
-      } catch(e) {}
-      overlay.style.transition = 'opacity .4s';
-      overlay.style.opacity = '0';
-      setTimeout(() => overlay.style.display = 'none', 420);
-    } else {
-      // Error — shake animation
-      error.textContent = 'Code incorrect — réessayez';
-      error.style.opacity = '1';
-      entered = '';
-      updateDots();
-      // Shake the card
-      const card = overlay.querySelector('div');
-      card.style.transition = 'transform .08s';
-      let shakes = 0;
-      const shake = setInterval(() => {
-        card.style.transform = shakes % 2 === 0 ? 'translateX(-8px)' : 'translateX(8px)';
-        if (++shakes > 5) { clearInterval(shake); card.style.transform = 'translateX(0)'; }
-      }, 80);
-    }
-  }
-
-  // ── Keyboard support ───────────────────────────────────────────
-  document.addEventListener('keydown', e => {
-    if (overlay.style.display === 'none') return;
-    if (e.key >= '0' && e.key <= '9') handleKey(e.key);
-    if (e.key === 'Backspace') handleKey('⌫');
-    if (e.key === 'Enter' && entered.length === PIN_LEN) validate();
-    e.preventDefault();
-  }, { capture: true });
-
-})();
-</script>
+<!-- Hidden utility elements for JS compatibility -->
+<button id="btnExport" style="display:none"></button>
+<button id="btnSaveSession" style="display:none"></button>
 
 </body>
 </html>
