@@ -550,95 +550,168 @@
   }
 
   /* ── SAVE SESSION BUTTON ── */
-  .btn-save-session {
-    background: rgba(255,255,255,.07);
-    border: 1px solid rgba(255,255,255,.15);
-    color: var(--text2);
-    border-radius: 8px;
-    padding: 5px 13px;
-    cursor: pointer;
-    font-size: 11px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    transition: all .15s;
-  }
-  .btn-save-session:hover { border-color: var(--lc-mint); color: var(--lc-mint); }
+  .btn-save-session { display: none; }
 
-  /* ── SAVE/LOAD MODAL ── */
-  .save-modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,.65);
+  /* ── FICHIER POPUP (nouveau système simplifié) ── */
+  .file-popup-overlay {
+    position: fixed; inset: 0; background: rgba(15,20,50,.55);
     z-index: 300; display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(2px);
   }
-  .save-modal-overlay.open { display: flex; }
-  .save-modal {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 28px; width: 540px; max-height: 82vh;
-    display: flex; flex-direction: column; gap: 16px;
-    box-shadow: 0 24px 64px rgba(82,93,244,.15);
+  .file-popup-overlay.open { display: flex; }
+
+  .file-popup {
+    background: var(--surface);
+    border: 1px solid var(--border-hi);
+    border-radius: 18px;
+    padding: 32px 36px;
+    width: 440px;
+    max-width: 94vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    box-shadow: 0 28px 80px rgba(32,46,91,.18), 0 4px 16px rgba(82,93,244,.1);
+    animation: popupIn .2s cubic-bezier(.34,1.4,.64,1);
   }
-  .save-modal-title { font-size: 16px; font-weight: 600; }
-  .save-modal-actions { display: flex; gap: 8px; }
-  .btn-new-save {
-    background: var(--accent); border: none; color: #fff; border-radius: 6px;
-    padding: 8px 16px; cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif;
-    font-weight: 500; transition: opacity .15s; flex: 1;
+  @keyframes popupIn {
+    from { transform: scale(.94) translateY(8px); opacity: 0; }
+    to   { transform: scale(1)   translateY(0);   opacity: 1; }
   }
-  .btn-new-save:hover { opacity: .85; }
-  .btn-import-file {
-    background: transparent; border: 1px solid var(--border); color: var(--text2);
-    border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 12px;
-    font-family: 'DM Sans', sans-serif; transition: all .15s; flex: 1; text-align: center;
+
+  .file-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
   }
-  .btn-import-file:hover { border-color: var(--accent); color: var(--accent); }
-  .save-list {
-    display: flex; flex-direction: column; gap: 6px;
-    overflow-y: auto; max-height: 360px; padding-right: 4px;
+  .file-popup-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--lc-intense);
+    letter-spacing: -.3px;
   }
-  .save-list::-webkit-scrollbar { width: 4px; }
-  .save-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .save-item {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 14px; display: flex;
-    align-items: center; gap: 10px; transition: border-color .15s;
+  .file-popup-close {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    flex-shrink: 0;
   }
-  .save-item:hover { border-color: rgba(79,124,255,.4); }
-  .save-item-info { flex: 1; min-width: 0; }
-  .save-item-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .save-item-meta { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
-  .save-item-btns { display: flex; gap: 5px; flex-shrink: 0; }
-  .save-btn-load {
-    background: var(--accent); border: none; color: #fff; border-radius: 5px;
-    padding: 5px 12px; cursor: pointer; font-size: 11px; font-family: 'DM Sans', sans-serif;
-    font-weight: 500; transition: opacity .15s;
+  .file-popup-close:hover { background: var(--surface3); color: var(--text); }
+
+  /* Save section */
+  .file-popup-section {
+    margin-bottom: 20px;
   }
-  .save-btn-load:hover { opacity: .85; }
-  .save-btn-export {
-    background: transparent; border: 1px solid var(--border); color: var(--text2);
-    border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 11px;
-    font-family: 'DM Sans', sans-serif; transition: all .15s;
+  .file-popup-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
   }
-  .save-btn-export:hover { border-color: var(--green); color: var(--green); }
-  .save-btn-del {
-    background: transparent; border: 1px solid var(--border); color: var(--text3);
-    border-radius: 5px; padding: 5px 8px; cursor: pointer; font-size: 11px; transition: all .15s;
+  .file-popup-row {
+    display: flex;
+    gap: 8px;
   }
-  .save-btn-del:hover { border-color: var(--red); color: var(--red); }
-  .save-empty { text-align: center; color: var(--text3); font-size: 13px; padding: 28px 0; }
-  .save-modal-close {
-    background: transparent; border: 1px solid var(--border); color: var(--text2);
-    border-radius: 6px; padding: 7px 16px; cursor: pointer; font-size: 12px;
-    font-family: 'DM Sans', sans-serif; transition: all .15s; align-self: flex-end;
+  .file-popup-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 9px;
+    padding: 9px 13px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    min-width: 0;
   }
-  .save-modal-close:hover { border-color: var(--text); color: var(--text); }
-  .save-name-row { display: flex; gap: 8px; }
-  .save-name-input {
-    flex: 1; background: #EEF1F9; border: 1px solid rgba(82,93,244,.15);
-    color: var(--text); border-radius: 6px; padding: 8px 12px; font-size: 13px;
-    font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .15s;
+  .file-popup-input:focus {
+    border-color: var(--lc-electric);
+    box-shadow: 0 0 0 3px rgba(82,93,244,.1);
   }
-  .save-name-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(82,93,244,.1); }
-  .save-autosave-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text3); }
-  .save-autosave-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+
+  .file-popup-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    transition: all .15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .file-popup-btn-primary {
+    background: var(--lc-electric);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(82,93,244,.3);
+  }
+  .file-popup-btn-primary:hover {
+    background: #3D46C9;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(82,93,244,.4);
+  }
+  .file-popup-btn-secondary {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .file-popup-btn-secondary:hover {
+    border-color: var(--lc-electric);
+    color: var(--lc-electric);
+    background: rgba(82,93,244,.06);
+  }
+  .file-popup-btn-danger {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .file-popup-btn-danger:hover {
+    border-color: var(--lc-coral);
+    color: var(--lc-coral);
+    background: rgba(255,140,119,.06);
+  }
+
+  .file-popup-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0 20px;
+  }
+
+  /* Confirm overlay (import) */
+  .file-confirm-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--surface);
+    border-radius: 18px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 32px;
+    text-align: center;
+    z-index: 10;
+  }
+  .file-confirm-overlay.open { display: flex; }
+  .file-confirm-icon { font-size: 36px; }
+  .file-confirm-msg { font-size: 14px; color: var(--text2); line-height: 1.6; }
+  .file-confirm-msg strong { color: var(--text); }
+  .file-confirm-btns { display: flex; gap: 10px; }
+  .file-popup-wrapper { position: relative; }
 
   /* Right panel */
   .chart-panel {
@@ -1517,11 +1590,11 @@
   body.dark-mode .modal-title { color: #fff; }
   body.dark-mode .form-label { color: #24EDB8; }
   body.dark-mode .form-input, body.dark-mode .form-select { background: #192244; border-color: rgba(82,93,244,.2); color: #F0F4FF; }
-  body.dark-mode .save-modal { background: #121C3A; border-color: rgba(82,93,244,.3); }
-  body.dark-mode .save-modal-title { color: #fff; }
-  body.dark-mode .save-name-input { background: #192244; border-color: rgba(82,93,244,.2); color: #F0F4FF; }
-  body.dark-mode .save-item { background: #192244; border-color: rgba(82,93,244,.12); }
-  body.dark-mode .save-item-name { color: #F0F4FF; }
+  body.dark-mode .file-popup { background: #121C3A; border-color: rgba(82,93,244,.3); }
+  body.dark-mode .file-popup-title { color: #fff; }
+  body.dark-mode .file-popup-input { background: rgba(82,93,244,.12); border-color: rgba(82,93,244,.3); color: #fff; }
+  body.dark-mode .file-confirm-overlay { background: #121C3A; }
+  body.dark-mode .file-popup-input { background: #192244; border-color: rgba(82,93,244,.2); color: #F0F4FF; }
   body.dark-mode .gantt-milestone { background: #24EDB8; box-shadow: 0 0 8px rgba(36,237,184,.5); }
   body.dark-mode .color-popup { background: #192244; border-color: rgba(82,93,244,.2); }
   body.dark-mode .ctx-menu { background: #192244; border-color: rgba(82,93,244,.2); }
@@ -1529,9 +1602,301 @@
 
   /* theme switch in dark mode */
 
+  /* ══════════════════════════════════════════
+     LANDING PAGE
+  ══════════════════════════════════════════ */
+  #landingPage {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    overflow: hidden;
+  }
+
+  /* Decorative background grid */
+  #landingPage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(82,93,244,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(82,93,244,.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* Top accent bar */
+  #landingPage::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #202E5B, #24C5A8, #525DF4);
+  }
+
+  .landing-card {
+    background: var(--surface);
+    border: 1px solid var(--border-hi);
+    border-radius: 24px;
+    padding: 52px 56px;
+    width: 560px;
+    max-width: 94vw;
+    position: relative;
+    z-index: 2;
+    box-shadow:
+      0 0 0 1px rgba(82,93,244,.06),
+      0 24px 80px rgba(32,46,91,.12),
+      0 8px 24px rgba(82,93,244,.08);
+  }
+
+  .landing-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  .landing-logo-divider {
+    width: 1px;
+    height: 32px;
+    background: linear-gradient(to bottom, transparent, var(--border-hi), transparent);
+  }
+
+  .landing-product-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--lc-electric);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .landing-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--lc-intense);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .landing-subtitle {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+
+  .landing-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 32px;
+  }
+
+  .landing-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .landing-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all .2s;
+    border: none;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .landing-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.12), transparent 60%);
+    pointer-events: none;
+  }
+
+  .landing-btn-primary {
+    background: linear-gradient(135deg, #525DF4, #3D46C9);
+    box-shadow: 0 6px 28px rgba(82,93,244,.35);
+  }
+  .landing-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(82,93,244,.45);
+    background: linear-gradient(135deg, #4752e8, #3440b8);
+  }
+
+  .landing-btn-secondary {
+    background: linear-gradient(135deg, #202E5B, #1a2650);
+    box-shadow: 0 6px 28px rgba(32,46,91,.3);
+  }
+  .landing-btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(32,46,91,.4);
+  }
+
+  .landing-btn-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+
+  .landing-btn-text {
+    flex: 1;
+  }
+
+  .landing-btn-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .landing-btn-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,.65);
+    line-height: 1.4;
+  }
+
+  .landing-btn-arrow {
+    color: rgba(255,255,255,.5);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: transform .2s;
+  }
+  .landing-btn:hover .landing-btn-arrow {
+    transform: translateX(4px);
+    color: rgba(255,255,255,.85);
+  }
+
+  .landing-footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .5px;
+  }
+
+  /* Mint accent dot */
+  .landing-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #24C5A8;
+    margin: 0 6px;
+    vertical-align: middle;
+  }
+
+  /* Error toast for landing */
+  #landingError {
+    display: none;
+    background: #FFF0F0;
+    border: 1px solid rgba(214,53,88,.3);
+    color: var(--red);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    margin-top: 16px;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* Body hidden state — app not yet loaded */
+  body.landing-active > *:not(#landingPage) {
+    visibility: hidden;
+  }
+
 </style>
 </head>
-<body>
+<body class="landing-active">
+
+<!-- ══════════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════════ -->
+<div id="landingPage">
+  <div class="landing-card">
+
+    <!-- Logo -->
+    <div class="landing-logo-row">
+      <svg style="height:28px;width:auto;flex-shrink:0" viewBox="0 0 180 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="7" height="38" rx="1.5" fill="#202E5B"/>
+        <rect x="0" y="0" width="26" height="7" rx="1.5" fill="#202E5B"/>
+        <rect x="0" y="31" width="26" height="7" rx="1.5" fill="#202E5B"/>
+        <rect x="19" y="0" width="7" height="13" rx="1.5" fill="#202E5B"/>
+        <rect x="19" y="25" width="7" height="13" rx="1.5" fill="#202E5B"/>
+        <rect x="10" y="10" width="16" height="5.5" rx="1" fill="#202E5B"/>
+        <rect x="10" y="22.5" width="16" height="5.5" rx="1" fill="#202E5B"/>
+        <rect x="10" y="10" width="5.5" height="18" rx="1" fill="#202E5B"/>
+        <rect x="21" y="10" width="5" height="8" rx="1" fill="#202E5B"/>
+        <rect x="21" y="20" width="5" height="8" rx="1" fill="#202E5B"/>
+        <text x="36" y="28" font-family="DM Sans, sans-serif" font-weight="700" font-size="20" fill="#202E5B" letter-spacing="1">LINKCITY</text>
+      </svg>
+      <div class="landing-logo-divider"></div>
+      <div class="landing-product-name">PlanningPro</div>
+    </div>
+
+    <!-- Title -->
+    <div class="landing-title">Bienvenue sur votre<br>outil de planning</div>
+    <div class="landing-subtitle">Chargez un calendrier existant ou démarrez avec le planning générique LCY pour commencer à travailler.</div>
+
+    <div class="landing-divider"></div>
+
+    <!-- Actions -->
+    <div class="landing-actions">
+
+      <!-- Import JSON -->
+      <button class="landing-btn landing-btn-primary" id="landingBtnImport">
+        <div class="landing-btn-icon">📂</div>
+        <div class="landing-btn-text">
+          <div class="landing-btn-label">Importer un calendrier existant</div>
+          <div class="landing-btn-desc">Charger un fichier .json exporté depuis PlanningPro</div>
+        </div>
+        <div class="landing-btn-arrow">→</div>
+      </button>
+      <input type="file" id="landingFileInput" accept=".json" style="display:none">
+
+      <!-- Generic LCY -->
+      <button class="landing-btn landing-btn-secondary" id="landingBtnGeneric">
+        <div class="landing-btn-icon">🏗️</div>
+        <div class="landing-btn-text">
+          <div class="landing-btn-label">Charger le planning générique LCY</div>
+          <div class="landing-btn-desc">Démarrer avec le squelette de planning standard</div>
+        </div>
+        <div class="landing-btn-arrow">→</div>
+      </button>
+
+    </div>
+
+    <!-- Error -->
+    <div id="landingError"></div>
+
+    <!-- Footer -->
+    <div class="landing-footer">
+      PlanningPro<span class="landing-dot"></span>Linkcity
+    </div>
+
+  </div>
+</div>
 
 <!-- HEADER -->
 <header>
@@ -1589,9 +1954,9 @@
 
   <!-- Actions -->
   <div class="header-actions">
-    <button class="btn-hdr" id="btnSaveExport" title="Sauvegardes &amp; Export">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 9v2h9V9M6.5 2v6M4 6l2.5 2.5L9 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Fichier
+    <button class="btn-hdr" id="btnOpenFilePopup" title="Sauvegarder, Exporter ou Importer">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2h6.5L11 4.5V11H2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M4 2v3h5V2" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><rect x="3.5" y="7" width="6" height="3" rx=".8" stroke="currentColor" stroke-width="1.2"/></svg>
+      Sauvegarder
     </button>
   </div>
 </header>
@@ -1751,35 +2116,69 @@
   </div>
 </div>
 
-<!-- Save/Load Modal -->
-<div class="save-modal-overlay" id="saveModalOverlay">
-  <div class="save-modal">
-    <div class="save-modal-title">💾 Sauvegardes</div>
+<!-- Fichier Popup (nouveau système simplifié) -->
+<div class="file-popup-overlay" id="filePopupOverlay">
+  <div class="file-popup-wrapper">
+    <div class="file-popup" id="filePopup">
 
-    <!-- New save row -->
-    <div class="save-name-row">
-      <input class="save-name-input" id="saveNameInput" type="text" placeholder="Nom de la sauvegarde…" />
-      <button class="btn-new-save" id="btnDoSave">Sauvegarder</button>
+      <!-- Header -->
+      <div class="file-popup-header">
+        <div class="file-popup-title">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-3px;margin-right:7px"><path d="M2 2h8l3 3v9H2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 2v4h6V2" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><rect x="4" y="9" width="8" height="3" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+          Fichier
+        </div>
+        <button class="file-popup-close" id="filePopupClose">✕</button>
+      </div>
+
+      <!-- Section Sauvegarder -->
+      <div class="file-popup-section">
+        <div class="file-popup-label">Sauvegarder</div>
+        <div class="file-popup-row">
+          <input class="file-popup-input" id="filePopupName" type="text" placeholder="Nom du fichier…" />
+          <button class="file-popup-btn file-popup-btn-primary" id="filePopupBtnSave">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2h7l2.5 2.5V11H2V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4 2v3h5V2" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><rect x="3" y="7.5" width="7" height="2.5" rx=".6" stroke="currentColor" stroke-width="1.1"/></svg>
+            Télécharger .json
+          </button>
+        </div>
+      </div>
+
+      <div class="file-popup-divider"></div>
+
+      <!-- Section Exporter PDF -->
+      <div class="file-popup-section">
+        <div class="file-popup-label">Exporter</div>
+        <button class="file-popup-btn file-popup-btn-secondary" id="filePopupBtnPdf" style="width:100%;justify-content:center">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 1h7l2.5 2.5V12H2V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M3.5 6h6M3.5 8h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Exporter en PDF
+        </button>
+      </div>
+
+      <div class="file-popup-divider"></div>
+
+      <!-- Section Importer -->
+      <div class="file-popup-section" style="margin-bottom:0">
+        <div class="file-popup-label">Importer</div>
+        <button class="file-popup-btn file-popup-btn-danger" id="filePopupBtnImport" style="width:100%;justify-content:center">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 8V2M4 5.5l2.5 2.5L9 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 9v2h9V9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Importer un .json
+        </button>
+        <input type="file" id="filePopupFileInput" accept=".json" style="display:none">
+      </div>
+
+      <!-- Confirm overlay (import) -->
+      <div class="file-confirm-overlay" id="fileConfirmOverlay">
+        <div class="file-confirm-icon">⚠️</div>
+        <div class="file-confirm-msg">
+          <strong>Remplacer le planning actuel ?</strong><br>
+          Toutes les modifications non sauvegardées seront perdues.
+        </div>
+        <div class="file-confirm-btns">
+          <button class="file-popup-btn file-popup-btn-secondary" id="fileConfirmCancel">Annuler</button>
+          <button class="file-popup-btn file-popup-btn-primary" id="fileConfirmOk">Oui, importer</button>
+        </div>
+      </div>
+
     </div>
-
-    <!-- Import from file -->
-    <div style="display:flex;gap:8px;margin-bottom:8px">
-    <button class="btn-save" id="btnExportFromModal" style="background:#EF6C50;flex:1;font-size:12px;padding:7px 12px;">⬇ Exporter en PDF</button>
-  </div>
-  <div class="save-modal-actions">
-      <label class="btn-import-file" for="importFileInput">📂 Importer un fichier .json</label>
-      <input type="file" id="importFileInput" accept=".json" style="display:none">
-      <button class="btn-import-file" id="btnExportAll" style="flex:1">⬇ Exporter toutes les sauvegardes</button>
-    </div>
-
-    <!-- Save list -->
-    <div class="save-list" id="saveList"></div>
-
-    <div class="save-autosave-row">
-      <span class="save-autosave-dot"></span>
-      Sauvegarde automatique toutes les 2 minutes
-    </div>
-    <button class="save-modal-close" id="btnSaveModalClose">Fermer</button>
   </div>
 </div>
 
@@ -1960,12 +2359,15 @@ function isVisible(task) {
   if (searchQuery) {
     if (!task.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
   }
-  // Check parent collapse
+  // Check all ancestors: walk backward, hide if any direct ancestor is collapsed
   const myIdx = tasks.findIndex(t => t.uid === task.uid);
+  let currentLevel = task.level;
   for (let i = myIdx - 1; i >= 0; i--) {
-    if (tasks[i].level < task.level) {
+    if (tasks[i].level < currentLevel) {
+      // This is a direct ancestor
       if (collapsed.has(tasks[i].uid)) return false;
-      if (tasks[i].level === 0) break;
+      currentLevel = tasks[i].level;
+      if (currentLevel === 0) break; // reached root, no more ancestors to check
     }
   }
   return true;
@@ -2361,8 +2763,8 @@ function renderGantt() {
           bar.classList.remove(`phase-${phaseIdx}`);
         }
 
-        // Task name label (only if wide enough and no pct already shown)
-        if (barW > 60 && task.level <= 2 && task.pct === 0) {
+        // Task name label: always show for summary/phase bars (level <= 1), show for others only if pct=0
+        if (barW > 60 && task.level <= 2 && (task.summary || task.pct === 0)) {
           const lbl = document.createElement('div');
           lbl.className = 'gantt-bar-label';
           lbl.style.maxWidth = (barW - 12) + 'px';
@@ -3270,21 +3672,12 @@ document.getElementById('searchInput').addEventListener('input', e => {
 });
 
 // ─── SAVE / LOAD SYSTEM ──────────────────────────────────────────────────────
-const SAVE_KEY = 'planningpro_saves';
-
-function getAllSaves() {
-  try { return JSON.parse(localStorage.getItem(SAVE_KEY) || '[]'); }
-  catch { return []; }
-}
-
-function writeSaves(saves) {
-  localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
-}
+// ─── FICHIER POPUP — système simplifié ───────────────────────────────────────
 
 function buildStateSnapshot(name) {
   return {
     id: Date.now(),
-    name: name || ('Sauvegarde ' + new Date().toLocaleString('fr-FR')),
+    name: name || ('Planning_' + new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')),
     date: new Date().toISOString(),
     tasks: tasks.map(t => ({...t})),
     links: JSON.parse(JSON.stringify(links)),
@@ -3295,21 +3688,21 @@ function buildStateSnapshot(name) {
   };
 }
 
-function doSave(name) {
-  const saves = getAllSaves();
-  saves.unshift(buildStateSnapshot(name));
-  // Keep max 30 saves
-  if (saves.length > 30) saves.splice(30);
-  writeSaves(saves);
-  showToast('✅ Sauvegarde "' + name + '" créée');
-  renderSaveList();
+function downloadJson(name) {
+  const snap = buildStateSnapshot(name);
+  const blob = new Blob([JSON.stringify(snap, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name.replace(/[^a-z0-9\-_]/gi, '_') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  closeFilePopup();
+  showToast('✅ Fichier téléchargé — ' + a.download);
 }
 
-function loadSave(id) {
-  const saves = getAllSaves();
-  const snap = saves.find(s => s.id === id);
-  if (!snap) return;
-  saveSnapshot(); // push current state to undo before loading
+function applySnapshot(snap) {
+  saveSnapshot(); // push undo
   tasks = snap.tasks.map(t => ({...t}));
   Object.keys(links).forEach(k => delete links[k]);
   Object.assign(links, snap.links || {});
@@ -3318,196 +3711,254 @@ function loadSave(id) {
   Object.assign(CUSTOM_TASK_COLORS, snap.colors || {});
   continuousZoom = snap.zoom || 16;
   collapsed = new Set(snap.collapsed || []);
-  document.getElementById('saveModalOverlay').classList.remove('open');
-  render();
-  showToast('📂 Sauvegarde "' + snap.name + '" chargée');
-}
-
-function deleteSave(id) {
-  let saves = getAllSaves();
-  saves = saves.filter(s => s.id !== id);
-  writeSaves(saves);
-  renderSaveList();
-  showToast('🗑 Sauvegarde supprimée');
-}
-
-function exportSave(id) {
-  const saves = getAllSaves();
-  const snap = saves.find(s => s.id === id);
-  if (!snap) return;
-  const blob = new Blob([JSON.stringify(snap, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = snap.name.replace(/[^a-z0-9]/gi, '_') + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function exportAllSaves() {
-  const saves = getAllSaves();
-  const blob = new Blob([JSON.stringify(saves, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'planning_sauvegardes_' + new Date().toISOString().slice(0,10) + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importFromFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      const saves = getAllSaves();
-      const toImport = Array.isArray(data) ? data : [data];
-      toImport.forEach(snap => {
-        snap.id = Date.now() + Math.random();
-        snap.name = (snap.name || 'Importé') + ' (import)';
-        saves.unshift(snap);
-      });
-      writeSaves(saves.slice(0, 30));
-      renderSaveList();
-      showToast(`📂 ${toImport.length} sauvegarde(s) importée(s)`);
-    } catch {
-      showToast('❌ Fichier invalide');
-    }
-  };
-  reader.readAsText(file);
-}
-
-function renderSaveList() {
-  const saves = getAllSaves();
-  const list = document.getElementById('saveList');
-  list.innerHTML = '';
-
-  if (saves.length === 0) {
-    list.innerHTML = '<div class="save-empty">Aucune sauvegarde pour le moment.<br>Créez votre première sauvegarde ci-dessus.</div>';
-    return;
+  if (snap.name) {
+    const titleEl = document.getElementById('projectTitle');
+    if (titleEl) titleEl.textContent = snap.name;
   }
-
-  saves.forEach(snap => {
-    const item = document.createElement('div');
-    item.className = 'save-item';
-
-    const info = document.createElement('div');
-    info.className = 'save-item-info';
-
-    const nameEl = document.createElement('div');
-    nameEl.className = 'save-item-name';
-    nameEl.textContent = snap.name;
-
-    const meta = document.createElement('div');
-    meta.className = 'save-item-meta';
-    const d = new Date(snap.date);
-    const taskCount = (snap.tasks || []).filter(t => !t.summary && !t.milestone).length;
-    meta.textContent = d.toLocaleString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) + ' · ' + taskCount + ' tâches';
-
-    info.appendChild(nameEl);
-    info.appendChild(meta);
-
-    const btns = document.createElement('div');
-    btns.className = 'save-item-btns';
-
-    const loadBtn = document.createElement('button');
-    loadBtn.className = 'save-btn-load';
-    loadBtn.textContent = '▶ Charger';
-    loadBtn.onclick = () => loadSave(snap.id);
-
-    const exportBtn = document.createElement('button');
-    exportBtn.className = 'save-btn-export';
-    exportBtn.textContent = '⬇';
-    exportBtn.title = 'Exporter en .json';
-    exportBtn.onclick = () => exportSave(snap.id);
-
-    const delBtn = document.createElement('button');
-    delBtn.className = 'save-btn-del';
-    delBtn.textContent = '🗑';
-    delBtn.title = 'Supprimer';
-    delBtn.onclick = () => {
-      if (confirm('Supprimer "' + snap.name + '" ?')) deleteSave(snap.id);
-    };
-
-    btns.appendChild(loadBtn);
-    btns.appendChild(exportBtn);
-    btns.appendChild(delBtn);
-    item.appendChild(info);
-    item.appendChild(btns);
-    list.appendChild(item);
-  });
+  render();
+  showToast('📂 Planning chargé — ' + (snap.name || 'fichier importé'));
 }
 
-// Open/close modal
-// Wire new combined save/export button
-const _btnSaveExport = document.getElementById('btnSaveExport');
-if (_btnSaveExport) _btnSaveExport.addEventListener('click', () => {
-  document.getElementById('saveNameInput').value = 'Planning du ' + new Date().toLocaleDateString('fr-FR');
-  renderSaveList();
-  document.getElementById('saveModalOverlay').classList.add('open');
+function openFilePopup() {
+  // Pre-fill filename from current project title
+  const title = document.getElementById('projectTitle')?.textContent?.trim() || 'Planning';
+  document.getElementById('filePopupName').value = title;
+  document.getElementById('fileConfirmOverlay').classList.remove('open');
+  document.getElementById('filePopupOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('filePopupName').focus(), 80);
+}
+
+function closeFilePopup() {
+  document.getElementById('filePopupOverlay').classList.remove('open');
+  document.getElementById('fileConfirmOverlay').classList.remove('open');
+}
+
+// Open popup
+document.getElementById('btnOpenFilePopup').addEventListener('click', openFilePopup);
+
+// Close on overlay click or × button
+document.getElementById('filePopupOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('filePopupOverlay')) closeFilePopup();
 });
-document.getElementById('btnSaveSession')?.addEventListener('click', () => { /* legacy */
-  document.getElementById('saveNameInput').value = 'Planning du ' + new Date().toLocaleDateString('fr-FR');
-  renderSaveList();
-  document.getElementById('saveModalOverlay').classList.add('open');
+document.getElementById('filePopupClose').addEventListener('click', closeFilePopup);
+
+// Save → download .json
+document.getElementById('filePopupBtnSave').addEventListener('click', () => {
+  const name = document.getElementById('filePopupName').value.trim()
+    || ('Planning_' + new Date().toLocaleDateString('fr-FR').replace(/\//g, '-'));
+  downloadJson(name);
 });
-document.getElementById('btnExportFromModal')?.addEventListener('click', () => {
-  document.getElementById('saveModalOverlay').classList.remove('open');
+document.getElementById('filePopupName').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('filePopupBtnSave').click();
+  if (e.key === 'Escape') closeFilePopup();
+});
+
+// Export PDF → open print modal
+document.getElementById('filePopupBtnPdf').addEventListener('click', () => {
+  closeFilePopup();
   setTimeout(() => document.getElementById('exportModalOverlay').classList.add('open'), 100);
 });
-document.getElementById('btnSaveModalClose').addEventListener('click', () => {
-  document.getElementById('saveModalOverlay').classList.remove('open');
-});
-document.getElementById('saveModalOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('saveModalOverlay'))
-    document.getElementById('saveModalOverlay').classList.remove('open');
-});
 
-// Save button inside modal
-document.getElementById('btnDoSave').addEventListener('click', () => {
-  const name = document.getElementById('saveNameInput').value.trim() || ('Sauvegarde ' + new Date().toLocaleString('fr-FR'));
-  doSave(name);
+// Import → show confirm overlay first
+let _pendingImportFile = null;
+document.getElementById('filePopupBtnImport').addEventListener('click', () => {
+  document.getElementById('filePopupFileInput').click();
 });
-document.getElementById('saveNameInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('btnDoSave').click();
-});
-
-// Import file
-document.getElementById('importFileInput')?.addEventListener('change', e => {
-  if (e.target.files[0]) importFromFile(e.target.files[0]);
+document.getElementById('filePopupFileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
   e.target.value = '';
+  if (!file) return;
+  _pendingImportFile = file;
+  document.getElementById('fileConfirmOverlay').classList.add('open');
+});
+document.getElementById('fileConfirmCancel').addEventListener('click', () => {
+  _pendingImportFile = null;
+  document.getElementById('fileConfirmOverlay').classList.remove('open');
+});
+document.getElementById('fileConfirmOk').addEventListener('click', () => {
+  if (!_pendingImportFile) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const snap = Array.isArray(data) ? data[0] : data;
+      if (!snap || !Array.isArray(snap.tasks) || snap.tasks.length === 0) {
+        closeFilePopup();
+        showToast('❌ Fichier invalide — planning non reconnu');
+        return;
+      }
+      const first = snap.tasks[0];
+      if (!('uid' in first) || !('name' in first) || !('start' in first)) {
+        closeFilePopup();
+        showToast('❌ Format incorrect — champs attendus manquants');
+        return;
+      }
+      closeFilePopup();
+      applySnapshot(snap);
+    } catch {
+      closeFilePopup();
+      showToast('❌ Erreur de lecture — fichier JSON invalide');
+    }
+  };
+  reader.readAsText(_pendingImportFile);
+  _pendingImportFile = null;
 });
 
-// Export all
-document.getElementById('btnExportAll')?.addEventListener('click', exportAllSaves);
-
-// Keyboard shortcut: Ctrl+S to quick-save
+// Keyboard shortcut Ctrl+S → open popup (or quick-download if already named)
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 's') {
     e.preventDefault();
-    doSave('Sauvegarde rapide — ' + new Date().toLocaleString('fr-FR'));
+    openFilePopup();
   }
 });
 
-// Auto-save every 2 minutes
-setInterval(() => {
-  doSave('Auto-save — ' + new Date().toLocaleString('fr-FR'));
-}, 2 * 60 * 1000);
+// Auto-save désactivé — sauvegarde manuelle uniquement
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 // Collapse level-2+ by default for cleaner initial view
-tasks.forEach(t => { if (t.level >= 2 && t.summary) collapsed.add(t.uid); });
-render();
+// (Applied later when landing is dismissed via launchApp)
 
-// Scroll to today on load
-setTimeout(() => {
-  const today = new Date('2026-03-11');
-  const x = daysBetween(PROJECT_START, today) * getColW() - 200;
-  document.getElementById('chartBody').scrollLeft = Math.max(0, x);
-  document.getElementById('zoomLabel').textContent = getZoomLabel();
-}, 100);
+// Scroll to today on load — deferred until landing dismissed
+// (handled in launchApp)
 
-// ─── PWA SETUP ───────────────────────────────────────────────────────────────
+// ─── LANDING PAGE ────────────────────────────────────────────────────────────
+(function() {
+
+  // Skeleton générique LCY — sera remplacé par le vrai JSON fourni ultérieurement
+  const GENERIC_LCY_SKELETON = {
+    name: 'Planning Générique LCY',
+    date: new Date().toISOString(),
+    id: Date.now(),
+    tasks: [
+      {"uid":"lcy_0","id":0,"name":"PROJET GÉNÉRIQUE LCY","level":0,"start":"2026-01-05","finish":"2027-06-30","milestone":false,"summary":true,"pct":0,"preds":[]},
+      {"uid":"lcy_1","id":1,"name":"Phase 1 — Études préalables","level":1,"start":"2026-01-05","finish":"2026-04-30","milestone":false,"summary":true,"pct":0,"preds":[]},
+      {"uid":"lcy_2","id":2,"name":"Choix des intervenants","level":2,"start":"2026-01-05","finish":"2026-02-28","milestone":false,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_3","id":3,"name":"Études de faisabilité","level":2,"start":"2026-02-01","finish":"2026-03-31","milestone":false,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_4","id":4,"name":"Validation programme","level":2,"start":"2026-04-01","finish":"2026-04-30","milestone":true,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_5","id":5,"name":"Phase 2 — Permis de construire","level":1,"start":"2026-03-01","finish":"2026-10-31","milestone":false,"summary":true,"pct":0,"preds":[]},
+      {"uid":"lcy_6","id":6,"name":"Esquisse & APS","level":2,"start":"2026-03-01","finish":"2026-05-31","milestone":false,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_7","id":7,"name":"Dépôt PC","level":2,"start":"2026-06-01","finish":"2026-06-01","milestone":true,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_8","id":8,"name":"Instruction PC","level":2,"start":"2026-06-02","finish":"2026-09-30","milestone":false,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_9","id":9,"name":"Obtention PC","level":2,"start":"2026-10-01","finish":"2026-10-01","milestone":true,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_10","id":10,"name":"Phase 3 — Montage juridique & financier","level":1,"start":"2026-05-01","finish":"2026-12-31","milestone":false,"summary":true,"pct":0,"preds":[]},
+      {"uid":"lcy_11","id":11,"name":"Promesse de vente terrain","level":2,"start":"2026-05-01","finish":"2026-09-30","milestone":false,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_12","id":12,"name":"Acte authentique","level":2,"start":"2026-10-01","finish":"2026-12-31","milestone":true,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_13","id":13,"name":"Phase 4 — Travaux","level":1,"start":"2026-11-01","finish":"2027-06-30","milestone":false,"summary":true,"pct":0,"preds":[]},
+      {"uid":"lcy_14","id":14,"name":"Consultation entreprises","level":2,"start":"2026-11-01","finish":"2026-12-31","milestone":false,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_15","id":15,"name":"Signature marchés travaux","level":2,"start":"2027-01-15","finish":"2027-01-15","milestone":true,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_16","id":16,"name":"Démarrage chantier","level":2,"start":"2027-02-01","finish":"2027-02-01","milestone":true,"summary":false,"pct":0,"preds":[]},
+      {"uid":"lcy_17","id":17,"name":"Livraison","level":2,"start":"2027-06-30","finish":"2027-06-30","milestone":true,"summary":false,"pct":0,"preds":[]}
+    ],
+    links: {},
+    deadlines: [],
+    colors: {},
+    zoom: 16,
+    collapsed: []
+  };
+
+  function showLandingError(msg) {
+    const el = document.getElementById('landingError');
+    el.style.display = 'block';
+    el.textContent = msg;
+    setTimeout(() => { el.style.display = 'none'; }, 5000);
+  }
+
+  function launchApp(snap) {
+    // Apply snapshot into app state
+    if (snap.tasks && snap.tasks.length > 0) {
+      tasks = snap.tasks.map(t => ({...t}));
+    }
+    if (snap.links) {
+      Object.keys(links).forEach(k => delete links[k]);
+      Object.assign(links, snap.links);
+    }
+    if (snap.deadlines) deadlines = [...snap.deadlines];
+    if (snap.colors) {
+      Object.keys(CUSTOM_TASK_COLORS).forEach(k => delete CUSTOM_TASK_COLORS[k]);
+      Object.assign(CUSTOM_TASK_COLORS, snap.colors);
+    }
+    if (snap.zoom) continuousZoom = snap.zoom;
+    if (snap.collapsed) collapsed = new Set(snap.collapsed);
+    if (snap.name) {
+      const titleEl = document.getElementById('projectTitle');
+      if (titleEl) titleEl.textContent = snap.name;
+    }
+
+    // Rebuild initial collapse state if it's an import without collapsed info
+    if (!snap.collapsed || snap.collapsed.length === 0) {
+      tasks.forEach(t => { if (t.level >= 2 && t.summary) collapsed.add(t.uid); });
+    }
+
+    // Hide landing, show app
+    const landing = document.getElementById('landingPage');
+    landing.style.transition = 'opacity .35s ease';
+    landing.style.opacity = '0';
+    setTimeout(() => {
+      landing.style.display = 'none';
+      document.body.classList.remove('landing-active');
+    }, 350);
+
+    render();
+
+    // Scroll to today after render
+    setTimeout(() => {
+      const today = new Date();
+      const x = daysBetween(PROJECT_START, today) * getColW() - 200;
+      document.getElementById('chartBody').scrollLeft = Math.max(0, x);
+      document.getElementById('zoomLabel').textContent = getZoomLabel();
+    }, 150);
+
+    showToast('✅ Planning chargé — ' + (snap.name || 'calendrier importé'));
+  }
+
+  // Import button → open file picker
+  document.getElementById('landingBtnImport').addEventListener('click', () => {
+    document.getElementById('landingFileInput').click();
+  });
+
+  // File selected
+  document.getElementById('landingFileInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    e.target.value = '';
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+
+        // Accept either a single snapshot or an array (take first)
+        const snap = Array.isArray(data) ? data[0] : data;
+
+        // Validate minimal structure
+        if (!snap || !Array.isArray(snap.tasks) || snap.tasks.length === 0) {
+          showLandingError('❌ Fichier invalide — ce fichier ne contient pas de planning PlanningPro reconnaissable. Vérifiez que vous importez bien un fichier .json exporté depuis cet outil.');
+          return;
+        }
+
+        // Check tasks have expected fields
+        const firstTask = snap.tasks[0];
+        if (!('uid' in firstTask) || !('name' in firstTask) || !('start' in firstTask)) {
+          showLandingError('❌ Format incorrect — les tâches ne contiennent pas les champs attendus (uid, name, start). Vérifiez la source du fichier.');
+          return;
+        }
+
+        launchApp(snap);
+
+      } catch (err) {
+        showLandingError('❌ Erreur de lecture — le fichier sélectionné n\'est pas un JSON valide. Vérifiez qu\'il n\'est pas corrompu.');
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // Generic LCY button
+  document.getElementById('landingBtnGeneric').addEventListener('click', () => {
+    launchApp(GENERIC_LCY_SKELETON);
+  });
+
+})();
+
+
 (function() {
   // Generate app icon as a canvas data URL (blue gradient with "PP" text)
   function makeIcon(size) {
