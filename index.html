@@ -1468,9 +1468,9 @@
   .color-popup-btn.reset:hover { border-color: var(--red); color: var(--red); }
 
   /* ══════════════════════════════════════════
-     THEME SWITCH TOGGLE
+     LANDING PAGE
   ══════════════════════════════════════════ */
-  .theme-switch {
+  #landingPage {
     display: flex;
     align-items: center;
     gap: 7px;
@@ -2316,8 +2316,22 @@ function getPhaseAncestor(task) {
 }
 
 // ─── TIMELINE CONFIG ────────────────────────────────────────────────────────
-const PROJECT_START = parseDate('2026-01-05');
-const PROJECT_END = parseDate('2027-04-05');
+let PROJECT_START = parseDate('2026-01-05');
+let PROJECT_END = parseDate('2027-04-05');
+
+function recalcTimeline() {
+  let minD = Infinity, maxD = -Infinity;
+  tasks.forEach(t => {
+    const s = parseDate(t.start).getTime();
+    const f = parseDate(t.finish).getTime();
+    if (s < minD) minD = s;
+    if (f > maxD) maxD = f;
+  });
+  if (minD !== Infinity) {
+    PROJECT_START = addDays(new Date(minD), -30); // 30j marge avant
+    PROJECT_END = addDays(new Date(maxD), 60);    // 60j marge après
+  }
+}
 
 let COL_W; // pixels per day
 function getColW() {
@@ -2405,6 +2419,7 @@ function renderPhaseButtons() {
 }
 
 function render() {
+  recalcTimeline();
   renderPhaseButtons();
   renderTaskList();
   renderGantt();
@@ -2568,39 +2583,9 @@ function renderTaskList() {
 
     list.appendChild(div);
   });
+} // fin renderTaskList
 
-  // Sync scroll
-  list.addEventListener('scroll', () => {
-    document.getElementById('ganttCanvas').parentElement.scrollTop = list.scrollTop;
-  });
 
-  // Sync header scroll with chart body horizontal scroll
-  const _chartBody = document.getElementById('chartBody');
-  const _headerInner = document.getElementById('chartHeaderInner');
-  _chartBody.addEventListener('scroll', () => {
-    if (_headerInner) _headerInner.style.transform = `translateX(-${_chartBody.scrollLeft}px)`;
-  });
-
-  // ── Vertical cursor line on mouse move ──
-  // ── Vertical cursor line — pure JS, no DOM obstruction ──
-  let _cursorEl = null;
-  function _ensureCursor() {
-    if (_cursorEl) return;
-    _cursorEl = document.createElement('div');
-    _cursorEl.style.cssText = 'position:fixed;top:0;bottom:0;width:1px;background:rgba(82,93,244,.22);pointer-events:none;z-index:8;display:none;';
-    document.body.appendChild(_cursorEl);
-  }
-  _chartBody.addEventListener('mousemove', (e) => {
-    _ensureCursor();
-    const rect = _chartBody.getBoundingClientRect();
-    if (e.clientX < rect.left || e.clientX > rect.right) return;
-    _cursorEl.style.display = 'block';
-    _cursorEl.style.left = e.clientX + 'px';
-  });
-  _chartBody.addEventListener('mouseleave', () => {
-    if (_cursorEl) _cursorEl.style.display = 'none';
-  });
-}
 
 function renderGantt() {
   const canvas = document.getElementById('ganttCanvas');
@@ -2632,7 +2617,7 @@ function renderGantt() {
 
   // Today line
   if (showToday) {
-    const today = new Date('2026-03-11');
+    const today = new Date();
     const x = dateToX(today);
     const line = document.createElement('div');
     line.className = 'today-line';
@@ -2763,6 +2748,14 @@ function renderGantt() {
           bar.classList.remove(`phase-${phaseIdx}`);
         }
 
+        // Progress bar
+        if (task.pct > 0 && !task.summary) {
+          const prog = document.createElement('div');
+          prog.className = 'gantt-bar-progress';
+          prog.style.width = Math.min(task.pct, 100) + '%';
+          bar.appendChild(prog);
+        }
+
         // Task name label: always show for summary/phase bars (level <= 1), show for others only if pct=0
         if (barW > 60 && task.level <= 2 && (task.summary || task.pct === 0)) {
           const lbl = document.createElement('div');
@@ -2888,6 +2881,24 @@ function addBarEvents(el, task) {
       task.start = toDateStr(newStart);
       task.finish = toDateStr(newFinish);
 
+      // Si c'est une phase groupe (summary), déplacer aussi tous les enfants
+      if (task.summary) {
+        getDescendants(task.uid).forEach(child => {
+          const childStart  = addDays(parseDate(child.start),  deltaDays - (dragState._lastDelta || 0));
+          const childFinish = addDays(parseDate(child.finish), deltaDays - (dragState._lastDelta || 0));
+          child.start  = toDateStr(childStart);
+          child.finish = toDateStr(childFinish);
+          // Déplacer visuellement
+          const childReg = window._barRegistry?.[child.uid];
+          if (childReg) {
+            const childX = dateToX(childStart);
+            childReg.el.style.left = (child.milestone ? childX - 5 : childX) + 'px';
+          }
+          updateTaskRowDates(child.uid, child.start, child.finish);
+        });
+      }
+      dragState._lastDelta = deltaDays;
+
       // Move bar visually without full re-render
       const newX = dateToX(newStart);
       el.style.left = (task.milestone ? newX - 5 : newX) + 'px';
@@ -2907,6 +2918,7 @@ function addBarEvents(el, task) {
       el.classList.remove('dragging');
       if (hasDragged) {
         dragState = null;
+        rollupParents();
         render();
       } else {
         dragState = null;
@@ -3031,6 +3043,35 @@ function updateTaskRowDates(uid, start, finish) {
   if (rows.length >= 2) {
     rows[0].textContent = formatShortDate(parseDate(start));
     rows[1].textContent = (finish === start && tasks.find(t=>t.uid===uid)?.milestone) ? '—' : formatShortDate(parseDate(finish));
+  }
+}
+
+// ── Collecte tous les descendants directs et récursifs d'une tâche summary ──
+function getDescendants(uid) {
+  const myIdx = tasks.findIndex(t => t.uid === uid);
+  if (myIdx < 0) return [];
+  const myLevel = tasks[myIdx].level;
+  const result = [];
+  for (let i = myIdx + 1; i < tasks.length; i++) {
+    if (tasks[i].level <= myLevel) break; // on est sorti de la branche
+    result.push(tasks[i]);
+  }
+  return result;
+}
+
+// ── Roll-up : recalcule les dates start/finish des phases parentes ──
+function rollupParents() {
+  // Parcourir du bas vers le haut (niveau max → niveau 0)
+  const maxLevel = Math.max(...tasks.map(t => t.level));
+  for (let level = maxLevel - 1; level >= 0; level--) {
+    tasks.filter(t => t.level === level && t.summary).forEach(parent => {
+      const children = getDescendants(parent.uid).filter(c => c.level === parent.level + 1);
+      if (children.length === 0) return;
+      const starts = children.map(c => parseDate(c.start).getTime());
+      const ends   = children.map(c => parseDate(c.finish).getTime());
+      parent.start  = toDateStr(new Date(Math.min(...starts)));
+      parent.finish = toDateStr(new Date(Math.max(...ends)));
+    });
   }
 }
 
@@ -3193,7 +3234,7 @@ function renderChartHeader(totalW) {
   monthsRow.style.width = totalW + 'px';
   weeksRow.style.width = totalW + 'px';
 
-  const today = new Date('2026-03-11');
+  const today = new Date();
 
   if (getZoomLevel() === 0) {
     // Month view
@@ -3383,9 +3424,20 @@ document.getElementById('btnCancel').addEventListener('click', () => {
 document.getElementById('btnSave').addEventListener('click', () => {
   const name = document.getElementById('fName').value.trim();
   if (!name) return;
-  saveSnapshot();
   const start = document.getElementById('fStart').value;
   const finish = document.getElementById('fEnd').value;
+
+  // Validation : date de fin >= date de début
+  if (start && finish && finish < start) {
+    document.getElementById('fEnd').style.borderColor = 'var(--red)';
+    document.getElementById('fEnd').style.boxShadow = '0 0 0 3px rgba(214,53,88,.15)';
+    showToast('⚠️ La date de fin ne peut pas être avant la date de début');
+    return;
+  }
+  document.getElementById('fEnd').style.borderColor = '';
+  document.getElementById('fEnd').style.boxShadow = '';
+
+  saveSnapshot();
   const pct = parseInt(document.getElementById('fPct').value) || 0;
   const type = document.getElementById('fType').value;
   const parentUid = document.getElementById('fParent').value;
@@ -3425,6 +3477,7 @@ document.getElementById('btnSave').addEventListener('click', () => {
   }
 
   document.getElementById('modalOverlay').classList.remove('open');
+  rollupParents();
   render();
 });
 
@@ -4162,31 +4215,36 @@ document.addEventListener('keydown', e => {
 
 })();
 
-// ─── THEME SWITCH ────────────────────────────────────────────────────────────
-(function() {
-  const checkbox = document.getElementById('themeCheckbox');
-  if (!checkbox) return;
+// ─── SCROLL SYNC — initialisé une seule fois (fix fuite mémoire) ─────────────
+function initScrollSync() {
+  const list = document.getElementById('taskList');
+  const chartBody = document.getElementById('chartBody');
+  const headerInner = document.getElementById('chartHeaderInner');
 
-  // Light is the DEFAULT — dark mode is the "checked" state
-  function applyTheme(isDark) {
-    document.documentElement.classList.toggle('dark-mode', isDark);
-    document.body.classList.toggle('dark-mode', isDark);
-    checkbox.checked = isDark;
-    try { localStorage.setItem('planningpro_theme', isDark ? 'dark' : 'light'); } catch(e) {}
-  }
-
-  // Restore preference — default is light (no dark-mode class)
-  try {
-    const saved = localStorage.getItem('planningpro_theme');
-    if (saved === 'dark') applyTheme(true);
-    // else stay in light mode (default)
-  } catch(e) {}
-
-  checkbox.addEventListener('change', () => {
-    applyTheme(checkbox.checked);
-    showToast(checkbox.checked ? '🌙 Mode sombre activé' : '☀️ Mode clair activé');
+  // Synchro verticale taskList ↔ chartBody
+  list.addEventListener('scroll', () => {
+    chartBody.scrollTop = list.scrollTop;
   });
-})();
+  chartBody.addEventListener('scroll', () => {
+    list.scrollTop = chartBody.scrollTop;
+    if (headerInner) headerInner.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
+  });
+
+  // ── Curseur vertical sur le Gantt ──
+  const cursorEl = document.createElement('div');
+  cursorEl.style.cssText = 'position:fixed;top:0;bottom:0;width:1px;background:rgba(82,93,244,.22);pointer-events:none;z-index:8;display:none;';
+  document.body.appendChild(cursorEl);
+  chartBody.addEventListener('mousemove', (e) => {
+    const rect = chartBody.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX > rect.right) return;
+    cursorEl.style.display = 'block';
+    cursorEl.style.left = e.clientX + 'px';
+  });
+  chartBody.addEventListener('mouseleave', () => {
+    cursorEl.style.display = 'none';
+  });
+}
+initScrollSync();
 
 
 
