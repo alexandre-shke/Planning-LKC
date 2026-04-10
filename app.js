@@ -659,6 +659,14 @@ function addBarEvents(el, task) {
     let ghost = null;
     let hasDragged = false;
 
+    // Sauvegarder positions originales des enfants au début du drag
+    const origChildren = {};
+    if (task.summary) {
+      getDescendants(task.uid).forEach(child => {
+        origChildren[child.uid] = { start: child.start, finish: child.finish };
+      });
+    }
+
     dragState = { uid: task.uid, startMouseX, origStart, origFinish, origDuration, el, ghost: null };
 
     const onMove = (ev) => {
@@ -696,11 +704,12 @@ function addBarEvents(el, task) {
       // Si c'est une phase groupe (summary), déplacer aussi tous les enfants
       if (task.summary) {
         getDescendants(task.uid).forEach(child => {
-          const childStart  = addDays(parseDate(child.start),  deltaDays - (dragState._lastDelta || 0));
-          const childFinish = addDays(parseDate(child.finish), deltaDays - (dragState._lastDelta || 0));
+          const orig = origChildren[child.uid];
+          if (!orig) return;
+          const childStart  = addDays(parseDate(orig.start), deltaDays);
+          const childFinish = addDays(parseDate(orig.finish), deltaDays);
           child.start  = toDateStr(childStart);
           child.finish = toDateStr(childFinish);
-          // Déplacer visuellement
           const childReg = window._barRegistry?.[child.uid];
           if (childReg) {
             const childX = dateToX(childStart);
@@ -709,7 +718,6 @@ function addBarEvents(el, task) {
           updateTaskRowDates(child.uid, child.start, child.finish);
         });
       }
-      dragState._lastDelta = deltaDays;
 
       // Move bar visually without full re-render
       const newX = dateToX(newStart);
