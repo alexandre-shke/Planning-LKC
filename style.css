@@ -710,9 +710,12 @@
     border-bottom: 1px solid rgba(82,93,244,.15);
     background: #EEF1F9;
     flex-shrink: 0;
-    overflow-x: hidden;
+    overflow-x: scroll;
     overflow-y: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE */
   }
+  .chart-header::-webkit-scrollbar { display: none; } /* Chrome/Safari */
   /* Inner scroll container — synced to chartBody via JS */
   .chart-header-inner {
     display: flex;
