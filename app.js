@@ -620,6 +620,12 @@ function renderGantt() {
   // Header
   renderChartHeader(w);
 
+  // Sync taskList height to canvas so vertical scrollTop sync works
+  requestAnimationFrame(() => {
+    const tl = document.getElementById('taskList');
+    const cv = document.getElementById('ganttCanvas');
+    if (tl && cv) tl.style.minHeight = cv.offsetHeight + 'px';
+  });
 }
 
 function addBarEvents(el, task) {
@@ -2030,8 +2036,6 @@ document.addEventListener('keydown', e => {
 function initScrollSync() {
   const list = document.getElementById('taskList');
   const chartBody = document.getElementById('chartBody');
-  const headerInner = document.getElementById('chartHeaderInner');
-
   // Synchro verticale taskList ↔ chartBody (flag anti-boucle)
   let _syncing = false;
   list.addEventListener('scroll', () => {
@@ -2044,7 +2048,9 @@ function initScrollSync() {
     if (_syncing) return;
     _syncing = true;
     list.scrollTop = chartBody.scrollTop;
-    if (headerInner) headerInner.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
+    // Re-sélection dynamique pour éviter stale ref après re-render
+    const hi = document.getElementById('chartHeaderInner');
+    if (hi) hi.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
     _syncing = false;
   });
 
