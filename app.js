@@ -1764,6 +1764,7 @@ document.addEventListener('keydown', e => {
     }, 350);
 
     render();
+    initScrollSync();
 
     // Scroll to today after render
     setTimeout(() => {
@@ -2068,4 +2069,3 @@ function initScrollSync() {
     cursorEl.style.display = 'none';
   });
 }
-initScrollSync();
