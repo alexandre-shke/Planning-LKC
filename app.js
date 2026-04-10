@@ -2029,26 +2029,23 @@ document.addEventListener('keydown', e => {
 
 // ─── SCROLL SYNC — initialisé une seule fois (fix fuite mémoire) ─────────────
 function initScrollSync() {
-  const list = document.getElementById('taskList');
-  const chartBody = document.getElementById('chartBody');
-  // Synchro verticale taskList ↔ chartBody (flag anti-boucle)
-  let _syncingV = false;
+  const list     = document.getElementById('taskList');
+  const chartBody= document.getElementById('chartBody');
+  const header   = document.getElementById('chartHeader');
+
+  // ── Horizontal : header suit chartBody ──
+  chartBody.addEventListener('scroll', () => {
+    if (header) header.scrollLeft = chartBody.scrollLeft;
+  });
+
+  // ── Vertical : taskList ↔ chartBody ──
   list.addEventListener('scroll', () => {
-    if (_syncingV) return;
-    _syncingV = true;
     chartBody.scrollTop = list.scrollTop;
-    requestAnimationFrame(() => { _syncingV = false; });
   });
   chartBody.addEventListener('scroll', () => {
-    // Header horizontal sync (toujours)
-    const hi = document.getElementById('chartHeaderInner');
-    if (hi) hi.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
-    // Vertical sync
-    if (_syncingV) return;
-    _syncingV = true;
     list.scrollTop = chartBody.scrollTop;
-    requestAnimationFrame(() => { _syncingV = false; });
   });
+
 
   // ── Curseur vertical sur le Gantt ──
   const cursorEl = document.createElement('div');
