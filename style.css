@@ -1228,6 +1228,15 @@
   .btn-export:hover { border-color: var(--lc-electric); color: var(--lc-electric); }
 
   /* ── PRINT / PDF STYLES ── */
+
+  /* ── PRINT HEADER (masqué à l'écran) ── */
+  .print-header {
+    display: none;
+  }
+  .print-watermark {
+    display: none;
+  }
+
   @media print {
     @page {
       size: A3 landscape;
@@ -1357,6 +1366,94 @@
 
     /* Force full width canvas to print */
     #ganttCanvas { min-width: 100% !important; }
+
+    /* ── MASQUER UI ── */
+    header, .toolbar, .landing-page, #landingPage,
+    .modal-overlay, .ctx-menu, .color-popup,
+    .file-popup-overlay, .header-tools, .header-actions,
+    .header-sep, #snapIndicator { display: none !important; }
+
+    /* ── PRINT HEADER ── */
+    .print-header {
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px 8px;
+      border-bottom: 2.5px solid #1e3a8a;
+      margin-bottom: 6px;
+      page-break-inside: avoid;
+    }
+    .print-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .print-logo {
+      height: 24px;
+      width: auto;
+    }
+    .print-header-divider {
+      width: 1px;
+      height: 28px;
+      background: #cbd5e1;
+    }
+    .print-header-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .print-project-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e3a8a;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.3px;
+    }
+    .print-meta {
+      font-size: 8.5px;
+      color: #64748b;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .print-header-right {
+      text-align: right;
+    }
+    .print-badge {
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      background: #1e3a8a;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      font-family: 'DM Sans', sans-serif;
+      text-transform: uppercase;
+    }
+
+    /* ── FILIGRANE ── */
+    .print-watermark {
+      display: block !important;
+      position: fixed;
+      bottom: 18mm;
+      right: 14mm;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(30,58,138,0.13);
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap;
+      transform: rotate(-8deg);
+      transform-origin: bottom right;
+    }
+    .print-watermark.wm-large {
+      font-size: 42px;
+      bottom: 30mm;
+      right: 20mm;
+      color: rgba(30,58,138,0.07);
+      letter-spacing: 6px;
+    }
   }
 
 
