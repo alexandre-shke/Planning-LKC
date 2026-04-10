@@ -168,6 +168,37 @@
 </div>
 
 <!-- MAIN -->
+
+<!-- PRINT HEADER — masqué à l'écran, visible uniquement à l'impression -->
+<div class="print-header" id="printHeader">
+  <div class="print-header-left">
+    <svg class="print-logo" viewBox="0 0 180 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="7" height="38" rx="1.5" fill="#1e3a8a"/>
+      <rect x="0" y="0" width="26" height="7" rx="1.5" fill="#1e3a8a"/>
+      <rect x="0" y="31" width="26" height="7" rx="1.5" fill="#1e3a8a"/>
+      <rect x="19" y="0" width="7" height="13" rx="1.5" fill="#1e3a8a"/>
+      <rect x="19" y="25" width="7" height="13" rx="1.5" fill="#1e3a8a"/>
+      <rect x="10" y="10" width="16" height="5.5" rx="1" fill="#1e3a8a"/>
+      <rect x="10" y="22.5" width="16" height="5.5" rx="1" fill="#1e3a8a"/>
+      <rect x="10" y="10" width="5.5" height="18" rx="1" fill="#1e3a8a"/>
+      <rect x="21" y="10" width="5" height="8" rx="1" fill="#1e3a8a"/>
+      <rect x="21" y="20" width="5" height="8" rx="1" fill="#1e3a8a"/>
+      <text x="36" y="28" font-family="DM Sans, sans-serif" font-weight="700" font-size="20" fill="#1e3a8a" letter-spacing="1">LINKCITY</text>
+    </svg>
+    <div class="print-header-divider"></div>
+    <div class="print-header-titles">
+      <div class="print-project-name" id="printProjectName">Planning</div>
+      <div class="print-meta" id="printMeta"></div>
+    </div>
+  </div>
+  <div class="print-header-right">
+    <div class="print-badge" id="printBadge"></div>
+  </div>
+</div>
+
+<!-- FILIGRANE -->
+<div class="print-watermark" id="printWatermark"></div>
+
 <div class="gantt-wrapper">
   <!-- Left: tasks -->
   <div class="task-panel">
@@ -234,6 +265,18 @@
         <option value="week" selected>Vue Semaine — détail semaines</option>
         <option value="day">Vue Jour — détail maximal</option>
       </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Filigrane</label>
+      <select class="form-select" id="exportWatermark">
+        <option value="none">Aucun</option>
+        <option value="projet">PROJET</option>
+        <option value="confidentiel">CONFIDENTIEL</option>
+        <option value="draft">DRAFT</option>
+        <option value="date">Date d'édition</option>
+        <option value="custom">Texte personnalisé…</option>
+      </select>
+      <input class="form-input" id="exportWatermarkCustom" type="text" placeholder="Votre texte…" style="margin-top:6px;display:none;">
     </div>
     <div style="background:rgba(79,124,255,.08);border:1px solid rgba(79,124,255,.2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">
       💡 <strong style="color:var(--text)">Conseil :</strong> Dans la fenêtre d'impression du navigateur, sélectionnez <strong style="color:var(--text)">Format A3 Paysage</strong> et activez <strong style="color:var(--text)">"Graphiques d'arrière-plan"</strong> pour que les couleurs soient visibles.
