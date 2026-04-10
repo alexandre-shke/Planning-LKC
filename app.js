@@ -620,12 +620,7 @@ function renderGantt() {
   // Header
   renderChartHeader(w);
 
-  // Sync taskList height to canvas so vertical scrollTop sync works
-  requestAnimationFrame(() => {
-    const tl = document.getElementById('taskList');
-    const cv = document.getElementById('ganttCanvas');
-    if (tl && cv) tl.style.minHeight = cv.offsetHeight + 'px';
-  });
+
 }
 
 function addBarEvents(el, task) {
@@ -2037,21 +2032,22 @@ function initScrollSync() {
   const list = document.getElementById('taskList');
   const chartBody = document.getElementById('chartBody');
   // Synchro verticale taskList ↔ chartBody (flag anti-boucle)
-  let _syncing = false;
+  let _syncingV = false;
   list.addEventListener('scroll', () => {
-    if (_syncing) return;
-    _syncing = true;
+    if (_syncingV) return;
+    _syncingV = true;
     chartBody.scrollTop = list.scrollTop;
-    _syncing = false;
+    requestAnimationFrame(() => { _syncingV = false; });
   });
   chartBody.addEventListener('scroll', () => {
-    if (_syncing) return;
-    _syncing = true;
-    list.scrollTop = chartBody.scrollTop;
-    // Re-sélection dynamique pour éviter stale ref après re-render
+    // Header horizontal sync (toujours)
     const hi = document.getElementById('chartHeaderInner');
     if (hi) hi.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
-    _syncing = false;
+    // Vertical sync
+    if (_syncingV) return;
+    _syncingV = true;
+    list.scrollTop = chartBody.scrollTop;
+    requestAnimationFrame(() => { _syncingV = false; });
   });
 
   // ── Curseur vertical sur le Gantt ──
