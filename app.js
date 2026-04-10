@@ -2028,9 +2028,15 @@ document.addEventListener('keydown', e => {
 
 // ─── SCROLL SYNC — initialisé une seule fois (fix fuite mémoire) ─────────────
 function initScrollSync() {
-  const list = document.getElementById('taskList');
-  const chartBody = document.getElementById('chartBody');
-  const headerInner = document.getElementById('chartHeaderInner');
+  const list        = document.getElementById('taskList');
+  const chartBody   = document.getElementById('chartBody');
+  const chartHeader = document.getElementById('chartHeader');
+
+  // Rendre le header scrollable horizontalement (scrollbar invisible)
+  if (chartHeader) {
+    chartHeader.style.overflowX = 'hidden';
+    chartHeader.style.overflowY = 'hidden';
+  }
 
   // Guard anti-boucle pour la synchro verticale
   let isSyncing = false;
@@ -2043,14 +2049,14 @@ function initScrollSync() {
     isSyncing = false;
   }, { passive: true });
 
-  // Scroll chartBody → taskList + header horizontal
+  // Scroll chartBody → taskList (vertical) + chartHeader (horizontal)
   chartBody.addEventListener('scroll', () => {
     if (!isSyncing) {
       isSyncing = true;
       list.scrollTop = chartBody.scrollTop;
       isSyncing = false;
     }
-    if (headerInner) headerInner.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
+    if (chartHeader) chartHeader.scrollLeft = chartBody.scrollLeft;
   }, { passive: true });
 
   // ── Curseur vertical sur le Gantt ──
