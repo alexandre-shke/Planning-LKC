@@ -2032,42 +2032,28 @@ function initScrollSync() {
   const list      = document.getElementById('taskList');
   const chartBody = document.getElementById('chartBody');
 
-  // ── Horizontal : chartHeaderInner suit via translateX ──
+  // Horizontal : translateX sur chartHeaderInner
   chartBody.addEventListener('scroll', () => {
     const hi = document.getElementById('chartHeaderInner');
     if (hi) hi.style.transform = 'translateX(-' + chartBody.scrollLeft + 'px)';
   });
 
-  // ── Vertical : taskList ↔ chartBody ──
-  // On utilise un wrapper scrollable commun autour des deux panneaux
-  // plutôt que de synchroniser deux scrollbars séparées
-  const wrapper = document.getElementById('taskList').parentElement.parentElement;
-  // wrapper = gantt-wrapper — on détourne le scroll vertical sur lui
-  // En pratique : taskList et chartBody partagent la même hauteur via flexbox
-  // Il suffit de propager le scrollTop dans les deux sens sans boucle
+  // Vertical : rAF pour éviter boucle infinie
   let ticking = false;
   list.addEventListener('scroll', () => {
     if (!ticking) {
-      window.requestAnimationFrame(() => {
-        chartBody.scrollTop = list.scrollTop;
-        ticking = false;
-      });
+      requestAnimationFrame(() => { chartBody.scrollTop = list.scrollTop; ticking = false; });
       ticking = true;
     }
   });
   chartBody.addEventListener('scroll', () => {
     if (!ticking) {
-      window.requestAnimationFrame(() => {
-        list.scrollTop = chartBody.scrollTop;
-        const hi = document.getElementById('chartHeaderInner');
-        if (hi) hi.style.transform = 'translateX(-' + chartBody.scrollLeft + 'px)';
-        ticking = false;
-      });
+      requestAnimationFrame(() => { list.scrollTop = chartBody.scrollTop; ticking = false; });
       ticking = true;
     }
   });
 
-
+  
   // ── Curseur vertical sur le Gantt ──
   const cursorEl = document.createElement('div');
   cursorEl.style.cssText = 'position:fixed;top:0;bottom:0;width:1px;background:rgba(82,93,244,.22);pointer-events:none;z-index:8;display:none;';
