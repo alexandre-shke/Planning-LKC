@@ -620,10 +620,6 @@ function renderGantt() {
   // Header
   renderChartHeader(w);
 
-  // Sync scroll
-  chartBody.addEventListener('scroll', () => {
-    document.getElementById('taskList').scrollTop = chartBody.scrollTop;
-  });
 }
 
 function addBarEvents(el, task) {
@@ -2036,14 +2032,26 @@ function initScrollSync() {
   const chartBody = document.getElementById('chartBody');
   const headerInner = document.getElementById('chartHeaderInner');
 
-  // Synchro verticale taskList ↔ chartBody
+  // Guard anti-boucle pour la synchro verticale
+  let isSyncing = false;
+
+  // Scroll vertical : taskList → chartBody
   list.addEventListener('scroll', () => {
+    if (isSyncing) return;
+    isSyncing = true;
     chartBody.scrollTop = list.scrollTop;
-  });
+    isSyncing = false;
+  }, { passive: true });
+
+  // Scroll chartBody → taskList + header horizontal
   chartBody.addEventListener('scroll', () => {
-    list.scrollTop = chartBody.scrollTop;
+    if (!isSyncing) {
+      isSyncing = true;
+      list.scrollTop = chartBody.scrollTop;
+      isSyncing = false;
+    }
     if (headerInner) headerInner.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
-  });
+  }, { passive: true });
 
   // ── Curseur vertical sur le Gantt ──
   const cursorEl = document.createElement('div');
