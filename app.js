@@ -2028,36 +2028,25 @@ document.addEventListener('keydown', e => {
 
 // ─── SCROLL SYNC — initialisé une seule fois (fix fuite mémoire) ─────────────
 function initScrollSync() {
-  const list        = document.getElementById('taskList');
-  const chartBody   = document.getElementById('chartBody');
-  const chartHeader = document.getElementById('chartHeader');
+  const list = document.getElementById('taskList');
+  const chartBody = document.getElementById('chartBody');
+  const headerInner = document.getElementById('chartHeaderInner');
 
-  // Rendre le header scrollable horizontalement (scrollbar invisible)
-  if (chartHeader) {
-    chartHeader.style.overflowX = 'hidden';
-    chartHeader.style.overflowY = 'hidden';
-  }
-
-  // Guard anti-boucle pour la synchro verticale
-  let isSyncing = false;
-
-  // Scroll vertical : taskList → chartBody
+  // Synchro verticale taskList ↔ chartBody (flag anti-boucle)
+  let _syncing = false;
   list.addEventListener('scroll', () => {
-    if (isSyncing) return;
-    isSyncing = true;
+    if (_syncing) return;
+    _syncing = true;
     chartBody.scrollTop = list.scrollTop;
-    isSyncing = false;
-  }, { passive: true });
-
-  // Scroll chartBody → taskList (vertical) + chartHeader (horizontal)
+    _syncing = false;
+  });
   chartBody.addEventListener('scroll', () => {
-    if (!isSyncing) {
-      isSyncing = true;
-      list.scrollTop = chartBody.scrollTop;
-      isSyncing = false;
-    }
-    if (chartHeader) chartHeader.scrollLeft = chartBody.scrollLeft;
-  }, { passive: true });
+    if (_syncing) return;
+    _syncing = true;
+    list.scrollTop = chartBody.scrollTop;
+    if (headerInner) headerInner.style.transform = `translateX(-${chartBody.scrollLeft}px)`;
+    _syncing = false;
+  });
 
   // ── Curseur vertical sur le Gantt ──
   const cursorEl = document.createElement('div');
