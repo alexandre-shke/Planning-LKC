@@ -1417,48 +1417,10 @@ document.getElementById('exportCancel')?.addEventListener('click', () => {
   document.getElementById('exportModalOverlay').classList.remove('open');
 });
 
-
-// Watermark custom field toggle
-document.getElementById('exportWatermark')?.addEventListener('change', function() {
-  const custom = document.getElementById('exportWatermarkCustom');
-  if (custom) custom.style.display = this.value === 'custom' ? 'block' : 'none';
-});
-
 document.getElementById('exportConfirm')?.addEventListener('click', () => {
   const scope = document.getElementById('exportScope').value;
   const zoomChoice = document.getElementById('exportZoom').value;
-  const wmChoice = document.getElementById('exportWatermark')?.value || 'none';
-  const wmCustom = document.getElementById('exportWatermarkCustom')?.value || '';
   document.getElementById('exportModalOverlay').classList.remove('open');
-
-  // ── Mettre à jour le print-header ──
-  const projectName = document.getElementById('projectTitle')?.textContent || 'Planning';
-  const printProjectName = document.getElementById('printProjectName');
-  const printMeta = document.getElementById('printMeta');
-  const printBadge = document.getElementById('printBadge');
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' });
-  const zoomLabels = { month: 'Vue Mois', week: 'Vue Semaine', day: 'Vue Jour' };
-  if (printProjectName) printProjectName.textContent = projectName;
-  if (printMeta) printMeta.textContent = 'Édité le ' + dateStr + '  ·  ' + zoomLabels[zoomChoice];
-  if (printBadge) printBadge.textContent = zoomLabels[zoomChoice];
-
-  // ── Filigrane ──
-  const wm = document.getElementById('printWatermark');
-  if (wm) {
-    const wmTexts = {
-      none: '',
-      projet: 'PROJET',
-      confidentiel: 'CONFIDENTIEL',
-      draft: 'DRAFT',
-      date: 'Édition ' + today.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric' }),
-      custom: wmCustom
-    };
-    const wmText = wmTexts[wmChoice] || '';
-    wm.textContent = wmText;
-    // Large pour mots courts, petit pour dates/textes longs
-    wm.className = 'print-watermark' + (['projet','confidentiel','draft'].includes(wmChoice) ? ' wm-large' : '');
-  }
 
   // Save current state
   const savedZoom = continuousZoom;
@@ -1484,19 +1446,26 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
   const origChartBodyStyle = chartBody.getAttribute('style') || '';
   const origTaskListStyle = taskList.getAttribute('style') || '';
 
+  // Force full height for print
   chartBody.style.overflow = 'visible';
   chartBody.style.height = canvas.scrollHeight + 'px';
   taskList.style.overflow = 'visible';
   taskList.style.height = canvas.scrollHeight + 'px';
 
-  // Nom de fichier PDF propre
-  const safeName = projectName.replace(/[^a-zA-Z0-9À-ɏ\s_-]/g, '').trim().replace(/\s+/g, '_');
-  document.title = safeName + '_' + today.toISOString().slice(0,10);
+  // Set document title for PDF filename
+  document.title = 'Planning_PA3_' + new Date().toISOString().slice(0,10);
+
+  // Reset scrollLeft avant impression : la ligne aujourd'hui est en position absolue
+  // dans le canvas — le scroll la décalerait visuellement à l'impression
+  const savedScrollLeft = chartBody.scrollLeft;
+  chartBody.scrollLeft = 0;
 
   setTimeout(() => {
     window.print();
 
+    // Restore state after print dialog
     setTimeout(() => {
+      chartBody.scrollLeft = savedScrollLeft;
       continuousZoom = savedZoom;
       collapsed.clear();
       savedCollapsed.forEach(uid => collapsed.add(uid));
@@ -1504,8 +1473,7 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
       taskList.setAttribute('style', origTaskListStyle);
       chartBody.style.overflow = '';
       taskList.style.overflow = '';
-      document.title = 'PlanningPro — PA3';
-      if (wm) { wm.textContent = ''; }
+      document.title = 'Planning Immobilier — PA3';
       render();
     }, 500);
   }, 300);
