@@ -1228,10 +1228,99 @@
   .btn-export:hover { border-color: var(--lc-electric); color: var(--lc-electric); }
 
   /* ── PRINT / PDF STYLES ── */
+
+  /* ── PRINT HEADER & WATERMARK — masqués à l'écran ── */
+  .print-header { display: none; }
+  .print-watermark { display: none; }
+
   @media print {
     @page {
       size: A3 landscape;
       margin: 8mm 6mm;
+    }
+
+    /* ── PRINT HEADER ── */
+    .print-header {
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 10px 7px;
+      border-bottom: 2px solid #1e3a8a;
+      margin-bottom: 5px;
+      page-break-inside: avoid;
+    }
+    .print-header-left {
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+    }
+    .print-logo {
+      height: 20px !important;
+      width: auto !important;
+      display: block !important;
+    }
+    .print-header-divider {
+      width: 1px;
+      height: 24px;
+      background: #cbd5e1;
+      display: block !important;
+    }
+    .print-header-titles {
+      display: flex !important;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .print-project-name {
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      color: #1e3a8a !important;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .print-meta {
+      font-size: 8px !important;
+      color: #64748b !important;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .print-header-right { display: block !important; }
+    .print-badge {
+      font-size: 8px !important;
+      font-weight: 700 !important;
+      color: #fff !important;
+      background: #1e3a8a !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      padding: 2px 8px !important;
+      border-radius: 20px !important;
+      text-transform: uppercase !important;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── FILIGRANE ── */
+    .print-watermark {
+      display: block !important;
+      position: fixed !important;
+      bottom: 18mm;
+      right: 14mm;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(30,58,138,0.13) !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      pointer-events: none;
+      white-space: nowrap;
+      transform: rotate(-8deg);
+      transform-origin: bottom right;
+    }
+    .print-watermark.wm-large {
+      font-size: 42px !important;
+      bottom: 30mm;
+      right: 20mm;
+      color: rgba(30,58,138,0.07) !important;
+      letter-spacing: 6px;
     }
 
     body {
