@@ -1446,6 +1446,10 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
   const origChartBodyStyle = chartBody.getAttribute('style') || '';
   const origTaskListStyle = taskList.getAttribute('style') || '';
 
+  // Reset scrollLeft AVANT overflow:visible — après, scrollLeft n'a plus d'effet
+  const savedScrollLeft = chartBody.scrollLeft;
+  chartBody.scrollLeft = 0;
+
   // Force full height for print
   chartBody.style.overflow = 'visible';
   chartBody.style.height = canvas.scrollHeight + 'px';
@@ -1454,11 +1458,6 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
 
   // Set document title for PDF filename
   document.title = 'Planning_PA3_' + new Date().toISOString().slice(0,10);
-
-  // Reset scrollLeft avant impression : la ligne aujourd'hui est en position absolue
-  // dans le canvas — le scroll la décalerait visuellement à l'impression
-  const savedScrollLeft = chartBody.scrollLeft;
-  chartBody.scrollLeft = 0;
 
   setTimeout(() => {
     window.print();
