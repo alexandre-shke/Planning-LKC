@@ -69,11 +69,63 @@ function undo() {
 // ─── DOM READY ───────────────────────────────────────────────────────────────
 
 
+// ─── COPY / PASTE ────────────────────────────────────────────────────────────
+let clipboardUid = null; // uid de la tâche copiée via Ctrl+C
+
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
     e.preventDefault();
     undo();
   }
+
+  // Ctrl+C : mémorise la tâche sélectionnée
+  if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+    // Ne pas interférer si l'utilisateur copie du texte dans un input/textarea
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (selectedUid) {
+      clipboardUid = selectedUid;
+      showToast('📋 Tâche copiée — Ctrl+V pour coller');
+    }
+  }
+
+  // Ctrl+V : duplique la tâche copiée juste après son bloc (tâche + descendants)
+  if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (!clipboardUid) return;
+    e.preventDefault();
+
+    const src = tasks.find(t => t.uid === clipboardUid);
+    if (!src) return;
+
+    saveSnapshot();
+
+    // Collecte la tâche source + tous ses descendants
+    const srcDescendants = getDescendants(clipboardUid);
+    const block = [src, ...srcDescendants];
+
+    // Génère de nouveaux uid pour chaque tâche du bloc, en conservant la structure
+    const uidMap = {}; // oldUid -> newUid
+    block.forEach(t => { uidMap[t.uid] = 'copy_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7); });
+
+    const copies = block.map(t => ({
+      ...t,
+      uid: uidMap[t.uid],
+      id: tasks.length + Object.keys(uidMap).indexOf(t.uid),
+      name: t === src ? t.name + ' (copie)' : t.name,
+    }));
+
+    // Insertion juste après le dernier descendant de la source
+    const srcIdx = tasks.findIndex(t => t.uid === clipboardUid);
+    const insertAfterIdx = srcIdx + srcDescendants.length; // dernier élément du bloc source
+    tasks.splice(insertAfterIdx + 1, 0, ...copies);
+
+    // Sélectionne la nouvelle tâche copiée
+    selectedUid = copies[0].uid;
+
+    render();
+    showToast(`✅ Tâche collée : ${copies[0].name}`);
+  }
+
   // Escape clears multi-selection
   if (e.key === 'Escape' && selectedUids.size > 0) {
     selectedUids.forEach(uid => {
@@ -1247,23 +1299,7 @@ function toggleLinkMode() {
 const _btnLinkHeader = document.getElementById('btnLinkModeHeader');
 if (_btnLinkHeader) _btnLinkHeader.addEventListener('click', toggleLinkMode);
 
-// Add "Supprimer liaisons" to context menu
-document.getElementById('ctxDelete').insertAdjacentHTML('beforebegin', `
-  <div class="ctx-item" id="ctxRemoveLinks">🔗 Supprimer liaisons</div>
-  <div class="ctx-sep"></div>
-`);
-document.getElementById('ctxRemoveLinks').addEventListener('click', () => {
-  if (!ctxUid) return;
-  saveSnapshot();
-  // Remove as source
-  delete links[ctxUid];
-  // Remove as target
-  Object.keys(links).forEach(k => {
-    links[k] = links[k].filter(v => v !== ctxUid);
-  });
-  render();
-  showToast('Liaisons supprimées');
-});
+
 
 function renderChartHeader(totalW) {
   const monthsRow = document.getElementById('monthsRow');
