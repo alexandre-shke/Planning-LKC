@@ -5,6 +5,7 @@ const RAW_TASKS = [{"uid":"0","id":0,"name":"PA3","level":0,"start":"2026-01-05"
 let tasks = RAW_TASKS.map((t,i) => ({...t, _idx: i}));
 let collapsed = new Set();
 let selectedUid = null;
+let selectedUids = new Set(); // multi-selection with Shift
 let ctxUid = null;
 let editUid = null;
 let showToday = true;
@@ -71,6 +72,14 @@ document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
     e.preventDefault();
     undo();
+  }
+  // Escape clears multi-selection
+  if (e.key === 'Escape' && selectedUids.size > 0) {
+    selectedUids.forEach(uid => {
+      const reg = window._barRegistry?.[uid];
+      if (reg) reg.el.classList.remove('multi-selected');
+    });
+    selectedUids.clear();
   }
 });
 
@@ -396,9 +405,155 @@ function renderTaskList() {
       showCtxMenu(e.clientX, e.clientY, task.uid);
     });
 
+    // ── Long-press to reorder subtask (500ms hold) ──
+    let longPressTimer = null;
+    let longPressActive = false;
+
+    div.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      longPressTimer = setTimeout(() => {
+        longPressActive = true;
+        startRowReorder(e, task, div);
+      }, 500);
+    });
+
+    div.addEventListener('pointermove', () => {
+      if (!longPressActive) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    });
+
+    div.addEventListener('pointerup', () => {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+      longPressActive = false;
+    });
+
+    div.addEventListener('pointercancel', () => {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+      longPressActive = false;
+    });
+
     list.appendChild(div);
   });
 } // fin renderTaskList
+
+// ─── ROW REORDER (long-press drag) ──────────────────────────────────────────
+function startRowReorder(e, task, divEl) {
+  const list = document.getElementById('taskList');
+  const canvas = document.getElementById('ganttCanvas');
+
+  // Only allow reordering within siblings (same parent level)
+  const myIdx = tasks.findIndex(t => t.uid === task.uid);
+  const myLevel = task.level;
+
+  // Visual feedback: add dragging class
+  divEl.classList.add('row-reorder-dragging');
+  divEl.style.opacity = '0.5';
+
+  // Create ghost label
+  const ghost = document.createElement('div');
+  ghost.className = 'drag-ghost';
+  ghost.textContent = '↕ ' + task.name;
+  document.body.appendChild(ghost);
+  ghost.style.left = e.clientX + 'px';
+  ghost.style.top  = e.clientY + 'px';
+
+  // Placeholder line
+  const placeholder = document.createElement('div');
+  placeholder.style.cssText = 'height:2px;background:var(--lc-electric, #525DF4);border-radius:2px;margin:0 12px;pointer-events:none;';
+  let placeholderInsertIdx = myIdx; // index in tasks[] where we'll insert
+
+  saveSnapshot();
+
+  const onMove = ev => {
+    ghost.style.left = ev.clientX + 'px';
+    ghost.style.top  = ev.clientY + 'px';
+
+    // Find which row we're hovering over
+    const rows = Array.from(list.querySelectorAll('.task-row:not(.hidden)'));
+    let targetRow = null;
+    let targetAfter = false;
+
+    for (const row of rows) {
+      const rect = row.getBoundingClientRect();
+      if (ev.clientY >= rect.top && ev.clientY <= rect.bottom) {
+        targetRow = row;
+        targetAfter = (ev.clientY - rect.top) > rect.height / 2;
+        break;
+      }
+    }
+
+    if (targetRow) {
+      const targetUid = targetRow.dataset.uid;
+      const targetTask = tasks.find(t => t.uid === targetUid);
+      // Only allow drop among same-level tasks
+      if (targetTask && targetTask.level === myLevel) {
+        const targetIdx = tasks.findIndex(t => t.uid === targetUid);
+        placeholderInsertIdx = targetAfter ? targetIdx + 1 : targetIdx;
+
+        // Move placeholder visually
+        if (targetAfter) {
+          targetRow.after(placeholder);
+        } else {
+          targetRow.before(placeholder);
+        }
+      }
+    }
+  };
+
+  const onUp = () => {
+    ghost.remove();
+    placeholder.remove();
+    divEl.classList.remove('row-reorder-dragging');
+    divEl.style.opacity = '';
+
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+
+    if (placeholderInsertIdx === myIdx || placeholderInsertIdx === myIdx + 1) {
+      // No real move
+      return;
+    }
+
+    // Collect the block to move: task + all its descendants
+    const descendants = getDescendants(task.uid);
+    const block = [task, ...descendants];
+    const blockUids = new Set(block.map(t => t.uid));
+
+    // Remove block from tasks array
+    const remaining = tasks.filter(t => !blockUids.has(t.uid));
+
+    // Find insertion index in the remaining array
+    // The target index was in the original array, so we need to map it
+    let insertAfterUid = null;
+    if (placeholderInsertIdx > 0) {
+      // Find the task at placeholderInsertIdx - 1 in original that is NOT in block
+      let scanIdx = placeholderInsertIdx - 1;
+      while (scanIdx >= 0 && blockUids.has(tasks[scanIdx]?.uid)) scanIdx--;
+      if (scanIdx >= 0) insertAfterUid = tasks[scanIdx].uid;
+    }
+
+    let insertPos = 0;
+    if (insertAfterUid) {
+      insertPos = remaining.findIndex(t => t.uid === insertAfterUid) + 1;
+    }
+
+    // Rebuild tasks
+    remaining.splice(insertPos, 0, ...block);
+    tasks.length = 0;
+    remaining.forEach(t => tasks.push(t));
+
+    rollupParents();
+    render();
+    showToast('↕ Tâche déplacée');
+  };
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp);
+}
 
 
 
@@ -545,6 +700,9 @@ function renderGantt() {
           diamond.style.boxShadow = `0 0 8px ${CUSTOM_TASK_COLORS[task.uid]}88`;
         }
         addBarEvents(diamond, task);
+        if (selectedUids.has(task.uid)) {
+          diamond.classList.add('multi-selected');
+        }
         row.appendChild(diamond);
         window._barRegistry[task.uid] = { el: diamond, x: x, w: 10, rowEl: row };
       } else {
@@ -581,6 +739,11 @@ function renderGantt() {
         }
 
         addBarEvents(bar, task);
+
+        // Re-apply multi-selected visual if in set
+        if (selectedUids.has(task.uid)) {
+          bar.classList.add('multi-selected');
+        }
 
         // ── Resize handles (left / right) ──
         if (!task.milestone) {
@@ -632,11 +795,36 @@ function addBarEvents(el, task) {
   });
   el.addEventListener('dblclick', () => openEditModal(task.uid));
 
-  // ── Click: link mode only ──
+  // ── Click: link mode + shift multi-select ──
   el.addEventListener('click', (e) => {
     e.stopPropagation();
     if (linkMode) {
       handleLinkClick(task.uid);
+      return;
+    }
+    if (e.shiftKey) {
+      // Toggle this bar in multi-selection
+      if (selectedUids.has(task.uid)) {
+        selectedUids.delete(task.uid);
+        el.classList.remove('multi-selected');
+      } else {
+        selectedUids.add(task.uid);
+        el.classList.add('multi-selected');
+      }
+    } else {
+      // Single click: clear multi-selection, select this one
+      if (selectedUids.size > 0) {
+        selectedUids.forEach(uid => {
+          const reg = window._barRegistry?.[uid];
+          if (reg) reg.el.classList.remove('multi-selected');
+        });
+        selectedUids.clear();
+      }
+      selectedUid = task.uid;
+      // Highlight task row
+      document.querySelectorAll('.task-row').forEach(r => r.classList.remove('selected'));
+      const taskRow = document.querySelector(`.task-row[data-uid="${task.uid}"]`);
+      if (taskRow) taskRow.classList.add('selected');
     }
   });
 
@@ -667,7 +855,17 @@ function addBarEvents(el, task) {
       });
     }
 
-    dragState = { uid: task.uid, startMouseX, origStart, origFinish, origDuration, el, ghost: null };
+    // If this bar is part of multi-selection, prepare grouped drag
+    const isMultiDrag = selectedUids.has(task.uid) && selectedUids.size > 1;
+    const groupOrigPositions = {};
+    if (isMultiDrag) {
+      selectedUids.forEach(uid => {
+        const t = tasks.find(x => x.uid === uid);
+        if (t) groupOrigPositions[uid] = { start: t.start, finish: t.finish };
+      });
+    }
+
+    dragState = { uid: task.uid, startMouseX, origStart, origFinish, origDuration, el, ghost: null, isMultiDrag, groupOrigPositions };
 
     const onMove = (ev) => {
       if (!dragState) return;
@@ -716,6 +914,26 @@ function addBarEvents(el, task) {
             childReg.el.style.left = (child.milestone ? childX - 5 : childX) + 'px';
           }
           updateTaskRowDates(child.uid, child.start, child.finish);
+        });
+      }
+
+      // Grouped multi-drag: move all selected bars together (keeping relative offsets)
+      if (dragState.isMultiDrag) {
+        selectedUids.forEach(uid => {
+          if (uid === task.uid) return; // already moved above
+          const t = tasks.find(x => x.uid === uid);
+          const origPos = dragState.groupOrigPositions[uid];
+          if (!t || !origPos) return;
+          const tNewStart  = addDays(parseDate(origPos.start), deltaDays);
+          const tNewFinish = addDays(parseDate(origPos.finish), deltaDays);
+          t.start  = toDateStr(tNewStart);
+          t.finish = toDateStr(tNewFinish);
+          const reg = window._barRegistry?.[uid];
+          if (reg) {
+            const nx = dateToX(tNewStart);
+            reg.el.style.left = (t.milestone ? nx - 5 : nx) + 'px';
+          }
+          updateTaskRowDates(uid, t.start, t.finish);
         });
       }
 
@@ -1289,8 +1507,14 @@ document.getElementById('btnSave').addEventListener('click', () => {
     };
     if (modalSelectedColor) CUSTOM_TASK_COLORS[newUid] = modalSelectedColor;
     if (parentUid) {
+      // Insert after the last descendant of the parent (not just after parent itself)
       const pIdx = tasks.findIndex(t => t.uid === parentUid);
-      tasks.splice(pIdx + 1, 0, newTask);
+      const pLevel = tasks[pIdx].level;
+      let insertIdx = pIdx + 1;
+      while (insertIdx < tasks.length && tasks[insertIdx].level > pLevel) {
+        insertIdx++;
+      }
+      tasks.splice(insertIdx, 0, newTask);
     } else {
       tasks.push(newTask);
     }
