@@ -7,6 +7,7 @@ let collapsed = new Set();
 let selectedUid = null;
 let selectedUids = new Set(); // multi-selection with Shift
 let ctxUid = null;
+let pendingParentUid = null; // parent forcé via clic droit "+sous-tâche"
 let editUid = null;
 let showToday = true;
 let zoomLevel = 1; // 0=month, 1=week, 2=day
@@ -1375,7 +1376,10 @@ document.getElementById('ctxDelete').addEventListener('click', () => {
 });
 
 document.getElementById('ctxAddChild').addEventListener('click', () => {
-  if (ctxUid) openAddModal(ctxUid);
+  if (ctxUid) {
+    pendingParentUid = ctxUid; // mémorise le parent avant d'ouvrir la modale
+    openAddModal(ctxUid);
+  }
 });
 
 // ─── COLOR POPUP ─────────────────────────────────────────────────────────────
@@ -1456,6 +1460,7 @@ function populateParentSelect(defaultUid) {
 }
 
 document.getElementById('btnCancel').addEventListener('click', () => {
+  pendingParentUid = null;
   document.getElementById('modalOverlay').classList.remove('open');
 });
 
@@ -1478,7 +1483,9 @@ document.getElementById('btnSave').addEventListener('click', () => {
   saveSnapshot();
   const pct = parseInt(document.getElementById('fPct').value) || 0;
   const type = document.getElementById('fType').value;
-  const parentUid = document.getElementById('fParent').value;
+  // Si la tâche a été créée via clic droit "+sous-tâche", on force le parent
+  const parentUid = pendingParentUid || document.getElementById('fParent').value;
+  pendingParentUid = null; // reset
 
   let level = 0;
   if (parentUid) {
