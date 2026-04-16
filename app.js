@@ -1519,10 +1519,12 @@ document.getElementById('btnSave').addEventListener('click', () => {
   saveSnapshot();
   const pct = parseInt(document.getElementById('fPct').value) || 0;
   const type = document.getElementById('fType').value;
-  // Si la tâche a été créée via clic droit "+sous-tâche", on force le parent
-  const parentUid = pendingParentUid || document.getElementById('fParent').value;
+  // Si clic droit "+sous-tâche", on positionne après le bloc du parent ciblé
+  // mais la tâche reste au level 0 (indépendante, non indentée)
+  const insertAfterUid = pendingParentUid;
   pendingParentUid = null; // reset
 
+  const parentUid = document.getElementById('fParent').value;
   let level = 0;
   if (parentUid) {
     const parent = tasks.find(t => t.uid === parentUid);
@@ -1549,8 +1551,18 @@ document.getElementById('btnSave').addEventListener('click', () => {
       pct, preds: []
     };
     if (modalSelectedColor) CUSTOM_TASK_COLORS[newUid] = modalSelectedColor;
-    if (parentUid) {
-      // Insert after the last descendant of the parent (not just after parent itself)
+    if (insertAfterUid) {
+      // Clic droit "+sous-tâche" : insérer juste après le dernier descendant du parent ciblé,
+      // sans modifier le level (la tâche reste indépendante, non indentée)
+      const pIdx = tasks.findIndex(t => t.uid === insertAfterUid);
+      const pLevel = tasks[pIdx].level;
+      let insertIdx = pIdx + 1;
+      while (insertIdx < tasks.length && tasks[insertIdx].level > pLevel) {
+        insertIdx++;
+      }
+      tasks.splice(insertIdx, 0, newTask);
+    } else if (parentUid) {
+      // Modale normale avec fParent sélectionné : indenter sous le parent
       const pIdx = tasks.findIndex(t => t.uid === parentUid);
       const pLevel = tasks[pIdx].level;
       let insertIdx = pIdx + 1;
