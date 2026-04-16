@@ -1556,15 +1556,11 @@ document.getElementById('btnSave').addEventListener('click', () => {
     };
     if (modalSelectedColor) CUSTOM_TASK_COLORS[newUid] = modalSelectedColor;
     if (insertAfterUid) {
-      // Clic droit "+sous-tâche" : insérer juste après le dernier descendant du parent ciblé,
-      // sans modifier le level (la tâche reste indépendante, non indentée)
+      // Clic droit "+sous-tâche" : insertion STRICTEMENT juste après la tâche ciblée (index+1)
+      // même level, summary: false forcé — aucune relation parent/enfant
+      newTask.summary = false;
       const pIdx = tasks.findIndex(t => t.uid === insertAfterUid);
-      const pLevel = tasks[pIdx].level;
-      let insertIdx = pIdx + 1;
-      while (insertIdx < tasks.length && tasks[insertIdx].level > pLevel) {
-        insertIdx++;
-      }
-      tasks.splice(insertIdx, 0, newTask);
+      tasks.splice(pIdx + 1, 0, newTask);
     } else if (parentUid) {
       // Modale normale avec fParent sélectionné : indenter sous le parent
       const pIdx = tasks.findIndex(t => t.uid === parentUid);
