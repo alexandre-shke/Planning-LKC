@@ -1520,13 +1520,17 @@ document.getElementById('btnSave').addEventListener('click', () => {
   const pct = parseInt(document.getElementById('fPct').value) || 0;
   const type = document.getElementById('fType').value;
   // Si clic droit "+sous-tâche", on positionne après le bloc du parent ciblé
-  // mais la tâche reste au level 0 (indépendante, non indentée)
+  // La tâche hérite du même level que le parent ciblé (tâche sœur, non enfant)
   const insertAfterUid = pendingParentUid;
   pendingParentUid = null; // reset
 
   const parentUid = document.getElementById('fParent').value;
   let level = 0;
-  if (parentUid) {
+  if (insertAfterUid) {
+    // Clic droit : même level que la tâche ciblée (tâche sœur)
+    const refTask = tasks.find(t => t.uid === insertAfterUid);
+    if (refTask) level = refTask.level;
+  } else if (parentUid) {
     const parent = tasks.find(t => t.uid === parentUid);
     if (parent) level = parent.level + 1;
   }
