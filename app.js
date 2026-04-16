@@ -1413,8 +1413,8 @@ document.getElementById('ctxDelete').addEventListener('click', () => {
 
 document.getElementById('ctxAddChild').addEventListener('click', () => {
   if (ctxUid) {
-    pendingParentUid = ctxUid; // mémorise le parent avant d'ouvrir la modale
-    openAddModal(ctxUid);
+    pendingParentUid = ctxUid; // mémorise la position d'insertion
+    openAddModal(null);        // null : pas de parent présélectionné, tâche au level 0
   }
 });
 
