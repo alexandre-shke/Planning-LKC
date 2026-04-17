@@ -1645,7 +1645,6 @@ function openEditModal(uid) {
   document.getElementById('fName').value = task.name;
   document.getElementById('fStart').value = task.start;
   document.getElementById('fEnd').value = task.finish;
-  document.getElementById('fPct').value = task.pct;
   document.getElementById('fType').value = task.milestone ? 'milestone' : task.summary ? 'summary' : 'task';
   populateParentSelect(null);
   buildColorSwatches('modalColorPicker', CUSTOM_TASK_COLORS[uid] || null, (c) => { modalSelectedColor = c; });
@@ -1708,7 +1707,6 @@ document.getElementById('btnSave').addEventListener('click', () => {
     task.name = name;
     task.start = start;
     task.finish = finish;
-    task.pct = pct;
     task.milestone = type === 'milestone';
     task.summary = type === 'summary';
     if (modalSelectedColor) CUSTOM_TASK_COLORS[editUid] = modalSelectedColor;
