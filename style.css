@@ -1933,3 +1933,39 @@
   body.landing-active > *:not(#landingPage) {
     visibility: hidden;
   }
+
+/* ─── DATE PICKER POPUP ──────────────────────────────────────────────────── */
+.date-picker-popup {
+  position: fixed;
+  z-index: 9999;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  padding: 8px;
+}
+
+#datePickerInput {
+  border: none;
+  background: transparent;
+  color: var(--text1);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+/* Hover sur dates cliquables */
+.task-row:not(.summary-row) .task-date.start:not(.locked),
+.task-row:not(.summary-row) .task-date.end:not(.locked) {
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s, color 0.15s;
+}
+.task-row:not(.summary-row) .task-date.start:not(.locked):hover,
+.task-row:not(.summary-row) .task-date.end:not(.locked):hover {
+  background: var(--lc-blue);
+  color: #fff;
+  padding: 1px 3px;
+}
