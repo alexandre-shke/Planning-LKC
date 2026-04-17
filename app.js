@@ -1503,14 +1503,10 @@ document.getElementById('datePickerInput').addEventListener('change', e => {
   closeDatePicker();
 });
 
-// Fermer en cliquant ailleurs
-document.addEventListener('click', e => {
-  const popup = document.getElementById('datePicker');
-  if (!popup) return;
-  if (popup.style.display === 'none') return;
-  if (popup.contains(e.target)) return;
-  closeDatePicker();
-}, true); // capture=true pour intercepter avant stopPropagation des enfants
+// Fermer le picker si on clique ailleurs
+document.getElementById('datePickerInput').addEventListener('blur', () => {
+  setTimeout(closeDatePicker, 150);
+});
 
 // ─── COLOR POPUP ─────────────────────────────────────────────────────────────
 function openColorPopup(uid, anchorEl) {
