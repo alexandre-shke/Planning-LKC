@@ -1439,6 +1439,8 @@ let _datePickerUid = null;
 let _datePickerField = null; // 'start' | 'end'
 
 function openDatePicker(anchorEl, uid, field) {
+  // Ne pas ouvrir si la landing est encore affichée
+  if (document.body.classList.contains('landing-active')) return;
   const popup = document.getElementById('datePicker');
   const input = document.getElementById('datePickerInput');
   const task = tasks.find(t => t.uid === uid);
@@ -1504,10 +1506,11 @@ document.getElementById('datePickerInput').addEventListener('change', e => {
 // Fermer en cliquant ailleurs
 document.addEventListener('click', e => {
   const popup = document.getElementById('datePicker');
-  if (popup.style.display !== 'none' && !popup.contains(e.target)) {
-    closeDatePicker();
-  }
-});
+  if (!popup) return;
+  if (popup.style.display === 'none') return;
+  if (popup.contains(e.target)) return;
+  closeDatePicker();
+}, true); // capture=true pour intercepter avant stopPropagation des enfants
 
 // ─── COLOR POPUP ─────────────────────────────────────────────────────────────
 function openColorPopup(uid, anchorEl) {
