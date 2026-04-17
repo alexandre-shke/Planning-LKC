@@ -370,6 +370,22 @@ function renderTaskList() {
     } else {
       endEl.textContent = formatShortDate(parseDate(task.finish));
     }
+
+    // ── Date picker sur clic (bloqué pour les summary) ──
+    if (!task.summary) {
+      startEl.title = 'Cliquer pour modifier la date de début';
+      endEl.title = 'Cliquer pour modifier la date de fin';
+      startEl.addEventListener('click', e => {
+        e.stopPropagation();
+        openDatePicker(e.currentTarget, task.uid, 'start');
+      });
+      if (!task.milestone || task.start !== task.finish) {
+        endEl.addEventListener('click', e => {
+          e.stopPropagation();
+          openDatePicker(e.currentTarget, task.uid, 'end');
+        });
+      }
+    }
     // Duration
     const durEl = document.createElement('div');
     // Duration = finish - start + 1 (start day counts as day 1)
@@ -1415,6 +1431,81 @@ document.getElementById('ctxAddChild').addEventListener('click', () => {
   if (ctxUid) {
     pendingParentUid = ctxUid; // mémorise la position d'insertion
     openAddModal(null);        // null : pas de parent présélectionné, tâche au level 0
+  }
+});
+
+// ─── DATE PICKER ─────────────────────────────────────────────────────────────
+let _datePickerUid = null;
+let _datePickerField = null; // 'start' | 'end'
+
+function openDatePicker(anchorEl, uid, field) {
+  const popup = document.getElementById('datePicker');
+  const input = document.getElementById('datePickerInput');
+  const task = tasks.find(t => t.uid === uid);
+  if (!task) return;
+
+  _datePickerUid = uid;
+  _datePickerField = field;
+
+  // Valeur initiale
+  input.value = field === 'start' ? task.start : task.finish;
+
+  // Contraintes : fin >= début
+  if (field === 'end') input.min = task.start;
+  if (field === 'start') input.max = task.finish;
+
+  // Positionnement sous l'élément cliqué
+  const rect = anchorEl.getBoundingClientRect();
+  popup.style.display = 'block';
+  const popW = 160;
+  let left = rect.left;
+  if (left + popW > window.innerWidth) left = window.innerWidth - popW - 8;
+  popup.style.left = left + 'px';
+  popup.style.top = (rect.bottom + 4) + 'px';
+
+  // Ouvre le picker natif
+  setTimeout(() => input.showPicker?.(), 50);
+}
+
+function closeDatePicker() {
+  document.getElementById('datePicker').style.display = 'none';
+  _datePickerUid = null;
+  _datePickerField = null;
+}
+
+document.getElementById('datePickerInput').addEventListener('change', e => {
+  if (!_datePickerUid || !_datePickerField) return;
+  const task = tasks.find(t => t.uid === _datePickerUid);
+  if (!task) return;
+
+  saveSnapshot();
+  const newDate = e.target.value;
+
+  if (_datePickerField === 'start') {
+    // Si la nouvelle date de début dépasse la fin, on avance la fin du même delta
+    if (newDate > task.finish) {
+      const delta = daysBetween(parseDate(task.start), parseDate(newDate));
+      task.finish = toDateStr(addDays(parseDate(task.finish), delta));
+    }
+    task.start = newDate;
+  } else {
+    // fin ne peut pas être avant début
+    if (newDate < task.start) {
+      task.start = newDate;
+    }
+    task.finish = newDate;
+  }
+
+  rollupParents();
+  render();
+  closeDatePicker();
+});
+
+// Fermer en cliquant ailleurs
+document.addEventListener('click', e => {
+  const popup = document.getElementById('datePicker');
+  if (popup.style.display !== 'none' && !popup.contains(e.target)) {
+    closeDatePicker();
   }
 });
 
