@@ -1437,78 +1437,153 @@ document.getElementById('ctxAddChild').addEventListener('click', () => {
   }
 });
 
-// ─── DATE PICKER ─────────────────────────────────────────────────────────────
-let _datePickerUid = null;
-let _datePickerField = null; // 'start' | 'end'
+// ─── DATE PICKER CUSTOM ───────────────────────────────────────────────────────
+let _datePickerUid   = null;
+let _datePickerField = null;
+let _calendarMonth   = { year: new Date().getFullYear(), month: new Date().getMonth() };
+let _calendarSel     = null; // date actuellement sélectionnée (objet Date)
+
+const CAL_MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin',
+                    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const CAL_DAYS   = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
 
 function openDatePicker(anchorEl, uid, field) {
-  // Ne pas ouvrir si la landing est encore affichée
   if (document.body.classList.contains('landing-active')) return;
-  const popup = document.getElementById('datePicker');
-  const input = document.getElementById('datePickerInput');
   const task = tasks.find(t => t.uid === uid);
   if (!task) return;
 
-  _datePickerUid = uid;
+  _datePickerUid   = uid;
   _datePickerField = field;
 
-  // Valeur initiale
-  input.value = field === 'start' ? task.start : task.finish;
+  const curStr  = field === 'start' ? task.start : task.finish;
+  _calendarSel  = parseDate(curStr);
+  _calendarMonth = { year: _calendarSel.getFullYear(), month: _calendarSel.getMonth() };
 
-  // Contraintes : fin >= début
-  if (field === 'end') input.min = task.start;
-  if (field === 'start') input.max = task.finish;
+  _renderCalendar();
 
-  // Positionnement sous l'élément cliqué
-  const rect = anchorEl.getBoundingClientRect();
+  // Positionnement
+  const popup = document.getElementById('datePicker');
+  const rect  = anchorEl.getBoundingClientRect();
   popup.style.display = 'block';
-  const popW = 160;
+  const popW = 252, popH = 300;
   let left = rect.left;
-  if (left + popW > window.innerWidth) left = window.innerWidth - popW - 8;
+  let top  = rect.bottom + 6;
+  if (left + popW > window.innerWidth)  left = window.innerWidth  - popW - 8;
+  if (top  + popH > window.innerHeight) top  = rect.top - popH - 6;
   popup.style.left = left + 'px';
-  popup.style.top = (rect.bottom + 4) + 'px';
-
-  // Ouvre le picker natif
-  setTimeout(() => input.showPicker?.(), 50);
+  popup.style.top  = top  + 'px';
 }
 
-function closeDatePicker() {
-  document.getElementById('datePicker').style.display = 'none';
-  _datePickerUid = null;
-  _datePickerField = null;
+function _renderCalendar() {
+  const popup = document.getElementById('datePicker');
+  const { year, month } = _calendarMonth;
+  const today  = new Date();
+  const selStr = _calendarSel ? toDateStr(_calendarSel) : null;
+
+  // Construire les cellules jours
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month + 1, 0);
+  let startDow   = firstDay.getDay();
+  startDow = startDow === 0 ? 6 : startDow - 1; // Lundi = 0
+
+  let cells = '';
+  for (let i = 0; i < startDow; i++) cells += `<div class="cal-day cal-empty"></div>`;
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const date    = new Date(year, month, d);
+    const dateStr = toDateStr(date);
+    const dow     = date.getDay();
+    const isToday = dateStr === toDateStr(today);
+    const isSel   = dateStr === selStr;
+    const isWe    = dow === 0 || dow === 6;
+    let cls = 'cal-day';
+    if (isWe)    cls += ' cal-weekend';
+    if (isToday) cls += ' cal-today';
+    if (isSel)   cls += ' cal-selected';
+    cells += `<div class="${cls}" data-date="${dateStr}">${d}</div>`;
+  }
+
+  popup.innerHTML = `
+    <div class="cal-header">
+      <button class="cal-nav" id="calPrev">‹</button>
+      <div class="cal-title">${CAL_MONTHS[month]} ${year}</div>
+      <button class="cal-nav" id="calNext">›</button>
+    </div>
+    <div class="cal-daynames">${CAL_DAYS.map(d => `<div class="cal-dayname">${d}</div>`).join('')}</div>
+    <div class="cal-grid">${cells}</div>
+    <div class="cal-footer">
+      <button class="cal-today-btn" id="calGoToday">Aujourd'hui</button>
+    </div>
+  `;
+
+  // Navigation mois précédent
+  document.getElementById('calPrev').addEventListener('click', e => {
+    e.stopPropagation();
+    _calendarMonth.month--;
+    if (_calendarMonth.month < 0) { _calendarMonth.month = 11; _calendarMonth.year--; }
+    _renderCalendar();
+  });
+  // Navigation mois suivant
+  document.getElementById('calNext').addEventListener('click', e => {
+    e.stopPropagation();
+    _calendarMonth.month++;
+    if (_calendarMonth.month > 11) { _calendarMonth.month = 0; _calendarMonth.year++; }
+    _renderCalendar();
+  });
+  // Bouton "Aujourd'hui" → navigate vers le mois actuel
+  document.getElementById('calGoToday').addEventListener('click', e => {
+    e.stopPropagation();
+    const t = new Date();
+    _calendarMonth = { year: t.getFullYear(), month: t.getMonth() };
+    _renderCalendar();
+  });
+  // Clic sur un jour
+  popup.querySelectorAll('.cal-day:not(.cal-empty)').forEach(cell => {
+    cell.addEventListener('click', e => {
+      e.stopPropagation();
+      _applyPickedDate(cell.dataset.date);
+    });
+  });
 }
 
-document.getElementById('datePickerInput').addEventListener('change', e => {
+function _applyPickedDate(dateStr) {
   if (!_datePickerUid || !_datePickerField) return;
   const task = tasks.find(t => t.uid === _datePickerUid);
   if (!task) return;
 
   saveSnapshot();
-  const newDate = e.target.value;
-
   if (_datePickerField === 'start') {
-    // Si la nouvelle date de début dépasse la fin, on avance la fin du même delta
-    if (newDate > task.finish) {
-      const delta = daysBetween(parseDate(task.start), parseDate(newDate));
+    // Si la nouvelle date de début dépasse la fin, on décale la fin du même delta
+    if (dateStr > task.finish) {
+      const delta = daysBetween(parseDate(task.start), parseDate(dateStr));
       task.finish = toDateStr(addDays(parseDate(task.finish), delta));
     }
-    task.start = newDate;
+    task.start = dateStr;
   } else {
-    // fin ne peut pas être avant début
-    if (newDate < task.start) {
-      task.start = newDate;
+    // Si la nouvelle fin est avant le début, on avance le début aussi
+    if (dateStr < task.start) {
+      task.start = dateStr;
     }
-    task.finish = newDate;
+    task.finish = dateStr;
   }
 
   rollupParents();
   render();
   closeDatePicker();
-});
+}
 
-// Fermer le picker si on clique ailleurs
-document.getElementById('datePickerInput').addEventListener('blur', () => {
-  setTimeout(closeDatePicker, 150);
+function closeDatePicker() {
+  const popup = document.getElementById('datePicker');
+  if (popup) { popup.style.display = 'none'; popup.innerHTML = ''; }
+  _datePickerUid   = null;
+  _datePickerField = null;
+}
+
+// Fermer si clic en dehors du calendrier
+document.addEventListener('click', e => {
+  const popup = document.getElementById('datePicker');
+  if (popup && popup.style.display === 'block' && !popup.contains(e.target)) {
+    closeDatePicker();
+  }
 });
 
 // ─── COLOR POPUP ─────────────────────────────────────────────────────────────
