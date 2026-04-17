@@ -1141,7 +1141,10 @@ function addResizeEvents(handle, barEl, task, side) {
 
 // ─── HELPERS FOR DRAG ────────────────────────────────────────────────────────
 function toDateStr(d) {
-  return d.toISOString().slice(0, 10);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 function updateTaskRowDates(uid, start, finish) {
@@ -2059,7 +2062,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Auto-save désactivé — sauvegarde manuelle uniquement
+// Sauvegarde manuelle uniquement (bouton Sauvegarder)
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 // Collapse level-2+ by default for cleaner initial view
