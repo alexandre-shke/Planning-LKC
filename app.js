@@ -431,6 +431,7 @@ function renderTaskList() {
           if (ev.key === 'Escape') { render(); }
           ev.stopPropagation();
         });
+        input.addEventListener('blur', commit); // Validation si on clique ailleurs
         input.addEventListener('click', ev => ev.stopPropagation());
       });
     }
@@ -1685,7 +1686,6 @@ document.getElementById('btnSave').addEventListener('click', () => {
   document.getElementById('fEnd').style.boxShadow = '';
 
   saveSnapshot();
-  const pct = parseInt(document.getElementById('fPct').value) || 0;
   const type = document.getElementById('fType').value;
   // Si clic droit "+sous-tâche", on positionne après le bloc du parent ciblé
   // La tâche hérite du même level que le parent ciblé (tâche sœur, non enfant)
@@ -1720,7 +1720,7 @@ document.getElementById('btnSave').addEventListener('click', () => {
       name, level, start, finish,
       milestone: type === 'milestone',
       summary: type === 'summary',
-      pct, preds: []
+      pct: 0, preds: []
     };
     if (modalSelectedColor) CUSTOM_TASK_COLORS[newUid] = modalSelectedColor;
     if (insertAfterUid) {
@@ -1747,6 +1747,9 @@ document.getElementById('btnSave').addEventListener('click', () => {
   rollupParents();
   render();
 });
+
+// Bouton d'ajout rapide dans le header
+document.getElementById('btnAddRootTask')?.addEventListener('click', () => openAddModal());
 
 // btnAdd removed from header — use context menu right-click to add tasks
 
@@ -1799,7 +1802,6 @@ function openAddModal(parentUid) {
   document.getElementById('fName').value = '';
   document.getElementById('fStart').value = new Date().toISOString().slice(0,10);
   document.getElementById('fEnd').value = new Date().toISOString().slice(0,10);
-  document.getElementById('fPct').value = 0;
   document.getElementById('fType').value = 'task';
   populateParentSelect(parentUid);
   buildColorSwatches('modalColorPicker', null, (c) => { modalSelectedColor = c; });
@@ -1903,8 +1905,8 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
   taskList.style.overflow = 'visible';
   taskList.style.height = canvas.scrollHeight + 'px';
 
-  // Set document title for PDF filename
-  document.title = 'Planning_PA3_' + new Date().toISOString().slice(0,10);
+    // Set document title for PDF filename
+    // document.title = 'Planning_PA3_' + new Date().toISOString().slice(0,10); (handled above)
 
   setTimeout(() => {
     window.print();
