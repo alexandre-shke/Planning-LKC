@@ -330,7 +330,7 @@
             Télécharger .json
           </button>
         </div>
-        <div id="filePopupSaveAlert" style="display:none; margin-top:10px; padding:8px 10px; background:rgba(82,93,244,0.07); border:1px dashed rgba(82,93,244,0.3); border-radius:6px; font-size:10.5px; color:var(--text2); line-height:1.4;">
+        <div id="filePopupSaveAlert" style="display:block; margin-top:10px; padding:8px 10px; background:rgba(82,93,244,0.07); border:1px dashed rgba(82,93,244,0.3); border-radius:6px; font-size:10.5px; color:var(--text2); line-height:1.4;">
           ⚠️ <strong>Note :</strong> Vos données ne sont pas stockées en ligne. Conservez précieusement ce fichier <strong>.json</strong> : il contient tout votre travail et sera indispensable pour effectuer vos futures mises à jour.
         </div>
       </div>
@@ -376,19 +376,6 @@
 </div>
 
 <div id="datePicker" class="date-picker-popup" style="display:none;"></div>
-
-<script>
-  // Affiche l'alerte de sauvegarde après le clic sur "Télécharger .json"
-  document.addEventListener('DOMContentLoaded', function () {
-    var btnSave = document.getElementById('filePopupBtnSave');
-    var alert   = document.getElementById('filePopupSaveAlert');
-    if (btnSave && alert) {
-      btnSave.addEventListener('click', function () {
-        alert.style.display = 'block';
-      });
-    }
-  });
-</script>
 
 <script src="app.js"></script>
 
