@@ -2325,7 +2325,7 @@ document.addEventListener('keydown', e => {
 // (handled in launchApp)
 
 // ─── LANDING PAGE ────────────────────────────────────────────────────────────
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
 
   // Skeleton générique LCY — sera remplacé par le vrai JSON fourni ultérieurement
   const GENERIC_LCY_SKELETON = {
@@ -2460,7 +2460,7 @@ document.addEventListener('keydown', e => {
     launchApp(GENERIC_LCY_SKELETON);
   });
 
-})();
+});
 
 
 (function() {
