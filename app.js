@@ -2018,6 +2018,10 @@ document.getElementById('chartBody').addEventListener('click', e => {
 
 function openDeadlinePanel(focusIdx) {
   deadlinePanelOpen = true;
+
+  // Position dropdown under btnDeadline
+  const anchorBtn = document.getElementById('btnDeadline');
+
   let panel = document.getElementById('deadlinePanel');
   if (!panel) {
     panel = document.createElement('div');
@@ -2025,18 +2029,43 @@ function openDeadlinePanel(focusIdx) {
     panel.className = 'deadline-panel';
     document.body.appendChild(panel);
   }
+
   renderDeadlinePanel(focusIdx);
-  panel.classList.add('open');
+
+  // Position
+  if (anchorBtn) {
+    const rect = anchorBtn.getBoundingClientRect();
+    panel.style.top = (rect.bottom + 8) + 'px';
+    panel.style.right = (window.innerWidth - rect.right) + 'px';
+  }
+
+  requestAnimationFrame(() => panel.classList.add('open'));
+  if (anchorBtn) anchorBtn.classList.add('active-deadline');
+
+  // Close on outside click
+  setTimeout(() => {
+    document.addEventListener('click', _deadlineOutsideClick);
+  }, 0);
+}
+
+function _deadlineOutsideClick(e) {
+  const panel = document.getElementById('deadlinePanel');
   const btn = document.getElementById('btnDeadline');
-  if (btn) { btn.style.borderColor = '#f87171'; btn.style.color = '#f87171'; }
+  if (panel && !panel.contains(e.target) && e.target !== btn && !btn?.contains(e.target)) {
+    closeDeadlinePanel();
+  }
 }
 
 function closeDeadlinePanel() {
   deadlinePanelOpen = false;
+
   const panel = document.getElementById('deadlinePanel');
   if (panel) panel.classList.remove('open');
+
   const btn = document.getElementById('btnDeadline');
-  if (btn) { btn.style.borderColor = ''; btn.style.color = ''; }
+  if (btn) btn.classList.remove('active-deadline');
+
+  document.removeEventListener('click', _deadlineOutsideClick);
 }
 
 function renderDeadlinePanel(focusIdx) {
@@ -2050,12 +2079,16 @@ function renderDeadlinePanel(focusIdx) {
   header.className = 'dl-panel-header';
   header.innerHTML = `
     <div class="dl-panel-title">
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
       Échéances
+      ${deadlines.length > 0 ? `<span class="dl-panel-count">${deadlines.length}</span>` : ''}
     </div>
-    <div style="display:flex;gap:6px;align-items:center">
-      <button class="dl-btn-add" id="dlBtnAdd" title="Poser une nouvelle échéance">+ Nouvelle</button>
-      <button class="dl-panel-close" id="dlPanelClose">✕</button>
+    <div class="dl-panel-header-actions">
+      <button class="dl-btn-add" id="dlBtnAdd" title="Poser une nouvelle échéance">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Nouvelle
+      </button>
+      <button class="dl-panel-close" id="dlPanelClose" title="Fermer">✕</button>
     </div>`;
   panel.appendChild(header);
 
@@ -2068,8 +2101,18 @@ function renderDeadlinePanel(focusIdx) {
   if (deadlines.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'dl-panel-empty';
-    empty.textContent = 'Aucune échéance posée. Cliquez sur "+ Nouvelle" pour en ajouter une.';
+    empty.innerHTML = `
+      <div class="dl-panel-empty-icon">
+        <svg width="18" height="18" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
+      </div>
+      <div class="dl-panel-empty-text">Aucune échéance posée sur ce planning.</div>
+      <div class="dl-panel-empty-cta" id="dlEmptyCta">+ Cliquer pour en poser une</div>
+    `;
     panel.appendChild(empty);
+    document.getElementById('dlEmptyCta')?.addEventListener('click', () => {
+      closeDeadlinePanel();
+      activateDeadlinePickMode();
+    });
     return;
   }
 
@@ -2147,6 +2190,12 @@ function renderDeadlinePanel(focusIdx) {
     }
   });
   panel.appendChild(list);
+
+  // Footer
+  const footer = document.createElement('div');
+  footer.className = 'dl-panel-footer';
+  footer.innerHTML = `💡 Glissez une ligne sur le Gantt pour déplacer une échéance.`;
+  panel.appendChild(footer);
 }
 
 // ─── FILTERS ─────────────────────────────────────────────────────────────────
@@ -2714,6 +2763,7 @@ function initScrollSync() {
 function injectDeadlinePanelCSS() {
   const style = document.createElement('style');
   style.textContent = `
+    /* ── Gantt line & label (unchanged) ── */
     .deadline-line {
       border-left: 2px dashed var(--dl-color, #f87171) !important;
     }
@@ -2723,141 +2773,267 @@ function injectDeadlinePanelCSS() {
       background: color-mix(in srgb, var(--dl-color, #f87171) 10%, var(--surface, #fff)) !important;
     }
 
-    /* ── Panel ── */
+    /* ── Active header button ── */
+    #btnDeadline.active-deadline {
+      background: rgba(82,93,244,.12) !important;
+      color: var(--lc-electric, #525df4) !important;
+      border-color: rgba(82,93,244,.3) !important;
+    }
+
+    /* ── Dropdown panel ── */
     .deadline-panel {
       position: fixed;
-      top: 54px;
-      right: -320px;
-      width: 300px;
-      max-height: calc(100vh - 70px);
-      background: var(--surface, #fff);
-      border: 1px solid var(--border, #e2e8f0);
-      border-radius: 10px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.13);
+      width: 340px;
+      max-height: 480px;
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.07);
+      box-shadow:
+        0 2px 4px rgba(0,0,0,.04),
+        0 8px 24px rgba(0,0,0,.10),
+        0 24px 48px rgba(0,0,0,.06),
+        inset 0 1px 0 rgba(255,255,255,.9);
       z-index: 1200;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: right .25s cubic-bezier(.4,0,.2,1);
+      opacity: 0;
+      transform: translateY(-6px) scale(.98);
+      pointer-events: none;
+      transition:
+        opacity .18s cubic-bezier(.4,0,.2,1),
+        transform .18s cubic-bezier(.4,0,.2,1);
     }
     .deadline-panel.open {
-      right: 12px;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
     }
+
+    /* ── Header ── */
     .dl-panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 11px 14px 10px;
-      border-bottom: 1px solid var(--border, #e2e8f0);
+      padding: 13px 16px 11px;
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      border-radius: 14px 14px 0 0;
       flex-shrink: 0;
     }
     .dl-panel-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text, #1e293b);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .dl-panel-close {
-      background: none;
-      border: none;
-      color: var(--text3, #94a3b8);
-      cursor: pointer;
-      font-size: 13px;
-      padding: 2px 5px;
-      border-radius: 4px;
-      line-height: 1;
-    }
-    .dl-panel-close:hover { background: var(--hover, #f1f5f9); color: var(--text, #1e293b); }
-    .dl-btn-add {
-      font-size: 10.5px;
-      font-weight: 600;
-      background: var(--lc-electric, #525df4);
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      padding: 4px 9px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .dl-btn-add:hover { opacity: .88; }
-    .dl-panel-empty {
-      padding: 20px 16px;
-      font-size: 11px;
-      color: var(--text3, #94a3b8);
-      line-height: 1.5;
-      text-align: center;
-    }
-    .dl-panel-list {
-      overflow-y: auto;
-      flex: 1;
-      padding: 8px 0;
-    }
-    .dl-item {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1e293b;
       display: flex;
       align-items: center;
       gap: 7px;
-      padding: 7px 14px;
-      transition: background .12s;
+      letter-spacing: -.01em;
     }
-    .dl-item:hover { background: var(--hover, #f8fafc); }
-    .dl-item-focused { background: rgba(248,113,113,.06); }
+    .dl-panel-title svg { color: var(--lc-electric, #525df4); }
+    .dl-panel-count {
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(82,93,244,.1);
+      color: var(--lc-electric, #525df4);
+      border-radius: 20px;
+      padding: 1px 7px;
+    }
+    .dl-panel-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .dl-btn-add {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      background: linear-gradient(180deg, #6470f5 0%, var(--lc-electric, #525df4) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(82,93,244,.35), inset 0 1px 0 rgba(255,255,255,.18);
+      transition: opacity .13s, box-shadow .13s;
+    }
+    .dl-btn-add:hover {
+      opacity: .92;
+      box-shadow: 0 2px 6px rgba(82,93,244,.4), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .dl-panel-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: rgba(0,0,0,.04);
+      border: 1px solid rgba(0,0,0,.07);
+      border-radius: 6px;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background .12s, color .12s;
+    }
+    .dl-panel-close:hover { background: rgba(0,0,0,.08); color: #475569; }
+
+    /* ── Empty state ── */
+    .dl-panel-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px;
+      gap: 9px;
+      text-align: center;
+    }
+    .dl-panel-empty-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(82,93,244,.1) 0%, rgba(82,93,244,.04) 100%);
+      border: 1px solid rgba(82,93,244,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--lc-electric, #525df4);
+    }
+    .dl-panel-empty-text {
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .dl-panel-empty-cta {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--lc-electric, #525df4);
+      cursor: pointer;
+      opacity: .85;
+      transition: opacity .12s;
+    }
+    .dl-panel-empty-cta:hover { opacity: 1; text-decoration: underline; }
+
+    /* ── List ── */
+    .dl-panel-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .dl-panel-list::-webkit-scrollbar { width: 3px; }
+    .dl-panel-list::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,.12);
+      border-radius: 4px;
+    }
+
+    /* ── Item card ── */
+    .dl-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 11px;
+      border-radius: 9px;
+      border: 1px solid rgba(0,0,0,.06);
+      background: linear-gradient(180deg, #fff 0%, #fafbfd 100%);
+      box-shadow: 0 1px 3px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.8);
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .dl-item:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.8);
+      border-color: rgba(82,93,244,.2);
+    }
+    .dl-item-focused {
+      border-color: rgba(82,93,244,.35) !important;
+      box-shadow: 0 0 0 3px rgba(82,93,244,.08), 0 2px 8px rgba(0,0,0,.06) !important;
+    }
+
+    /* ── Color swatch ── */
     .dl-color-swatch {
       width: 16px;
       height: 16px;
       border-radius: 50%;
       flex-shrink: 0;
       cursor: pointer;
-      border: 2px solid rgba(0,0,0,.08);
-      transition: transform .1s;
+      border: 2px solid rgba(255,255,255,.9);
+      box-shadow: 0 0 0 1.5px rgba(0,0,0,.15), 0 1px 3px rgba(0,0,0,.1);
+      transition: transform .12s, box-shadow .12s;
     }
-    .dl-color-swatch:hover { transform: scale(1.2); }
-    .dl-color-input {
-      display: none;
+    .dl-color-swatch:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 2px 5px rgba(0,0,0,.15);
     }
+    .dl-color-input { display: none; }
+
+    /* ── Label input ── */
     .dl-label-input {
       flex: 1;
       min-width: 0;
       font-size: 11.5px;
       font-weight: 500;
-      color: var(--text, #1e293b);
+      color: #1e293b;
       background: transparent;
       border: none;
-      border-bottom: 1px solid transparent;
-      padding: 2px 2px;
-      border-radius: 3px;
+      border-bottom: 1.5px solid transparent;
+      padding: 2px 0;
       outline: none;
-      transition: border-color .15s, background .15s;
+      transition: border-color .15s;
     }
-    .dl-label-input:focus {
-      border-bottom-color: var(--lc-electric, #525df4);
-      background: var(--hover, #f8fafc);
-    }
+    .dl-label-input:focus { border-bottom-color: var(--lc-electric, #525df4); }
+    .dl-label-input::placeholder { color: #cbd5e1; font-weight: 400; }
+
+    /* ── Date input ── */
     .dl-date-input {
       font-size: 10px;
-      color: var(--text2, #64748b);
-      background: var(--hover, #f1f5f9);
-      border: 1px solid var(--border, #e2e8f0);
-      border-radius: 4px;
-      padding: 2px 4px;
+      font-weight: 500;
+      color: #64748b;
+      background: #f1f5f9;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 5px;
+      padding: 3px 6px;
       outline: none;
       flex-shrink: 0;
-      width: 98px;
+      width: 100px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.05);
+      transition: border-color .15s, box-shadow .15s;
     }
-    .dl-date-input:focus { border-color: var(--lc-electric, #525df4); }
+    .dl-date-input:focus {
+      border-color: rgba(82,93,244,.4);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.03), 0 0 0 2px rgba(82,93,244,.08);
+    }
+
+    /* ── Delete button ── */
     .dl-delete-btn {
-      background: none;
-      border: none;
-      color: var(--text3, #94a3b8);
-      cursor: pointer;
-      padding: 3px;
-      border-radius: 4px;
-      flex-shrink: 0;
       display: flex;
       align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      border-radius: 5px;
+      flex-shrink: 0;
+      transition: background .12s, color .12s;
     }
     .dl-delete-btn:hover { background: #fee2e2; color: #ef4444; }
+
+    /* ── Footer ── */
+    .dl-panel-footer {
+      padding: 8px 14px 10px;
+      border-top: 1px solid rgba(0,0,0,.05);
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      font-size: 10px;
+      color: #94a3b8;
+      line-height: 1.4;
+      flex-shrink: 0;
+      border-radius: 0 0 14px 14px;
+    }
   `;
   document.head.appendChild(style);
 }
