@@ -1990,7 +1990,7 @@ function activateDeadlinePickMode() {
   const btn = document.getElementById('btnDeadline');
   if (btn) { btn.style.borderColor = '#f87171'; btn.style.color = '#f87171'; }
   document.getElementById('chartBody').style.cursor = 'crosshair';
-  showToast('⚑ Cliquez sur le Gantt pour poser l'échéance');
+  showToast('⚑ Cliquez sur le Gantt pour poser l\'échéance');
 }
 
 document.getElementById('chartBody').addEventListener('click', e => {
@@ -2104,7 +2104,7 @@ function renderDeadlinePanel(focusIdx) {
     labelInput.type = 'text';
     labelInput.className = 'dl-label-input';
     labelInput.value = dl.label;
-    labelInput.placeholder = 'Nom de l'échéance…';
+    labelInput.placeholder = 'Nom de l\'échéance…';
     labelInput.addEventListener('input', ev => {
       deadlines[idx].label = ev.target.value || ('Échéance ' + (idx + 1));
       render();
@@ -2326,7 +2326,7 @@ document.addEventListener('keydown', e => {
 // (handled in launchApp)
 
 // ─── LANDING PAGE ────────────────────────────────────────────────────────────
-(function() {
+{
 
   // Skeleton générique LCY — sera remplacé par le vrai JSON fourni ultérieurement
   const GENERIC_LCY_SKELETON = {
@@ -2461,10 +2461,11 @@ document.addEventListener('keydown', e => {
     launchApp(GENERIC_LCY_SKELETON);
   });
 
-})();
+}
 
 
-(function() {
+// ─── PWA ICON ────────────────────────────────────────────────────────────────
+{
   // Generate app icon as a canvas data URL (blue gradient with "PP" text)
   function makeIcon(size) {
     const c = document.createElement('canvas');
@@ -2665,7 +2666,7 @@ document.addEventListener('keydown', e => {
   if (firstBtn) header.insertBefore(installHeaderBtn, firstBtn);
   else header.appendChild(installHeaderBtn);
 
-})();
+}
 
 // ─── SCROLL SYNC — initialisé une seule fois (fix fuite mémoire) ─────────────
 function initScrollSync() {
@@ -2710,7 +2711,7 @@ function initScrollSync() {
 }
 
 // ─── DEADLINE PANEL CSS (injected) ──────────────────────────────────────────
-(function injectDeadlinePanelCSS() {
+function injectDeadlinePanelCSS() {
   const style = document.createElement('style');
   style.textContent = `
     .deadline-line {
@@ -2859,5 +2860,6 @@ function initScrollSync() {
     .dl-delete-btn:hover { background: #fee2e2; color: #ef4444; }
   `;
   document.head.appendChild(style);
-})();
+}
+injectDeadlinePanelCSS();
 });
