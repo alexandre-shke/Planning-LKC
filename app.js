@@ -29,7 +29,8 @@ let phaseColorIdx = 0;
 let dragState = null;
 
 // ─── DEADLINES ───────────────────────────────────────────────────────────────
-let deadlines = []; // [{ date: 'YYYY-MM-DD', label: 'Deadline' }]
+let deadlines = []; // [{ date: 'YYYY-MM-DD', label: 'Deadline', color: '#f87171' }]
+let deadlinePanelOpen = false;
 
 // ─── LINKS (liaisons fin→début) ──────────────────────────────────────────────
 let links = {}; // { fromUid: [toUid, ...] }
@@ -673,9 +674,11 @@ function renderGantt() {
   deadlines.forEach((dl, idx) => {
     const dlDate = parseDate(dl.date);
     const dlX = dateToX(dlDate);
+    const dlColor = dl.color || '#f87171';
     const dlEl = document.createElement('div');
     dlEl.className = 'deadline-line deadline-line-draggable';
     dlEl.style.left = dlX + 'px';
+    dlEl.style.setProperty('--dl-color', dlColor);
     dlEl.dataset.dlIdx = idx;
     const dlLbl = document.createElement('div');
     dlLbl.className = 'deadline-label';
@@ -683,11 +686,16 @@ function renderGantt() {
     dlEl.appendChild(dlLbl);
 
     // Drag to reposition deadline
+    let didDrag = false;
     dlEl.addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
       e.preventDefault();
       e.stopPropagation();
+      didDrag = false;
+      const startX = e.clientX;
       const chartBody = document.getElementById('chartBody');
       const onMove = ev => {
+        if (Math.abs(ev.clientX - startX) > 3) didDrag = true;
         const relX = ev.clientX - canvas.getBoundingClientRect().left + chartBody.scrollLeft;
         const days = Math.round(relX / getColW());
         const newDate = addDays(PROJECT_START, days);
@@ -698,10 +706,20 @@ function renderGantt() {
       const onUp = () => {
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
-        render();
+        if (didDrag) {
+          render();
+          renderDeadlinePanel();
+        }
       };
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
+    });
+
+    // Click (no drag) → open panel and highlight this deadline
+    dlEl.addEventListener('click', e => {
+      if (didDrag) return;
+      e.stopPropagation();
+      openDeadlinePanel(idx);
     });
 
     // Right-click to remove
@@ -710,7 +728,8 @@ function renderGantt() {
       e.stopPropagation();
       deadlines.splice(idx, 1);
       render();
-      showToast('Deadline supprimée');
+      renderDeadlinePanel();
+      showToast('Échéance supprimée');
     });
 
     canvas.appendChild(dlEl);
@@ -1936,20 +1955,42 @@ document.getElementById('todayToggle')?.addEventListener('click', () => {
 // ─── DEADLINE ────────────────────────────────────────────────────────────────
 let deadlinePickMode = false;
 
+const DEADLINE_COLORS = [
+  '#f87171', // rouge
+  '#fb923c', // orange
+  '#facc15', // jaune
+  '#4ade80', // vert
+  '#60a5fa', // bleu
+  '#a78bfa', // violet
+  '#f472b6', // rose
+  '#94a3b8', // gris
+];
+
+// ── Bouton header ──
 document.getElementById('btnDeadline')?.addEventListener('click', () => {
-  deadlinePickMode = !deadlinePickMode;
-  const btn = document.getElementById('btnDeadline'); if(!btn) return;
-  if (deadlinePickMode) {
-    btn.style.borderColor = '#f87171';
-    btn.style.color = '#f87171';
-    document.getElementById('chartBody').style.cursor = 'crosshair';
-    showToast('⚑ Cliquez sur le Gantt pour placer la deadline — clic droit sur la ligne pour la supprimer');
-  } else {
-    btn.style.borderColor = '';
-    btn.style.color = '';
+  if (deadlinePanelOpen) {
+    closeDeadlinePanel();
+  } else if (deadlinePickMode) {
+    deadlinePickMode = false;
+    const btn = document.getElementById('btnDeadline');
+    if (btn) { btn.style.borderColor = ''; btn.style.color = ''; }
     document.getElementById('chartBody').style.cursor = '';
+  } else {
+    if (deadlines.length > 0) {
+      openDeadlinePanel(null);
+    } else {
+      activateDeadlinePickMode();
+    }
   }
 });
+
+function activateDeadlinePickMode() {
+  deadlinePickMode = true;
+  const btn = document.getElementById('btnDeadline');
+  if (btn) { btn.style.borderColor = '#f87171'; btn.style.color = '#f87171'; }
+  document.getElementById('chartBody').style.cursor = 'crosshair';
+  showToast('⚑ Cliquez sur le Gantt pour poser l'échéance');
+}
 
 document.getElementById('chartBody').addEventListener('click', e => {
   if (!deadlinePickMode) return;
@@ -1959,16 +2000,153 @@ document.getElementById('chartBody').addEventListener('click', e => {
   const relX = e.clientX - canvas.getBoundingClientRect().left + chartBody.scrollLeft;
   const days = Math.round(relX / getColW());
   const dlDate = addDays(PROJECT_START, days);
-  const label = 'Deadline ' + (deadlines.length + 1);
-  deadlines.push({ date: toDateStr(dlDate), label });
+  const idx = deadlines.length;
+  const label = 'Échéance ' + (idx + 1);
+  const color = DEADLINE_COLORS[idx % DEADLINE_COLORS.length];
+  deadlines.push({ date: toDateStr(dlDate), label, color });
   deadlinePickMode = false;
-  const btn = document.getElementById('btnDeadline'); if(!btn) return;
-  btn.style.borderColor = '';
-  btn.style.color = '';
+  const btn = document.getElementById('btnDeadline');
+  if (btn) { btn.style.borderColor = ''; btn.style.color = ''; }
   chartBody.style.cursor = '';
   render();
-  showToast(`⚑ ${label} placée au ${formatShortDate(dlDate)} — glissez-la pour ajuster, clic droit pour supprimer`);
+  openDeadlinePanel(deadlines.length - 1);
+  showToast(`⚑ ${label} posée — nommez-la dans le panneau`);
 });
+
+// ── Panneau de gestion des deadlines ──
+
+function openDeadlinePanel(focusIdx) {
+  deadlinePanelOpen = true;
+  let panel = document.getElementById('deadlinePanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'deadlinePanel';
+    panel.className = 'deadline-panel';
+    document.body.appendChild(panel);
+  }
+  renderDeadlinePanel(focusIdx);
+  panel.classList.add('open');
+  const btn = document.getElementById('btnDeadline');
+  if (btn) { btn.style.borderColor = '#f87171'; btn.style.color = '#f87171'; }
+}
+
+function closeDeadlinePanel() {
+  deadlinePanelOpen = false;
+  const panel = document.getElementById('deadlinePanel');
+  if (panel) panel.classList.remove('open');
+  const btn = document.getElementById('btnDeadline');
+  if (btn) { btn.style.borderColor = ''; btn.style.color = ''; }
+}
+
+function renderDeadlinePanel(focusIdx) {
+  const panel = document.getElementById('deadlinePanel');
+  if (!panel) return;
+
+  panel.innerHTML = '';
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'dl-panel-header';
+  header.innerHTML = `
+    <div class="dl-panel-title">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
+      Échéances
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="dl-btn-add" id="dlBtnAdd" title="Poser une nouvelle échéance">+ Nouvelle</button>
+      <button class="dl-panel-close" id="dlPanelClose">✕</button>
+    </div>`;
+  panel.appendChild(header);
+
+  document.getElementById('dlPanelClose')?.addEventListener('click', closeDeadlinePanel);
+  document.getElementById('dlBtnAdd')?.addEventListener('click', () => {
+    closeDeadlinePanel();
+    activateDeadlinePickMode();
+  });
+
+  if (deadlines.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'dl-panel-empty';
+    empty.textContent = 'Aucune échéance posée. Cliquez sur "+ Nouvelle" pour en ajouter une.';
+    panel.appendChild(empty);
+    return;
+  }
+
+  // List
+  const list = document.createElement('div');
+  list.className = 'dl-panel-list';
+  deadlines.forEach((dl, idx) => {
+    const dlColor = dl.color || '#f87171';
+    const item = document.createElement('div');
+    item.className = 'dl-item' + (focusIdx === idx ? ' dl-item-focused' : '');
+    item.dataset.idx = idx;
+
+    // Color swatch + picker
+    const colorSwatch = document.createElement('div');
+    colorSwatch.className = 'dl-color-swatch';
+    colorSwatch.style.background = dlColor;
+    colorSwatch.title = 'Changer la couleur';
+
+    const colorPicker = document.createElement('input');
+    colorPicker.type = 'color';
+    colorPicker.value = dlColor;
+    colorPicker.className = 'dl-color-input';
+    colorPicker.addEventListener('input', ev => {
+      deadlines[idx].color = ev.target.value;
+      colorSwatch.style.background = ev.target.value;
+      render();
+    });
+    colorSwatch.addEventListener('click', () => colorPicker.click());
+
+    // Label input
+    const labelInput = document.createElement('input');
+    labelInput.type = 'text';
+    labelInput.className = 'dl-label-input';
+    labelInput.value = dl.label;
+    labelInput.placeholder = 'Nom de l'échéance…';
+    labelInput.addEventListener('input', ev => {
+      deadlines[idx].label = ev.target.value || ('Échéance ' + (idx + 1));
+      render();
+    });
+
+    // Date input
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.className = 'dl-date-input';
+    dateInput.value = dl.date;
+    dateInput.addEventListener('change', ev => {
+      if (ev.target.value) {
+        deadlines[idx].date = ev.target.value;
+        render();
+        renderDeadlinePanel(idx);
+      }
+    });
+
+    // Delete btn
+    const delBtn = document.createElement('button');
+    delBtn.className = 'dl-delete-btn';
+    delBtn.title = 'Supprimer cette échéance';
+    delBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><line x1="1" y1="1" x2="10" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="1" x2="1" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    delBtn.addEventListener('click', () => {
+      deadlines.splice(idx, 1);
+      render();
+      renderDeadlinePanel();
+      showToast('Échéance supprimée');
+    });
+
+    item.appendChild(colorSwatch);
+    item.appendChild(colorPicker);
+    item.appendChild(labelInput);
+    item.appendChild(dateInput);
+    item.appendChild(delBtn);
+    list.appendChild(item);
+
+    if (focusIdx === idx) {
+      setTimeout(() => labelInput.focus(), 50);
+    }
+  });
+  panel.appendChild(list);
+}
 
 // ─── FILTERS ─────────────────────────────────────────────────────────────────
 // filterPhaseUid declared at top level
@@ -2529,3 +2707,155 @@ function initScrollSync() {
     cursorEl.style.display = 'none';
   });
 }
+
+// ─── DEADLINE PANEL CSS (injected) ──────────────────────────────────────────
+(function injectDeadlinePanelCSS() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .deadline-line {
+      border-left: 2px dashed var(--dl-color, #f87171) !important;
+    }
+    .deadline-label {
+      color: var(--dl-color, #f87171) !important;
+      border-color: var(--dl-color, #f87171) !important;
+      background: color-mix(in srgb, var(--dl-color, #f87171) 10%, var(--surface, #fff)) !important;
+    }
+
+    /* ── Panel ── */
+    .deadline-panel {
+      position: fixed;
+      top: 54px;
+      right: -320px;
+      width: 300px;
+      max-height: calc(100vh - 70px);
+      background: var(--surface, #fff);
+      border: 1px solid var(--border, #e2e8f0);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.13);
+      z-index: 1200;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: right .25s cubic-bezier(.4,0,.2,1);
+    }
+    .deadline-panel.open {
+      right: 12px;
+    }
+    .dl-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px 10px;
+      border-bottom: 1px solid var(--border, #e2e8f0);
+      flex-shrink: 0;
+    }
+    .dl-panel-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text, #1e293b);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dl-panel-close {
+      background: none;
+      border: none;
+      color: var(--text3, #94a3b8);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      line-height: 1;
+    }
+    .dl-panel-close:hover { background: var(--hover, #f1f5f9); color: var(--text, #1e293b); }
+    .dl-btn-add {
+      font-size: 10.5px;
+      font-weight: 600;
+      background: var(--lc-electric, #525df4);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 4px 9px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .dl-btn-add:hover { opacity: .88; }
+    .dl-panel-empty {
+      padding: 20px 16px;
+      font-size: 11px;
+      color: var(--text3, #94a3b8);
+      line-height: 1.5;
+      text-align: center;
+    }
+    .dl-panel-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 8px 0;
+    }
+    .dl-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      transition: background .12s;
+    }
+    .dl-item:hover { background: var(--hover, #f8fafc); }
+    .dl-item-focused { background: rgba(248,113,113,.06); }
+    .dl-color-swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid rgba(0,0,0,.08);
+      transition: transform .1s;
+    }
+    .dl-color-swatch:hover { transform: scale(1.2); }
+    .dl-color-input {
+      display: none;
+    }
+    .dl-label-input {
+      flex: 1;
+      min-width: 0;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text, #1e293b);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid transparent;
+      padding: 2px 2px;
+      border-radius: 3px;
+      outline: none;
+      transition: border-color .15s, background .15s;
+    }
+    .dl-label-input:focus {
+      border-bottom-color: var(--lc-electric, #525df4);
+      background: var(--hover, #f8fafc);
+    }
+    .dl-date-input {
+      font-size: 10px;
+      color: var(--text2, #64748b);
+      background: var(--hover, #f1f5f9);
+      border: 1px solid var(--border, #e2e8f0);
+      border-radius: 4px;
+      padding: 2px 4px;
+      outline: none;
+      flex-shrink: 0;
+      width: 98px;
+    }
+    .dl-date-input:focus { border-color: var(--lc-electric, #525df4); }
+    .dl-delete-btn {
+      background: none;
+      border: none;
+      color: var(--text3, #94a3b8);
+      cursor: pointer;
+      padding: 3px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+    .dl-delete-btn:hover { background: #fee2e2; color: #ef4444; }
+  `;
+  document.head.appendChild(style);
+})();
