@@ -2950,6 +2950,11 @@ function injectDeadlinePanelCSS() {
     .dl-item-focused {
       border-color: rgba(82,93,244,.35) !important;
       box-shadow: 0 0 0 3px rgba(82,93,244,.08), 0 2px 8px rgba(0,0,0,.06) !important;
+      animation: dl-item-appear .22s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes dl-item-appear {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── Color swatch ── */
