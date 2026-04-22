@@ -2019,7 +2019,6 @@ document.getElementById('chartBody').addEventListener('click', e => {
 function openDeadlinePanel(focusIdx) {
   deadlinePanelOpen = true;
 
-  // Position dropdown under btnDeadline
   const anchorBtn = document.getElementById('btnDeadline');
 
   let panel = document.getElementById('deadlinePanel');
@@ -2030,14 +2029,16 @@ function openDeadlinePanel(focusIdx) {
     document.body.appendChild(panel);
   }
 
-  renderDeadlinePanel(focusIdx);
-
-  // Position
+  // Position BEFORE rendering so layout is correct
   if (anchorBtn) {
     const rect = anchorBtn.getBoundingClientRect();
     panel.style.top = (rect.bottom + 8) + 'px';
     panel.style.right = (window.innerWidth - rect.right) + 'px';
+    panel.style.left = 'auto';
+    panel.style.bottom = 'auto';
   }
+
+  renderDeadlinePanel(focusIdx);
 
   requestAnimationFrame(() => panel.classList.add('open'));
   if (anchorBtn) anchorBtn.classList.add('active-deadline');
