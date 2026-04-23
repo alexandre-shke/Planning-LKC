@@ -2109,8 +2109,21 @@ function renderDeadlinePanel(focusIdx) {
     colorPicker.value = dlColor;
     colorPicker.className = 'dl-color-input';
     colorPicker.addEventListener('input', ev => {
-      deadlines[idx].color = ev.target.value;
-      colorSwatch.style.background = ev.target.value;
+      const newColor = ev.target.value;
+      deadlines[idx].color = newColor;
+      colorSwatch.style.background = newColor;
+      // Update the line directly without full re-render for instant feedback
+      const canvas = document.getElementById('ganttCanvas');
+      if (canvas) {
+        const lines = canvas.querySelectorAll('.deadline-line');
+        lines.forEach(line => {
+          if (parseInt(line.dataset.dlIdx) === idx) {
+            line.style.setProperty('--dl-color', newColor);
+          }
+        });
+      }
+    });
+    colorPicker.addEventListener('change', ev => {
       render();
     });
     colorSwatch.addEventListener('click', () => colorPicker.click());
