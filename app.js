@@ -2018,98 +2018,70 @@ document.getElementById('chartBody').addEventListener('click', e => {
 
 function openDeadlinePanel(focusIdx) {
   deadlinePanelOpen = true;
+  const panel = document.getElementById('deadlinePanel');
+  const btn = document.getElementById('btnDeadline');
+  if (!panel) return;
 
-  const anchorBtn = document.getElementById('btnDeadline');
-
-  let panel = document.getElementById('deadlinePanel');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.id = 'deadlinePanel';
-    panel.className = 'deadline-panel';
-    document.body.appendChild(panel);
-  }
-
-  // Position BEFORE rendering so layout is correct
-  if (anchorBtn) {
-    const rect = anchorBtn.getBoundingClientRect();
-    panel.style.top = (rect.bottom + 8) + 'px';
+  // Position under the button
+  if (btn) {
+    const rect = btn.getBoundingClientRect();
+    panel.style.top = (rect.bottom + 6) + 'px';
     panel.style.right = (window.innerWidth - rect.right) + 'px';
-    panel.style.left = 'auto';
-    panel.style.bottom = 'auto';
   }
 
   renderDeadlinePanel(focusIdx);
+  panel.classList.add('open');
+  if (btn) btn.classList.add('active-deadline');
 
-  requestAnimationFrame(() => panel.classList.add('open'));
-  if (anchorBtn) anchorBtn.classList.add('active-deadline');
-
-  // Close on outside click
-  setTimeout(() => {
-    document.addEventListener('click', _deadlineOutsideClick);
-  }, 0);
+  setTimeout(() => document.addEventListener('click', _deadlineOutsideClick), 0);
 }
 
 function _deadlineOutsideClick(e) {
   const panel = document.getElementById('deadlinePanel');
   const btn = document.getElementById('btnDeadline');
-  if (panel && !panel.contains(e.target) && e.target !== btn && !btn?.contains(e.target)) {
+  if (panel && !panel.contains(e.target) && !btn?.contains(e.target)) {
     closeDeadlinePanel();
   }
 }
 
 function closeDeadlinePanel() {
   deadlinePanelOpen = false;
-
   const panel = document.getElementById('deadlinePanel');
   if (panel) panel.classList.remove('open');
-
   const btn = document.getElementById('btnDeadline');
   if (btn) btn.classList.remove('active-deadline');
-
   document.removeEventListener('click', _deadlineOutsideClick);
 }
 
 function renderDeadlinePanel(focusIdx) {
-  const panel = document.getElementById('deadlinePanel');
-  if (!panel) return;
+  const body = document.getElementById('dlPanelBody');
+  if (!body) return;
 
-  panel.innerHTML = '';
+  // Update count badge
+  const countEl = document.getElementById('dlCount');
+  if (countEl) {
+    countEl.textContent = deadlines.length;
+    countEl.style.display = deadlines.length > 0 ? '' : 'none';
+  }
 
-  // Header
-  const header = document.createElement('div');
-  header.className = 'dl-panel-header';
-  header.innerHTML = `
-    <div class="dl-panel-title">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
-      Échéances
-      ${deadlines.length > 0 ? `<span class="dl-panel-count">${deadlines.length}</span>` : ''}
-    </div>
-    <div class="dl-panel-header-actions">
-      <button class="dl-btn-add" id="dlBtnAdd" title="Poser une nouvelle échéance">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><line x1="5" y1="1" x2="5" y2="9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="1" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        Nouvelle
-      </button>
-      <button class="dl-panel-close" id="dlPanelClose" title="Fermer">✕</button>
-    </div>`;
-  panel.appendChild(header);
-
+  // Wire static header buttons (safe to re-wire)
   document.getElementById('dlPanelClose')?.addEventListener('click', closeDeadlinePanel);
   document.getElementById('dlBtnAdd')?.addEventListener('click', () => {
     closeDeadlinePanel();
     activateDeadlinePickMode();
   });
 
+  body.innerHTML = '';
+
   if (deadlines.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'dl-panel-empty';
-    empty.innerHTML = `
-      <div class="dl-panel-empty-icon">
-        <svg width="18" height="18" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
-      </div>
-      <div class="dl-panel-empty-text">Aucune échéance posée sur ce planning.</div>
-      <div class="dl-panel-empty-cta" id="dlEmptyCta">+ Cliquer pour en poser une</div>
-    `;
-    panel.appendChild(empty);
+    body.innerHTML = `
+      <div class="dl-empty">
+        <div class="dl-empty-icon">
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/><polygon points="7,2 11,6 7,6" fill="currentColor"/></svg>
+        </div>
+        <div class="dl-empty-text">Aucune échéance posée.</div>
+        <div class="dl-empty-cta" id="dlEmptyCta">+ Cliquer pour en poser une</div>
+      </div>`;
     document.getElementById('dlEmptyCta')?.addEventListener('click', () => {
       closeDeadlinePanel();
       activateDeadlinePickMode();
@@ -2119,7 +2091,7 @@ function renderDeadlinePanel(focusIdx) {
 
   // List
   const list = document.createElement('div');
-  list.className = 'dl-panel-list';
+  list.className = 'dl-panel-list'; // reuse body as parent
   deadlines.forEach((dl, idx) => {
     const dlColor = dl.color || '#f87171';
     const item = document.createElement('div');
@@ -2190,13 +2162,7 @@ function renderDeadlinePanel(focusIdx) {
       setTimeout(() => labelInput.focus(), 50);
     }
   });
-  panel.appendChild(list);
-
-  // Footer
-  const footer = document.createElement('div');
-  footer.className = 'dl-panel-footer';
-  footer.innerHTML = `💡 Glissez une ligne sur le Gantt pour déplacer une échéance.`;
-  panel.appendChild(footer);
+  body.appendChild(list);
 }
 
 // ─── FILTERS ─────────────────────────────────────────────────────────────────
