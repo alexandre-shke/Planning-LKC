@@ -680,9 +680,13 @@ function renderGantt() {
     dlEl.className = 'deadline-line deadline-line-draggable';
     dlEl.style.left = dlX + 'px';
     dlEl.style.setProperty('--dl-color', dlColor);
+    dlEl.style.borderLeftColor = dlColor;
     dlEl.dataset.dlIdx = idx;
     const dlLbl = document.createElement('div');
     dlLbl.className = 'deadline-label';
+    dlLbl.style.color = dlColor;
+    dlLbl.style.borderColor = dlColor;
+    dlLbl.style.background = `color-mix(in srgb, ${dlColor} 10%, #fff)`;
     dlLbl.textContent = dl.label + ' — ' + formatShortDate(dlDate);
     dlEl.appendChild(dlLbl);
 
@@ -2112,13 +2116,18 @@ function renderDeadlinePanel(focusIdx) {
       const newColor = ev.target.value;
       deadlines[idx].color = newColor;
       colorSwatch.style.background = newColor;
-      // Update the line directly without full re-render for instant feedback
       const canvas = document.getElementById('ganttCanvas');
       if (canvas) {
-        const lines = canvas.querySelectorAll('.deadline-line');
-        lines.forEach(line => {
+        canvas.querySelectorAll('.deadline-line').forEach(line => {
           if (parseInt(line.dataset.dlIdx) === idx) {
             line.style.setProperty('--dl-color', newColor);
+            line.style.borderLeftColor = newColor;
+            const lbl = line.querySelector('.deadline-label');
+            if (lbl) {
+              lbl.style.color = newColor;
+              lbl.style.borderColor = newColor;
+              lbl.style.background = `color-mix(in srgb, ${newColor} 10%, #fff)`;
+            }
           }
         });
       }
