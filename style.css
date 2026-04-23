@@ -514,7 +514,7 @@
     position: absolute;
     top: 0; bottom: 0;
     width: 2px;
-    background: linear-gradient(to bottom, #f87171, rgba(248,113,113,.2));
+    background: linear-gradient(to bottom, var(--dl-color, #f87171), color-mix(in srgb, var(--dl-color, #f87171) 20%, transparent));
     z-index: 5;
     pointer-events: none;
     cursor: ew-resize;
@@ -524,7 +524,7 @@
     top: 2px;
     left: 5px;
     font-size: 9px;
-    color: #f87171;
+    color: var(--dl-color, #f87171);
     font-weight: 700;
     white-space: nowrap;
     font-family: 'JetBrains Mono', monospace;
