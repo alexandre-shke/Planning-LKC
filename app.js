@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
 // ─── DATA ───────────────────────────────────────────────────────────────────
-const RAW_TASKS = [{"uid":"0","id":0,"name":"PA3","level":0,"start":"2026-01-05","finish":"2027-04-05","milestone":false,"summary":true,"pct":5,"preds":[]},{"uid":"658","id":1,"name":"Missions préalables","level":1,"start":"2026-01-05","finish":"2026-06-30","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"665","id":2,"name":"Obtention accord CDC - Phase 3","level":2,"start":"2026-02-11","finish":"2026-02-11","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"667","id":3,"name":"Mission Tolila (Fiche de Lot, suivi PC…)","level":2,"start":"2026-02-02","finish":"2026-03-02","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"672","id":4,"name":"Choix architecte + BE","level":2,"start":"2026-02-02","finish":"2026-03-06","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"671","id":5,"name":"Accord SAS/EPFIF sur Secteur 3","level":2,"start":"2026-03-02","finish":"2026-03-27","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"659","id":6,"name":"Calendrier validé de démolition et calendrier ICPE","level":2,"start":"2026-05-04","finish":"2026-05-29","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"674","id":7,"name":"ICPE (à confirmer)","level":2,"start":"2026-05-29","finish":"2026-06-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"673","id":8,"name":"Travaux SAS de démolition","level":2,"start":"2027-01-04","finish":"2027-04-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"364","id":9,"name":"Promesse Vente Terrain","level":1,"start":"2026-06-01","finish":"2026-09-30","milestone":false,"summary":true,"pct":76,"preds":[]},{"uid":"677","id":11,"name":"Accord EPFIF / SAS","level":2,"start":"2026-06-15","finish":"2026-06-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"675","id":12,"name":"Accord SAS / SSCV","level":2,"start":"2026-07-01","finish":"2026-07-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"367","id":13,"name":"Réunion Lancement Notaire","level":2,"start":"2026-07-13","finish":"2026-07-13","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"369","id":15,"name":"Rédaction Projet Promesse terrain","level":2,"start":"2026-07-13","finish":"2026-08-24","milestone":false,"summary":false,"pct":100,"preds":[]},{"uid":"370","id":16,"name":"Relecture et négociations","level":2,"start":"2026-08-24","finish":"2026-09-11","milestone":false,"summary":false,"pct":100,"preds":[]},{"uid":"526","id":17,"name":"Comité d'engagement pour signature Promesse","level":2,"start":"2026-09-14","finish":"2026-09-14","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"527","id":18,"name":"Relecture et négociation","level":2,"start":"2026-09-17","finish":"2026-09-18","milestone":false,"summary":false,"pct":100,"preds":[]},{"uid":"371","id":19,"name":"Signature PUV/PSV","level":2,"start":"2026-09-21","finish":"2026-09-21","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"510","id":71,"name":"Permis de construire","level":1,"start":"2026-03-02","finish":"2026-12-02","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"670","id":72,"name":"Esquisse PC","level":2,"start":"2026-03-09","finish":"2026-04-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"666","id":73,"name":"Validation PC - Aménagement","level":2,"start":"2026-04-15","finish":"2026-04-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"668","id":74,"name":"Validation PC - Mairie","level":2,"start":"2026-05-04","finish":"2026-05-04","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"669","id":75,"name":"Validation financier avant dépôt PC","level":2,"start":"2026-05-04","finish":"2026-05-04","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"511","id":76,"name":"Dépôt du PC incomplet","level":2,"start":"2026-05-11","finish":"2026-05-11","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"516","id":77,"name":"Complétude PC","level":2,"start":"2026-05-11","finish":"2026-06-10","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"654","id":78,"name":"Instruction PC","level":2,"start":"2026-06-11","finish":"2026-09-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"517","id":79,"name":"Obtention PC","level":2,"start":"2026-09-14","finish":"2026-09-14","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"518","id":80,"name":"Délai de purge PC","level":2,"start":"2026-09-14","finish":"2026-12-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"519","id":81,"name":"Obtention PC définitif","level":2,"start":"2026-12-14","finish":"2026-12-14","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"169","id":82,"name":"Contrats de réservation","level":1,"start":"2026-05-11","finish":"2026-08-28","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"676","id":83,"name":"Validation Bailleur-Exploitant / Ville","level":2,"start":"2026-03-02","finish":"2026-04-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"173","id":84,"name":"Négociation prix","level":2,"start":"2026-05-11","finish":"2026-06-02","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"647","id":85,"name":"OFFRE FERME","level":2,"start":"2026-06-03","finish":"2026-06-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"175","id":86,"name":"Rédaction de l'Avant Contrat","level":2,"start":"2026-06-03","finish":"2026-06-16","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"176","id":87,"name":"Relecture de l'Avant Contrat","level":2,"start":"2026-06-17","finish":"2026-06-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"177","id":88,"name":"Négociation // Relecture commune","level":2,"start":"2026-06-24","finish":"2026-06-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"179","id":89,"name":"Signature de l'Avant Contrat","level":2,"start":"2026-06-30","finish":"2026-06-30","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"190","id":152,"name":"PHASE PRO/MARCHE","level":1,"start":"2026-09-01","finish":"2027-02-12","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"380","id":153,"name":"Phase pro/marché","level":2,"start":"2026-09-01","finish":"2027-02-12","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"191","id":154,"name":"Réunion lancement phase PRO","level":3,"start":"2026-09-01","finish":"2026-09-01","milestone":true,"summary":false,"pct":100,"preds":[]},{"uid":"521","id":155,"name":"Demande de raccordements concessionnaires","level":3,"start":"2026-09-01","finish":"2026-09-29","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"644","id":156,"name":"Audit structure","level":3,"start":"2026-09-01","finish":"2026-10-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"582","id":157,"name":"Etudes Acoustique Thermique Handicapé Incendie","level":3,"start":"2026-09-01","finish":"2026-10-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"645","id":158,"name":"Audit HQE","level":3,"start":"2026-09-21","finish":"2026-10-09","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"583","id":159,"name":"Etudes Fluides","level":3,"start":"2026-09-21","finish":"2026-10-09","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"571","id":160,"name":"Reprise plans archi suite audits","level":3,"start":"2026-10-06","finish":"2026-10-26","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"572","id":161,"name":"Plans Architectes Figés - Plans Architecte PRO","level":3,"start":"2026-10-27","finish":"2026-10-27","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"575","id":162,"name":"Etudes clashs structure & fluides","level":3,"start":"2026-10-21","finish":"2026-11-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"577","id":163,"name":"Carnet de Détails et façades","level":3,"start":"2026-10-27","finish":"2026-11-24","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"578","id":164,"name":"Reprise Plans Architecte","level":3,"start":"2026-11-18","finish":"2026-12-01","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"585","id":165,"name":"Plans fluides","level":3,"start":"2026-11-04","finish":"2026-11-18","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"586","id":166,"name":"Plans structure","level":3,"start":"2026-11-04","finish":"2026-11-18","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"655","id":167,"name":"Plans, coupes et détails paysage/VRD","level":3,"start":"2026-11-18","finish":"2026-12-01","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"579","id":168,"name":"Plans Marché V0","level":3,"start":"2026-12-01","finish":"2026-12-01","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"580","id":169,"name":"PIC","level":3,"start":"2026-11-18","finish":"2026-12-01","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"202","id":170,"name":"Rédaction CCTP CEA et lot 00","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"203","id":171,"name":"Rédaction CCTP GO (Gros Œuvre)","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"204","id":172,"name":"Rédaction CCTP CET (Corps Etat Technique)","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"653","id":173,"name":"Rédaction CCTP Paysage et VRD","level":3,"start":"2026-11-02","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"205","id":174,"name":"Relecture CCTP","level":3,"start":"2026-11-24","finish":"2026-12-07","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"206","id":175,"name":"Reprise des CCTP","level":3,"start":"2026-12-01","finish":"2026-12-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"207","id":176,"name":"CCTP Marché V0","level":3,"start":"2026-12-23","finish":"2026-12-23","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"216","id":177,"name":"Etablissement Evaluation Provisoire Labels","level":3,"start":"2026-11-18","finish":"2026-12-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"217","id":178,"name":"Evaluation Provisoire Labels","level":3,"start":"2026-12-23","finish":"2026-12-23","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"587","id":179,"name":"Production des plans de vente","level":3,"start":"2026-11-24","finish":"2026-12-07","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"208","id":180,"name":"Etablissement RICT","level":3,"start":"2027-01-04","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"209","id":181,"name":"RICT Marché V0","level":3,"start":"2027-01-15","finish":"2027-01-15","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"212","id":182,"name":"Etablissement PGCSPS","level":3,"start":"2027-01-04","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"214","id":183,"name":"PGCSPS Marché V0","level":3,"start":"2027-01-15","finish":"2027-01-15","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"213","id":184,"name":"Etablissement DIUO","level":3,"start":"2027-01-04","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"215","id":185,"name":"DIUO Marché V0","level":3,"start":"2027-01-15","finish":"2027-01-15","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"218","id":186,"name":"Rédaction Pièce Marché","level":3,"start":"2026-09-23","finish":"2026-10-13","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"220","id":187,"name":"Relecture & Modification Pièce Marché","level":3,"start":"2026-10-14","finish":"2026-11-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"221","id":188,"name":"Pièce Marché Définitive","level":3,"start":"2026-11-25","finish":"2026-11-25","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"581","id":189,"name":"Relecture Dossier Marché V0","level":3,"start":"2027-01-11","finish":"2027-01-15","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"223","id":190,"name":"Intégration Remarques","level":3,"start":"2027-02-01","finish":"2027-02-05","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"224","id":191,"name":"Dossier Marché V1","level":3,"start":"2027-02-05","finish":"2027-02-05","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"378","id":192,"name":"ACTES AUTHENTIQUES","level":1,"start":"2026-03-31","finish":"2026-12-31","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"275","id":193,"name":"Signature Actes Authentiques","level":2,"start":"2026-03-31","finish":"2026-12-31","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"227","id":194,"name":"Réunion Lancement Assurances (DO - TRC - CNR)","level":3,"start":"2026-09-07","finish":"2026-09-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"228","id":195,"name":"Constitution Dossier Assurances (DO - TRC)","level":3,"start":"2026-10-07","finish":"2026-10-27","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"229","id":196,"name":"Obtention Attestations Assurances (DO, TRC, CNR)","level":3,"start":"2026-10-26","finish":"2026-12-03","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"230","id":197,"name":"Réunion Lancement GFA","level":3,"start":"2026-09-07","finish":"2026-09-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"600","id":198,"name":"Constitution Dossier GFA","level":3,"start":"2026-09-07","finish":"2026-09-25","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"601","id":199,"name":"Obtention du projet de GFA","level":3,"start":"2026-10-01","finish":"2026-10-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"602","id":200,"name":"Relecture GFA (Client)","level":3,"start":"2026-10-12","finish":"2026-10-16","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"603","id":201,"name":"Validation GFA","level":3,"start":"2026-10-31","finish":"2026-10-31","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"656","id":202,"name":"Demande des agréments CDC","level":3,"start":"2026-10-15","finish":"2026-11-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"657","id":203,"name":"Obtention des agréments CDC","level":3,"start":"2026-11-30","finish":"2026-11-30","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"591","id":204,"name":"Obtention Plans de vente et tableaux de surface","level":3,"start":"2026-10-19","finish":"2026-10-19","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"592","id":206,"name":"Réunion Lancement EDD","level":3,"start":"2026-09-07","finish":"2026-09-07","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"593","id":207,"name":"Rédaction EDD (Plans + Règlements)","level":3,"start":"2026-10-19","finish":"2026-10-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"595","id":208,"name":"Relecture EDD & Modification EDD","level":3,"start":"2026-11-02","finish":"2026-11-16","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"596","id":209,"name":"Rédaction Statuts EDD","level":3,"start":"2026-11-17","finish":"2026-11-30","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"597","id":210,"name":"Relecture Statuts EDD","level":3,"start":"2026-12-01","finish":"2026-12-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"598","id":211,"name":"Calcul de la répartition de charges","level":3,"start":"2026-11-17","finish":"2026-11-23","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"599","id":212,"name":"EDD VF","level":3,"start":"2026-12-09","finish":"2026-12-09","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"226","id":213,"name":"Rédaction Projet VEFA","level":3,"start":"2026-11-30","finish":"2026-12-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"241","id":214,"name":"Relecture","level":3,"start":"2026-11-30","finish":"2026-12-08","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"249","id":215,"name":"RDV Relecture Notaires","level":3,"start":"2026-12-09","finish":"2026-12-14","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"250","id":216,"name":"Mise à jour Projet VEFA","level":3,"start":"2026-12-15","finish":"2026-12-21","milestone":false,"summary":false,"pct":0,"preds":[]},{"uid":"251","id":217,"name":"Comité Engagement Final","level":3,"start":"2026-12-18","finish":"2026-12-18","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"604","id":218,"name":"Signature VEFA","level":3,"start":"2026-12-31","finish":"2026-12-31","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"253","id":219,"name":"Signature Dossier Marché","level":3,"start":"2026-12-18","finish":"2026-12-18","milestone":true,"summary":false,"pct":0,"preds":[]},{"uid":"298","id":220,"name":"Achat du terrain","level":2,"start":"2026-12-31","finish":"2026-12-31","milestone":false,"summary":true,"pct":0,"preds":[]},{"uid":"256","id":221,"name":"Purge droit de préemption autre","level":3,"start":"2026-12-31","finish":"2026-12-31","milestone":true,"summary":false,"pct":0,"preds":[]}];
 
 // ─── STATE ─────────────────────────────────────────────────────────────────
-let tasks = RAW_TASKS.map((t,i) => ({...t, _idx: i}));
+// Les tâches sont chargées depuis l'écran d'accueil (fichier .json ou planning générique)
+let tasks = [];
 let collapsed = new Set();
 let selectedUid = null;
 let selectedUids = new Set(); // multi-selection with Shift
@@ -42,7 +42,21 @@ let linkSource = null;
 const undoStack = [];
 const UNDO_MAX = 50;
 
+// ─── PROTECTION CONTRE LA PERTE DE DONNÉES ───────────────────────────────────
+// isDirty = "il y a des modifications non sauvegardées"
+let isDirty = false;
+function markDirty() { isDirty = true; }
+
+// Si on ferme l'onglet / rafraîchit avec des modifications non sauvegardées,
+// le navigateur affiche sa fenêtre de confirmation "Quitter le site ?"
+window.addEventListener('beforeunload', e => {
+  if (!isDirty) return;
+  e.preventDefault();
+  e.returnValue = ''; // nécessaire pour certains navigateurs
+});
+
 function saveSnapshot() {
+  markDirty(); // toute action annulable est une modification
   const snapshot = {
     tasks: tasks.map(t => ({...t})),
     links: JSON.parse(JSON.stringify(links)),
@@ -352,7 +366,11 @@ function renderTaskList() {
     const nameEl = document.createElement('div');
     nameEl.className = 'task-name';
     if (task.milestone) {
-      nameEl.innerHTML = '<span class="milestone-icon">◆</span>' + task.name;
+      // Construit l'icône en DOM et ajoute le nom comme TEXTE (jamais comme HTML)
+      const icon = document.createElement('span');
+      icon.className = 'milestone-icon';
+      icon.textContent = '◆';
+      nameEl.append(icon, task.name);
     } else {
       nameEl.textContent = task.name;
     }
@@ -705,6 +723,7 @@ function renderGantt() {
         const days = Math.round(relX / getColW());
         const newDate = addDays(PROJECT_START, days);
         deadlines[idx].date = toDateStr(newDate);
+        markDirty();
         dlEl.style.left = dateToX(newDate) + 'px';
         dlLbl.textContent = dl.label + ' — ' + formatShortDate(newDate);
       };
@@ -732,6 +751,7 @@ function renderGantt() {
       e.preventDefault();
       e.stopPropagation();
       deadlines.splice(idx, 1);
+      markDirty();
       render();
       renderDeadlinePanel();
       showToast('Échéance supprimée');
@@ -1448,11 +1468,35 @@ document.getElementById('ctxColor').addEventListener('click', (e) => {
 });
 
 document.getElementById('ctxDelete').addEventListener('click', () => {
-  if (ctxUid) {
-    saveSnapshot();
-    tasks = tasks.filter(t => t.uid !== ctxUid);
-    render();
-  }
+  if (!ctxUid) return;
+  const target = tasks.find(t => t.uid === ctxUid);
+  if (!target) return;
+
+  // La tâche + toutes ses sous-tâches forment un "bloc" à supprimer ensemble
+  const descendants = getDescendants(ctxUid);
+  const blockUids = new Set([ctxUid, ...descendants.map(t => t.uid)]);
+
+  // Demande de confirmation
+  const msg = descendants.length > 0
+    ? `Supprimer « ${target.name} » et ses ${descendants.length} sous-tâche(s) ?`
+    : `Supprimer « ${target.name} » ?`;
+  if (!confirm(msg)) return;
+
+  saveSnapshot(); // permet de revenir en arrière avec Ctrl+Z
+  tasks = tasks.filter(t => !blockUids.has(t.uid));
+
+  // Nettoyage : couleurs et liaisons qui pointaient vers les tâches supprimées
+  blockUids.forEach(uid => {
+    delete CUSTOM_TASK_COLORS[uid];
+    delete links[uid];
+  });
+  Object.keys(links).forEach(from => {
+    links[from] = links[from].filter(to => !blockUids.has(to));
+  });
+
+  rollupParents(); // recalcule les dates des phases parentes
+  render();
+  showToast('🗑 Tâche supprimée — Ctrl+Z pour annuler');
 });
 
 document.getElementById('ctxAddChild').addEventListener('click', () => {
@@ -1628,6 +1672,7 @@ function openColorPopup(uid, anchorEl) {
   customInput.value = CUSTOM_TASK_COLORS[uid] || '#4f7cff';
   customInput.oninput = () => {
     CUSTOM_TASK_COLORS[colorPopupUid] = customInput.value;
+    markDirty();
     // Mark all swatches as deselected
     document.querySelectorAll('#colorPopupGrid .color-swatch').forEach(s => s.classList.remove('selected'));
     render();
@@ -1643,6 +1688,7 @@ function openColorPopup(uid, anchorEl) {
 document.getElementById('colorPopupReset').addEventListener('click', () => {
   if (colorPopupUid) {
     delete CUSTOM_TASK_COLORS[colorPopupUid];
+    markDirty();
     document.getElementById('colorPopup').classList.remove('open');
     render();
   }
@@ -1928,7 +1974,6 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
   taskList.style.height = canvas.scrollHeight + 'px';
 
     // Set document title for PDF filename
-    // document.title = 'Planning_PA3_' + new Date().toISOString().slice(0,10); (handled above)
 
   setTimeout(() => {
     window.print();
@@ -1943,7 +1988,7 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
       taskList.setAttribute('style', origTaskListStyle);
       chartBody.style.overflow = '';
       taskList.style.overflow = '';
-      document.title = 'Planning Immobilier — PA3';
+      document.title = 'PlanningPro';
       render();
     }, 500);
   }, 300);
@@ -2009,6 +2054,7 @@ document.getElementById('chartBody').addEventListener('click', e => {
   const label = 'Échéance ' + (idx + 1);
   const color = DEADLINE_COLORS[idx % DEADLINE_COLORS.length];
   deadlines.push({ date: toDateStr(dlDate), label, color });
+  markDirty();
   deadlinePickMode = false;
   const btn = document.getElementById('btnDeadline');
   if (btn) { btn.style.borderColor = ''; btn.style.color = ''; }
@@ -2115,6 +2161,7 @@ function renderDeadlinePanel(focusIdx) {
     colorPicker.addEventListener('input', ev => {
       const newColor = ev.target.value;
       deadlines[idx].color = newColor;
+      markDirty();
       colorSwatch.style.background = newColor;
       const canvas = document.getElementById('ganttCanvas');
       if (canvas) {
@@ -2145,6 +2192,7 @@ function renderDeadlinePanel(focusIdx) {
     labelInput.placeholder = 'Nom de l\'échéance…';
     labelInput.addEventListener('input', ev => {
       deadlines[idx].label = ev.target.value || ('Échéance ' + (idx + 1));
+      markDirty();
       render();
     });
 
@@ -2156,6 +2204,7 @@ function renderDeadlinePanel(focusIdx) {
     dateInput.addEventListener('change', ev => {
       if (ev.target.value) {
         deadlines[idx].date = ev.target.value;
+        markDirty();
         render();
         renderDeadlinePanel(idx);
       }
@@ -2168,6 +2217,7 @@ function renderDeadlinePanel(focusIdx) {
     delBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><line x1="1" y1="1" x2="10" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="1" x2="1" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
     delBtn.addEventListener('click', () => {
       deadlines.splice(idx, 1);
+      markDirty();
       render();
       renderDeadlinePanel();
       showToast('Échéance supprimée');
@@ -2239,6 +2289,7 @@ function downloadJson(name) {
   a.download = name.replace(/[^a-z0-9\-_]/gi, '_') + '.json';
   a.click();
   URL.revokeObjectURL(url);
+  isDirty = false; // tout est sauvegardé dans le fichier .json
   closeFilePopup();
   showToast('✅ Fichier téléchargé — ' + a.download);
 }
@@ -2257,6 +2308,7 @@ function applySnapshot(snap) {
     const titleEl = document.getElementById('projectTitle');
     if (titleEl) titleEl.textContent = snap.name;
   }
+  isDirty = false; // on vient de charger un fichier : rien à sauvegarder
   render();
   showToast('📂 Planning chargé — ' + (snap.name || 'fichier importé'));
 }
@@ -2525,210 +2577,6 @@ document.addEventListener('keydown', e => {
 
 }
 
-
-// ─── PWA ICON ────────────────────────────────────────────────────────────────
-{
-  // Generate app icon as a canvas data URL (blue gradient with "PP" text)
-  function makeIcon(size) {
-    const c = document.createElement('canvas');
-    c.width = size; c.height = size;
-    const ctx = c.getContext('2d');
-    // Background gradient
-    const grad = ctx.createLinearGradient(0, 0, size, size);
-    grad.addColorStop(0, '#EBF0FC');
-    grad.addColorStop(1, '#F2F5FD');
-    ctx.fillStyle = grad;
-    // Rounded rect
-    const r = size * 0.2;
-    ctx.beginPath();
-    ctx.moveTo(r, 0); ctx.lineTo(size-r, 0);
-    ctx.quadraticCurveTo(size, 0, size, r);
-    ctx.lineTo(size, size-r);
-    ctx.quadraticCurveTo(size, size, size-r, size);
-    ctx.lineTo(r, size); ctx.quadraticCurveTo(0, size, 0, size-r);
-    ctx.lineTo(0, r); ctx.quadraticCurveTo(0, 0, r, 0);
-    ctx.closePath();
-    ctx.fill();
-
-    // Accent bar left
-    const barGrad = ctx.createLinearGradient(0, 0, 0, size);
-    barGrad.addColorStop(0, '#4f7cff');
-    barGrad.addColorStop(1, '#7c5cfc');
-    ctx.fillStyle = barGrad;
-    ctx.fillRect(size*0.1, size*0.2, size*0.07, size*0.6);
-
-    // Gantt bars illustration
-    const bars = [
-      { y: 0.28, x: 0.22, w: 0.52, c: '#4f7cff' },
-      { y: 0.43, x: 0.22, w: 0.35, c: '#7c5cfc' },
-      { y: 0.58, x: 0.22, w: 0.45, c: '#06b6d4' },
-      { y: 0.73, x: 0.22, w: 0.28, c: '#34d399' },
-    ];
-    bars.forEach(b => {
-      ctx.fillStyle = b.c;
-      const bh = size * 0.1;
-      const br = bh / 2;
-      const bx = size * b.x, by = size * b.y, bw = size * b.w;
-      ctx.beginPath();
-      ctx.moveTo(bx + br, by); ctx.lineTo(bx + bw - br, by);
-      ctx.quadraticCurveTo(bx+bw, by, bx+bw, by+br);
-      ctx.lineTo(bx+bw, by+bh-br);
-      ctx.quadraticCurveTo(bx+bw, by+bh, bx+bw-br, by+bh);
-      ctx.lineTo(bx+br, by+bh); ctx.quadraticCurveTo(bx, by+bh, bx, by+bh-br);
-      ctx.lineTo(bx, by+br); ctx.quadraticCurveTo(bx, by, bx+br, by);
-      ctx.closePath();
-      ctx.fill();
-    });
-
-    return c.toDataURL('image/png');
-  }
-
-  const icon192 = makeIcon(192);
-  const icon512 = makeIcon(512);
-
-  // Set apple touch icon
-  document.getElementById('appleTouchIcon').href = icon192;
-
-  // Inject manifest as blob URL
-  const manifest = {
-    name: 'PlanningPro — Immobilier',
-    short_name: 'PlanningPro',
-    description: 'Planning de conception immobilière',
-    start_url: '.',
-    display: 'standalone',
-    background_color: '#F0F4FB',
-    theme_color: '#F0F4FB',
-    orientation: 'landscape',
-    icons: [
-      { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-    ]
-  };
-  const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-  const manifestURL = URL.createObjectURL(manifestBlob);
-  document.getElementById('pwaManifest').href = manifestURL;
-
-  // Register inline Service Worker for offline support
-  const swCode = `
-    const CACHE = 'planningpro-v1';
-    self.addEventListener('install', e => {
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => {
-      e.waitUntil(clients.claim());
-    });
-    self.addEventListener('fetch', e => {
-      e.respondWith(
-        caches.match(e.request).then(r => r || fetch(e.request).catch(() => new Response('Offline')))
-      );
-    });
-  `;
-  const swBlob = new Blob([swCode], { type: 'application/javascript' });
-  const swURL = URL.createObjectURL(swBlob);
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(swURL, { scope: '/' }).catch(() => {});
-  }
-
-  // ── Install prompt banner ──────────────────────────────────────────────────
-  let deferredPrompt = null;
-
-  const banner = document.createElement('div');
-  banner.id = 'installBanner';
-  banner.style.cssText = `
-    display: none; position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-    background: #FFFFFF; border: 1px solid rgba(82,93,244,.25);
-    border-radius: 14px; padding: 16px 20px; width: 300px;
-    box-shadow: 0 8px 32px rgba(82,93,244,.18);
-    font-family: 'DM Sans', sans-serif; color: #1A2347;
-    animation: slideUp .3s ease;
-  `;
-  banner.innerHTML = `
-    <style>@keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }</style>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <canvas id="bannerIcon" width="40" height="40" style="border-radius:8px;flex-shrink:0"></canvas>
-      <div>
-        <div style="font-weight:600;font-size:14px;color:#1A2347">Installer PlanningPro</div>
-        <div style="font-size:11px;color:#8B9BC8;margin-top:1px">Accès rapide depuis votre bureau</div>
-      </div>
-      <button onclick="document.getElementById('installBanner').style.display='none'"
-        style="margin-left:auto;background:none;border:none;color:#8B9BC8;cursor:pointer;font-size:18px;line-height:1">×</button>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button id="installBtn" style="
-        flex:1; background:#525DF4; border:none; color:#fff; border-radius:8px;
-        padding:9px; cursor:pointer; font-size:13px; font-family:'DM Sans',sans-serif; font-weight:500;">
-        📲 Installer
-      </button>
-      <button onclick="document.getElementById('installBanner').style.display='none'" style="
-        background:transparent; border:1px solid rgba(82,93,244,.2); color:#4A5578; border-radius:8px;
-        padding:9px 14px; cursor:pointer; font-size:13px; font-family:'DM Sans',sans-serif;">
-        Plus tard
-      </button>
-    </div>
-  `;
-  document.body.appendChild(banner);
-
-  // Draw mini icon on banner canvas
-  setTimeout(() => {
-    const bc = document.getElementById('bannerIcon');
-    if (bc) {
-      const ctx = bc.getContext('2d');
-      const img = new Image();
-      img.onload = () => ctx.drawImage(img, 0, 0, 40, 40);
-      img.src = makeIcon(40);
-    }
-  }, 100);
-
-  document.getElementById('installBtn')?.addEventListener('click', async () => {
-    if (!deferredPrompt) {
-      // Safari / manual instructions
-      showToast('Sur Safari : appuyez sur Partager → "Sur l\'écran d\'accueil". Sur Chrome : menu ⋮ → "Installer l\'application".');
-      return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') showToast('✅ PlanningPro installé !');
-    deferredPrompt = null;
-    banner.style.display = 'none';
-  });
-
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    setTimeout(() => { banner.style.display = 'block'; }, 1500);
-  });
-
-  window.addEventListener('appinstalled', () => {
-    banner.style.display = 'none';
-    showToast('✅ PlanningPro installé sur votre bureau !');
-  });
-
-  // Add install button to header
-  const installHeaderBtn = document.createElement('button');
-  installHeaderBtn.id = 'btnInstall';
-  installHeaderBtn.title = 'Installer comme application bureau';
-  installHeaderBtn.style.cssText = `
-    background: rgba(82,93,244,.07); border: 1px solid rgba(82,93,244,.18); color: #4A5578;
-    border-radius: 6px; padding: 5px 13px; cursor: pointer; font-size: 12px;
-    font-family: 'DM Sans', sans-serif; transition: all .15s;
-  `;
-  installHeaderBtn.textContent = '📲 Installer';
-  installHeaderBtn.onmouseenter = () => { installHeaderBtn.style.borderColor = '#525DF4'; installHeaderBtn.style.color = '#525DF4'; };
-  installHeaderBtn.onmouseleave = () => { installHeaderBtn.style.borderColor = 'rgba(82,93,244,.18)'; installHeaderBtn.style.color = '#4A5578'; };
-  installHeaderBtn.onclick = () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-    } else {
-      banner.style.display = banner.style.display === 'block' ? 'none' : 'block';
-    }
-  };
-  // Insert before the first header button
-  const header = document.querySelector('header');
-  const firstBtn = header.querySelector('button');
-  if (firstBtn) header.insertBefore(installHeaderBtn, firstBtn);
-  else header.appendChild(installHeaderBtn);
-
-}
 
 // ─── SCROLL SYNC — initialisé une seule fois (fix fuite mémoire) ─────────────
 function initScrollSync() {
