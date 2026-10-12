@@ -5,7 +5,7 @@
 .print-watermark { display: none !important; }
 
   :root {
-    /* ── Linkcity brand ── */
+    /* ── Couleurs principales ── */
     --lc-electric: #525DF4;
     --lc-intense:  #202E5B;
     --lc-mint:     #0FAE87;
@@ -49,7 +49,7 @@
 
 
   /* ══════════════════════════════════════════
-     HEADER — Linkcity v8
+     HEADER
   ══════════════════════════════════════════ */
   header {
     background: #202E5B;
@@ -75,7 +75,7 @@
     pointer-events: none;
   }
 
-  /* Mint bottom-left accent block — echoes the Linkcity module system */
+  /* Bande verte décorative à gauche du header */
   header::before {
     content: '';
     position: absolute;
@@ -93,20 +93,6 @@
     padding-left: 14px;
     position: relative;
     z-index: 3;
-    flex-shrink: 0;
-  }
-
-  /* Real Linkcity PNG logo */
-  .lc-logo-svg {
-    height: 44px;
-    width: auto;
-    flex-shrink: 0;
-  }
-
-  .logo-divider {
-    width: 1px;
-    height: 32px;
-    background: linear-gradient(to bottom, transparent, rgba(255,255,255,.25), transparent);
     flex-shrink: 0;
   }
 
@@ -851,7 +837,7 @@
     height: 10px;
     border-radius: 3px;
   }
-  /* Phase colors — Linkcity identitaires rotated */
+  /* Couleurs des phases */
   .gantt-bar.phase-0 { background: linear-gradient(90deg, #525DF4, #3D46C9); }
   .gantt-bar.phase-1 { background: linear-gradient(90deg, #0FAE87, #0D9276); }
   .gantt-bar.phase-2 { background: linear-gradient(90deg, #8B5CF6, #7C3AED); }
@@ -1272,17 +1258,6 @@
       align-items: center;
       gap: 10px;
     }
-    .print-logo {
-      height: 20px !important;
-      width: auto !important;
-      display: block !important;
-    }
-    .print-header-divider {
-      width: 1px;
-      height: 24px;
-      background: #cbd5e1;
-      display: block !important;
-    }
     .print-header-titles {
       display: flex !important;
       flex-direction: column;
@@ -1358,8 +1333,6 @@
     }
 
     .logo-zone { filter: invert(1) brightness(0.3); }
-    .lc-logo-svg text { fill: #111 !important; }
-    .lc-logo-svg rect, .lc-logo-svg path { fill: #2563eb !important; }
     .project-label { color: #2563eb !important; }
     .project-title { color: #111 !important; }
     .stat { background: #f1f5f9 !important; border-color: #e2e8f0 !important; }
@@ -1627,18 +1600,6 @@
     align-items: center;
     gap: 14px;
     margin-bottom: 40px;
-  }
-
-  /* Landing logo size */
-  .landing-logo-row svg {
-    height: 40px;
-    width: auto;
-  }
-
-  .landing-logo-divider {
-    width: 1px;
-    height: 32px;
-    background: linear-gradient(to bottom, transparent, var(--border-hi), transparent);
   }
 
   .landing-product-name {
