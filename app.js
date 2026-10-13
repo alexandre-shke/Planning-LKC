@@ -50,6 +50,7 @@ function markDirty() { isDirty = true; }
 // Si on ferme l'onglet / rafraîchit avec des modifications non sauvegardées,
 // le navigateur affiche sa fenêtre de confirmation "Quitter le site ?"
 window.addEventListener('beforeunload', e => {
+  autosaveNow(); // dernière copie de sécurité avant de partir
   if (!isDirty) return;
   e.preventDefault();
   e.returnValue = ''; // nécessaire pour certains navigateurs
@@ -153,6 +154,31 @@ document.addEventListener('keydown', e => {
 });
 
 document.getElementById('btnUndo').addEventListener('click', undo);
+
+// ─── TOUCHES ÉCHAP ET ENTRÉE DANS LES FENÊTRES ───────────────────────────────
+document.addEventListener('keydown', e => {
+  const isOpen = id => document.getElementById(id)?.classList.contains('open');
+
+  if (e.key === 'Escape') {
+    // On ferme la fenêtre ouverte la plus "au-dessus"
+    if (document.getElementById('datePicker')?.style.display === 'block') { closeDatePicker(); return; }
+    if (isOpen('ctxMenu'))            { document.getElementById('ctxMenu').classList.remove('open'); return; }
+    if (isOpen('colorPopup'))         { document.getElementById('colorPopup').classList.remove('open'); return; }
+    if (isOpen('modalOverlay'))       { closeTaskModal(); return; }
+    if (isOpen('exportModalOverlay')) { document.getElementById('exportModalOverlay').classList.remove('open'); return; }
+    if (isOpen('fileConfirmOverlay')) { document.getElementById('fileConfirmCancel').click(); return; }
+    if (isOpen('filePopupOverlay'))   { closeFilePopup(); return; }
+    if (deadlinePanelOpen)            { closeDeadlinePanel(); return; }
+    return;
+  }
+
+  if (e.key === 'Enter') {
+    // Entrée valide la fenêtre ouverte (sauf dans une liste déroulante)
+    if (e.target.tagName === 'SELECT') return;
+    if (isOpen('modalOverlay'))       { e.preventDefault(); document.getElementById('btnSave').click(); return; }
+    if (isOpen('exportModalOverlay')) { e.preventDefault(); document.getElementById('exportConfirm').click(); return; }
+  }
+});
 
 // ─── CUSTOM COLORS ──────────────────────────────────────────────────────────
 const CUSTOM_TASK_COLORS = {}; // uid -> color string
@@ -317,6 +343,46 @@ function render() {
   renderTaskList();
   renderGantt();
   updateStats();
+  scheduleAutosave();
+}
+
+// ─── SAUVEGARDE AUTOMATIQUE (dans le navigateur) ─────────────────────────────
+// À chaque affichage, on garde une copie du planning dans le navigateur
+// (localStorage). C'est un filet de sécurité : le fichier .json reste la
+// vraie sauvegarde. La copie est proposée sur l'écran d'accueil.
+const AUTOSAVE_KEY = 'planningpro_autosave_v1';
+let appStarted = false;      // on ne sauvegarde qu'une fois le planning chargé
+let autosaveTimer = null;
+
+function scheduleAutosave() {
+  if (!appStarted) return;
+  clearTimeout(autosaveTimer);
+  // On attend 1 seconde de calme pour ne pas sauvegarder à chaque frappe
+  autosaveTimer = setTimeout(autosaveNow, 1000);
+}
+
+function autosaveNow() {
+  if (!appStarted) return;
+  try {
+    const title = document.getElementById('projectTitle')?.textContent?.trim() || 'Planning';
+    const snap = buildStateSnapshot(title);
+    snap.savedAt = new Date().toISOString();
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(snap));
+  } catch (err) {
+    // Navigation privée, stockage plein… : on ignore, ce n'est qu'un filet de sécurité
+    console.warn('Sauvegarde automatique impossible :', err);
+  }
+}
+
+function readAutosave() {
+  try {
+    const raw = localStorage.getItem(AUTOSAVE_KEY);
+    if (!raw) return null;
+    const snap = JSON.parse(raw);
+    return (snap && Array.isArray(snap.tasks) && snap.tasks.length > 0) ? snap : null;
+  } catch {
+    return null;
+  }
 }
 
 function updateStats() {
@@ -1416,7 +1482,8 @@ function renderChartHeader(totalW) {
     while (wd <= PROJECT_END) {
       const x = dateToX(wd);
       const cell = document.createElement('div');
-      const isCurrentWeek = Math.abs(daysBetween(wd, today)) < 7;
+      const daysSinceMonday = (today - wd) / 86400000;
+      const isCurrentWeek = daysSinceMonday >= 0 && daysSinceMonday < 7;
       cell.className = 'week-cell' + (isCurrentWeek ? ' current-week' : '');
       cell.style.left = x + 'px';
       cell.style.width = (7 * getColW()) + 'px';
@@ -1500,10 +1567,17 @@ document.getElementById('ctxDelete').addEventListener('click', () => {
 });
 
 document.getElementById('ctxAddChild').addEventListener('click', () => {
-  if (ctxUid) {
-    pendingParentUid = ctxUid; // mémorise la position d'insertion
-    openAddModal(null);        // null : pas de parent présélectionné, tâche au level 0
-  }
+  if (!ctxUid) return;
+  const parent = tasks.find(t => t.uid === ctxUid);
+  if (!parent) return;
+  pendingParentUid = ctxUid; // la nouvelle tâche sera créée DANS cette tâche
+  openAddModal(null);
+  // On adapte la fenêtre : titre explicite, dates du parent, choix du parent masqué
+  document.getElementById('modalTitle').textContent = 'Nouvelle sous-tâche de « ' + parent.name + ' »';
+  document.getElementById('fStart').value = parent.start;
+  // Par défaut, la sous-tâche couvre toute la durée du parent (ainsi le parent ne rétrécit pas)
+  document.getElementById('fEnd').value = parent.finish;
+  document.getElementById('fParent').closest('.form-group').style.display = 'none';
 });
 
 // ─── DATE PICKER CUSTOM ───────────────────────────────────────────────────────
@@ -1733,10 +1807,12 @@ function populateParentSelect(defaultUid) {
   });
 }
 
-document.getElementById('btnCancel').addEventListener('click', () => {
+document.getElementById('btnCancel').addEventListener('click', closeTaskModal);
+
+function closeTaskModal() {
   pendingParentUid = null;
   document.getElementById('modalOverlay').classList.remove('open');
-});
+}
 
 document.getElementById('btnSave').addEventListener('click', () => {
   const name = document.getElementById('fName').value.trim();
@@ -1756,17 +1832,16 @@ document.getElementById('btnSave').addEventListener('click', () => {
 
   saveSnapshot();
   const type = document.getElementById('fType').value;
-  // Si clic droit "+sous-tâche", on positionne après le bloc du parent ciblé
-  // La tâche hérite du même level que le parent ciblé (tâche sœur, non enfant)
-  const insertAfterUid = pendingParentUid;
+  // Clic droit "+ Sous-tâche" : la nouvelle tâche est créée DANS la tâche ciblée
+  const subtaskOfUid = pendingParentUid;
   pendingParentUid = null; // reset
 
   const parentUid = document.getElementById('fParent').value;
   let level = 0;
-  if (insertAfterUid) {
-    // Clic droit : même level que la tâche ciblée (tâche sœur)
-    const refTask = tasks.find(t => t.uid === insertAfterUid);
-    if (refTask) level = refTask.level;
+  if (subtaskOfUid) {
+    // Un niveau en dessous de la tâche ciblée
+    const refTask = tasks.find(t => t.uid === subtaskOfUid);
+    if (refTask) level = refTask.level + 1;
   } else if (parentUid) {
     const parent = tasks.find(t => t.uid === parentUid);
     if (parent) level = parent.level + 1;
@@ -1791,12 +1866,16 @@ document.getElementById('btnSave').addEventListener('click', () => {
       pct: 0, preds: []
     };
     if (modalSelectedColor) CUSTOM_TASK_COLORS[newUid] = modalSelectedColor;
-    if (insertAfterUid) {
-      // Clic droit "+sous-tâche" : insertion STRICTEMENT juste après la tâche ciblée (index+1)
-      // même level, summary: false forcé — aucune relation parent/enfant
-      newTask.summary = false;
-      const pIdx = tasks.findIndex(t => t.uid === insertAfterUid);
-      tasks.splice(pIdx + 1, 0, newTask);
+    if (subtaskOfUid) {
+      // Insertion à la fin du bloc de la tâche ciblée (après ses sous-tâches existantes)
+      const ref = tasks.find(t => t.uid === subtaskOfUid);
+      const pIdx = tasks.findIndex(t => t.uid === subtaskOfUid);
+      const insertIdx = pIdx + 1 + getDescendants(subtaskOfUid).length;
+      tasks.splice(insertIdx, 0, newTask);
+      // La tâche ciblée devient un groupe (ses dates suivront celles de ses sous-tâches)
+      ref.summary = true;
+      ref.milestone = false;
+      collapsed.delete(ref.uid); // on la déplie pour voir la nouvelle sous-tâche
     } else if (parentUid) {
       // Modale normale avec fParent sélectionné : indenter sous le parent
       const pIdx = tasks.findIndex(t => t.uid === parentUid);
@@ -1865,6 +1944,7 @@ function buildColorSwatches(containerId, currentColor, onSelect) {
 // ─── MODAL COLOR PICKER ────────────────────────────────────────────────────
 function openAddModal(parentUid) {
   editUid = null;
+  document.getElementById('fParent').closest('.form-group').style.display = '';
   modalSelectedColor = null;
   document.getElementById('modalTitle').textContent = 'Nouvelle tâche';
   document.getElementById('fName').value = '';
@@ -1905,6 +1985,7 @@ document.getElementById('zoomOut').addEventListener('click', () => {
 document.getElementById('chartBody').addEventListener('wheel', (e) => {
   if (e.ctrlKey || e.metaKey) {
     e.preventDefault();
+    e.stopPropagation(); // évite que .gantt-wrapper zoome une 2e fois
     // deltaY negative = zoom in, positive = zoom out
     const factor = e.deltaY > 0 ? 0.92 : 1.09;
     applyZoom(continuousZoom * factor, e.currentTarget.scrollLeft + e.offsetX);
@@ -1934,6 +2015,13 @@ document.getElementById('exportCancel')?.addEventListener('click', () => {
   document.getElementById('exportModalOverlay').classList.remove('open');
 });
 
+// Affiche le champ "Texte personnalisé" seulement si on le choisit
+document.getElementById('exportWatermark')?.addEventListener('change', e => {
+  const custom = document.getElementById('exportWatermarkCustom');
+  custom.style.display = e.target.value === 'custom' ? '' : 'none';
+  if (e.target.value === 'custom') custom.focus();
+});
+
 document.getElementById('exportConfirm')?.addEventListener('click', () => {
   const scope = document.getElementById('exportScope').value;
   const zoomChoice = document.getElementById('exportZoom').value;
@@ -1942,6 +2030,33 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
   // Save current state
   const savedZoom = continuousZoom;
   const savedCollapsed = new Set(collapsed);
+
+  // ── En-tête du PDF : nom du projet, date d'édition, type de vue ──
+  const projectName = document.getElementById('projectTitle')?.textContent?.trim() || 'Planning';
+  const editDate = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const viewNames = { month: 'Vue mois', week: 'Vue semaine', day: 'Vue jour' };
+  document.getElementById('printProjectName').textContent = projectName;
+  document.getElementById('printMeta').textContent = 'Édité le ' + editDate;
+  document.getElementById('printBadge').textContent = viewNames[zoomChoice] || '';
+
+  // ── Filigrane ──
+  const wmChoice = document.getElementById('exportWatermark').value;
+  const wmTexts = {
+    none: '',
+    projet: 'PROJET',
+    confidentiel: 'CONFIDENTIEL',
+    draft: 'DRAFT',
+    date: 'Édité le ' + editDate,
+    custom: document.getElementById('exportWatermarkCustom').value.trim(),
+  };
+  const wmEl = document.getElementById('printWatermark');
+  wmEl.textContent = wmTexts[wmChoice] || '';
+  // Gros filigrane pour les mots-clés, petit pour la date
+  wmEl.classList.toggle('wm-large', wmChoice !== 'date' && wmChoice !== 'none');
+  wmEl.style.visibility = wmEl.textContent ? '' : 'hidden';
+
+  // PDF filename suggested by the browser = page title
+  document.title = projectName.replace(/[\\/:*?"<>|]/g, '-') + ' — ' + new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
 
   // Apply export zoom
   const zoomMap = { month: 3.5, week: 14, day: 38 };
@@ -1972,8 +2087,6 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
   chartBody.style.height = canvas.scrollHeight + 'px';
   taskList.style.overflow = 'visible';
   taskList.style.height = canvas.scrollHeight + 'px';
-
-    // Set document title for PDF filename
 
   setTimeout(() => {
     window.print();
@@ -2516,8 +2629,10 @@ document.addEventListener('keydown', e => {
       document.body.classList.remove('landing-active');
     }, 350);
 
+    appStarted = true; // à partir d'ici, la sauvegarde automatique est active
     render();
     initScrollSync();
+    document.getElementById('projectTitle')?.addEventListener('input', () => { markDirty(); scheduleAutosave(); });
 
     // Scroll to today after render
     setTimeout(() => {
@@ -2574,6 +2689,22 @@ document.addEventListener('keydown', e => {
   document.getElementById('landingBtnGeneric').addEventListener('click', () => {
     launchApp(GENERIC_LCY_SKELETON);
   });
+
+  // Bouton "Reprendre mon dernier planning" (visible seulement si une copie existe)
+  const autosaved = readAutosave();
+  const resumeBtn = document.getElementById('landingBtnResume');
+  if (autosaved && resumeBtn) {
+    const when = autosaved.savedAt
+      ? new Date(autosaved.savedAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+      : '';
+    document.getElementById('landingResumeDesc').textContent =
+      (autosaved.name || 'Planning') + (when ? ' — enregistré le ' + when : '');
+    resumeBtn.style.display = '';
+    resumeBtn.addEventListener('click', () => {
+      launchApp(autosaved);
+      isDirty = true; // la copie auto n'est pas un fichier .json : on rappellera de sauvegarder
+    });
+  }
 
 }
 
