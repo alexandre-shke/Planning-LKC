@@ -2051,8 +2051,10 @@ document.getElementById('exportConfirm')?.addEventListener('click', () => {
   };
   const wmEl = document.getElementById('printWatermark');
   wmEl.textContent = wmTexts[wmChoice] || '';
-  // Gros filigrane pour les mots-clés, petit pour la date
-  wmEl.classList.toggle('wm-large', wmChoice !== 'date' && wmChoice !== 'none');
+  // Taille adaptée à la longueur du texte : un texte long est écrit plus petit
+  // pour toujours tenir dans la page (ex. CONFIDENTIEL ≈ 125 px)
+  const wmLen = Math.max(wmEl.textContent.length, 1);
+  wmEl.style.fontSize = Math.max(40, Math.min(160, Math.round(1500 / wmLen))) + 'px';
   wmEl.style.visibility = wmEl.textContent ? '' : 'hidden';
 
   // PDF filename suggested by the browser = page title
