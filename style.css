@@ -1289,31 +1289,24 @@
       letter-spacing: 0.5px;
     }
 
-    /* ── FILIGRANE ── */
+    /* ── FILIGRANE : grand, rouge semi-transparent, en diagonale au centre ── */
     .print-watermark {
       display: block !important;
-      position: fixed !important;
-      bottom: 18mm;
-      right: 14mm;
-      font-size: 11px;
-      font-weight: 700;
-      color: rgba(30,58,138,0.13) !important;
+      position: fixed !important;       /* fixed = répété au centre de CHAQUE page */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 120px;                 /* ajusté par app.js selon la longueur du texte */
+      font-weight: 800;
+      color: rgba(220, 38, 38, 0.18) !important;  /* rouge, 18 % d'opacité */
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
       font-family: 'DM Sans', sans-serif;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      pointer-events: none;
-      white-space: nowrap;
-      transform: rotate(-8deg);
-      transform-origin: bottom right;
-    }
-    .print-watermark.wm-large {
-      font-size: 42px !important;
-      bottom: 30mm;
-      right: 20mm;
-      color: rgba(30,58,138,0.07) !important;
       letter-spacing: 6px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 9999;                    /* au-dessus du planning */
     }
 
     body {
@@ -1443,7 +1436,7 @@
 
     .gantt-milestone { background: #f59e0b !important; box-shadow: none !important; }
 
-    .modal-overlay, .ctx-menu, .tooltip { display: none !important; }
+    .modal-overlay, .ctx-menu, .tooltip, #toast { display: none !important; }
 
     /* Force full width canvas to print */
     #ganttCanvas { min-width: 100% !important; }
