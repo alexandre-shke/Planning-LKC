@@ -1340,7 +1340,8 @@
     .stat-label { color: #64748b !important; }
     .stat.highlight { background: #f0fdf4 !important; border-color: #bbf7d0 !important; }
     .stat.highlight .stat-val { color: #059669 !important; }
-    .header-actions, .btn-hdr, .btn-add, .toolbar { display: none !important; }
+    /* L'en-tête écran est remplacé par l'en-tête d'impression (nom, date, vue) */
+    header, .header-actions, .btn-hdr, .btn-add, .toolbar, .dl-panel { display: none !important; }
 
     .gantt-wrapper {
       overflow: visible !important;
@@ -1680,6 +1681,16 @@
   .landing-btn-secondary:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 40px rgba(32,46,91,.4);
+  }
+
+  /* Bouton "Reprendre mon dernier planning" */
+  .landing-btn-resume {
+    background: linear-gradient(135deg, #0FAE87, #0D9276);
+    box-shadow: 0 6px 28px rgba(15,174,135,.3);
+  }
+  .landing-btn-resume:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(15,174,135,.4);
   }
 
   .landing-btn-icon {
